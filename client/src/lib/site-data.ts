@@ -6,12 +6,11 @@ export const FOUNDER_IMAGE = "/manus-storage/msb-founder-city_626ec76d.jpg";
 export const UGC_VIDEO = "/manus-storage/msb-ugc-sample_6e071991.mp4";
 
 export const services = [
-  { title: "Facebook & Instagram Ads", copy: "حملات محسوبة توصل الرسالة للناس المناسبة وتراقب كل نتيجة.", icon: Megaphone, tone: "blue" },
-  { title: "Video Editing & Production", copy: "مونتاج وإنتاج سريع الإيقاع يناسب الإعلانات والمحتوى القصير.", icon: Clapperboard, tone: "violet" },
-  { title: "AI UGC Content Creation", copy: "أفكار وتنفيذ UGC مرن للمنصات، من الخطاف حتى الدعوة للإجراء.", icon: Sparkles, tone: "yellow" },
-  { title: "Voice Noise Reduction & Subtitling", copy: "تنقية صوت، ترجمة، ومزامنة دقيقة حتى تظل الرسالة مفهومة.", icon: Headphones, tone: "cyan" },
-  { title: "Web, Platforms & Landing Pages", copy: "واجهات ويب وصفحات هبوط ومنصات تعليمية تتعامل مع هدف التحويل بوضوح.", icon: Globe2, tone: "green" },
-  { title: "All-in-One AI Suite", copy: "Gemini PRO (Family Plan)، Google Flow، Veo 3، Nano Banana + Cloud Storage.", icon: Bot, tone: "ai", price: "300 جنيه شهرياً" },
+  { title: "فيديوهات UGC بالذكاء الاصطناعي", copy: "فيديوهات UGC بالذكاء الاصطناعي", icon: Sparkles, tone: "yellow" },
+  { title: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", copy: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", icon: Globe2, tone: "green" },
+  { title: "اعلانات ممولة فيسبوك & انستجرام", copy: "اعلانات ممولة فيسبوك & انستجرام", icon: Megaphone, tone: "blue" },
+  { title: "اشتراك Gemini PRO", copy: "Veo 3 · Google flow · Nano 🍌", icon: Bot, tone: "ai", price: "300 جنيه شهرياً" },
+  { title: "مونتاج و تنقية الصوت وإزالة الضوضاء و ترجمة للفيديوهات", copy: "مونتاج و تنقية الصوت وإزالة الضوضاء و ترجمة للفيديوهات", icon: Headphones, tone: "cyan" },
 ];
 
 export const openWhatsApp = (message: string) => {
