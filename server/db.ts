@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, paymentReceipts, supportTickets, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,54 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export type CreateSupportTicketInput = {
+  name: string;
+  phone: string;
+  email?: string;
+  subject: string;
+  message: string;
+  emailDispatched: boolean;
+};
+
+export async function createSupportTicket(input: CreateSupportTicketInput): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا.");
+
+  await db.insert(supportTickets).values({
+    name: input.name,
+    phone: input.phone,
+    email: input.email || null,
+    subject: input.subject,
+    message: input.message,
+    emailDispatched: input.emailDispatched ? 1 : 0,
+  });
+}
+
+export type CreatePaymentReceiptInput = {
+  method: "vodafone_cash" | "binance_pay";
+  customerName: string;
+  phone: string;
+  binancePhone?: string;
+  receiptKey: string;
+  receiptUrl: string;
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+};
+
+export async function createPaymentReceipt(input: CreatePaymentReceiptInput): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا.");
+
+  await db.insert(paymentReceipts).values({
+    method: input.method,
+    customerName: input.customerName,
+    phone: input.phone,
+    binancePhone: input.binancePhone || null,
+    receiptKey: input.receiptKey,
+    receiptUrl: input.receiptUrl,
+    filename: input.filename,
+    mimeType: input.mimeType,
+    sizeBytes: input.sizeBytes,
+  });
+}

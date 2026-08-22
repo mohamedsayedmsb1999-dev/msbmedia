@@ -25,4 +25,32 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const supportTickets = mysqlTable("supportTickets", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 120 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  subject: varchar("subject", { length: 180 }).notNull(),
+  message: text("message").notNull(),
+  status: mysqlEnum("status", ["new", "in_progress", "closed"]).default("new").notNull(),
+  emailDispatched: int("emailDispatched").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const paymentReceipts = mysqlTable("paymentReceipts", {
+  id: int("id").autoincrement().primaryKey(),
+  method: mysqlEnum("method", ["vodafone_cash", "binance_pay"]).notNull(),
+  customerName: varchar("customerName", { length: 120 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  binancePhone: varchar("binancePhone", { length: 32 }),
+  receiptKey: varchar("receiptKey", { length: 512 }).notNull(),
+  receiptUrl: text("receiptUrl").notNull(),
+  filename: varchar("filename", { length: 255 }).notNull(),
+  mimeType: varchar("mimeType", { length: 80 }).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  status: mysqlEnum("status", ["received", "reviewing", "confirmed"]).default("received").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type PaymentReceipt = typeof paymentReceipts.$inferSelect;
