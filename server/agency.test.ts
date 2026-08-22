@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { RECEIPT_MAX_BYTES, sendSupportEmail, validateReceiptDataUrl } from "./agency";
+import { describe, expect, it } from "vitest";
+import { buildSupportMailto, hashClientPassword, RECEIPT_MAX_BYTES, validateReceiptDataUrl } from "./agency";
 
 describe("إدارة مدخلات وكالة MSB Media", () => {
   it("تقبل صورة إيصال PNG صغيرة وصحيحة", () => {
@@ -12,17 +12,23 @@ describe("إدارة مدخلات وكالة MSB Media", () => {
     expect(() => validateReceiptDataUrl("data:application/pdf;base64,QQ==", "application/pdf")).toThrow();
   });
 
-  it("لا يحاول إرسال بريد عند غياب إعدادات خدمة البريد", async () => {
-    vi.stubEnv("RESEND_API_KEY", "");
-    vi.stubEnv("SUPPORT_FROM_EMAIL", "");
-    const sent = await sendSupportEmail({
+  it("يبني رابط بريد مباشر دون الحاجة إلى أي مفتاح خارجي", () => {
+    const mailto = buildSupportMailto({
       name: "عميل تجريبي",
       phone: "01000000000",
       subject: "استفسار",
       message: "اختبار",
     });
-    expect(sent).toBe(false);
+    expect(mailto).toContain("mailto:mohamedsayedmsb1999@gmail.com");
+    expect(mailto).toContain("MSB%20Media");
     expect(RECEIPT_MAX_BYTES).toBe(5 * 1024 * 1024);
-    vi.unstubAllEnvs();
+  });
+
+  it("يحوّل كلمة مرور التسجيل إلى بصمة ثابتة لا تعيد النص الخام", () => {
+    const hash = hashClientPassword("strong-password");
+    expect(hash).toHaveLength(64);
+    expect(hash).not.toContain("strong-password");
+    expect(hash).toBe(hashClientPassword("strong-password"));
+    expect(hash).not.toBe(hashClientPassword("another-password"));
   });
 });

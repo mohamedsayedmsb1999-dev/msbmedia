@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { createHash } from "node:crypto";
 
 export const RECEIPT_MAX_BYTES = 5 * 1024 * 1024;
 const allowedReceiptTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -39,12 +40,7 @@ export function validateReceiptDataUrl(dataUrl: string, mimeType: string) {
   return buffer;
 }
 
-export async function sendSupportEmail(payload: SupportEmailPayload): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.SUPPORT_FROM_EMAIL;
-
-  if (!apiKey || !from) return false;
-
+export function buildSupportMailto(payload: SupportEmailPayload): string {
   const message = [
     `الاسم: ${payload.name}`,
     `الهاتف: ${payload.phone}`,
@@ -52,23 +48,9 @@ export async function sendSupportEmail(payload: SupportEmailPayload): Promise<bo
     "",
     payload.message,
   ].join("\n");
+  return `mailto:mohamedsayedmsb1999@gmail.com?subject=${encodeURIComponent(`MSB Media — ${payload.subject}`)}&body=${encodeURIComponent(message)}`;
+}
 
-  try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: ["mohamedsayedmsb1999@gmail.com"],
-        subject: `MSB Media — ${payload.subject}`,
-        text: message,
-      }),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
+export function hashClientPassword(password: string): string {
+  return createHash("sha256").update(password).digest("hex");
 }

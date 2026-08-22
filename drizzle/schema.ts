@@ -52,5 +52,14 @@ export const paymentReceipts = mysqlTable("paymentReceipts", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const leadAccounts = mysqlTable("leadAccounts", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 120 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 128 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type SupportTicket = typeof supportTickets.$inferSelect;
 export type PaymentReceipt = typeof paymentReceipts.$inferSelect;
+export type LeadAccount = typeof leadAccounts.$inferSelect;

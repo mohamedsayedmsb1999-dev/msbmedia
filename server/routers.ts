@@ -1,12 +1,12 @@
 import { COOKIE_NAME } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { sendSupportEmail, validateReceiptDataUrl } from "./agency";
+import { buildSupportMailto, hashClientPassword, validateReceiptDataUrl } from "./agency";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { notifyOwner } from "./_core/notification";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { createPaymentReceipt, createSupportTicket } from "./db";
+import { createLeadAccount, createPaymentReceipt, createSupportTicket, getLeadAccountByPhone } from "./db";
 import { storagePut } from "./storage";
 
 const contactInput = z.string().trim().min(3).max(120);
@@ -24,6 +24,36 @@ export const appRouter = router({
       } as const;
     }),
   }),
+  clientAuth: router({
+    register: publicProcedure
+      .input(z.object({
+        name: contactInput,
+        phone: z.string().trim().min(6).max(32),
+        password: z.string().min(6).max(128),
+      }))
+      .mutation(async ({ input }) => {
+        const exists = await getLeadAccountByPhone(input.phone);
+        if (exists) throw new TRPCError({ code: "CONFLICT", message: "هذا الرقم مسجل بالفعل. استخدم تسجيل الدخول." });
+        const passwordHash = hashClientPassword(input.password);
+        await createLeadAccount({ name: input.name, phone: input.phone, passwordHash });
+        const mailUrl = buildSupportMailto({
+          name: input.name,
+          phone: input.phone,
+          subject: "تسجيل عميل جديد",
+          message: "تم إنشاء حساب جديد من نافذة التسجيل في موقع MSB Media.",
+        });
+        await notifyOwner({ title: "تسجيل عميل جديد — MSB Media", content: `${input.name} أنشأ حسابًا جديدًا.` });
+        return { success: true, name: input.name, mailUrl };
+      }),
+    signIn: publicProcedure
+      .input(z.object({ phone: z.string().trim().min(6).max(32), password: z.string().min(6).max(128) }))
+      .mutation(async ({ input }) => {
+        const account = await getLeadAccountByPhone(input.phone);
+        const passwordHash = hashClientPassword(input.password);
+        if (!account || account.passwordHash !== passwordHash) throw new TRPCError({ code: "UNAUTHORIZED", message: "بيانات الدخول غير صحيحة." });
+        return { success: true, name: account.name };
+      }),
+  }),
   support: router({
     create: publicProcedure
       .input(z.object({
@@ -34,19 +64,19 @@ export const appRouter = router({
         message: z.string().trim().min(10).max(5000),
       }))
       .mutation(async ({ input }) => {
-        const emailDispatched = await sendSupportEmail({
+        const mailUrl = buildSupportMailto({
           name: input.name,
           phone: input.phone,
           email: input.email || undefined,
           subject: input.subject,
           message: input.message,
         });
-        await createSupportTicket({ ...input, emailDispatched });
+        await createSupportTicket({ ...input, emailDispatched: false });
         const notificationSent = await notifyOwner({
           title: "طلب دعم جديد — MSB Media",
           content: `${input.name} أرسل طلب دعم بعنوان: ${input.subject}`,
         });
-        return { success: true, notificationSent, emailDispatched };
+        return { success: true, notificationSent, mailUrl };
       }),
   }),
   payment: router({

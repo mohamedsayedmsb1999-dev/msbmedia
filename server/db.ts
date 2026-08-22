@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, paymentReceipts, supportTickets, users } from "../drizzle/schema";
+import { InsertUser, leadAccounts, paymentReceipts, supportTickets, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -139,4 +139,17 @@ export async function createPaymentReceipt(input: CreatePaymentReceiptInput): Pr
     mimeType: input.mimeType,
     sizeBytes: input.sizeBytes,
   });
+}
+
+export async function createLeadAccount(input: { name: string; phone: string; passwordHash: string }): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا.");
+  await db.insert(leadAccounts).values(input);
+}
+
+export async function getLeadAccountByPhone(phone: string) {
+  const db = await getDb();
+  if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا.");
+  const result = await db.select().from(leadAccounts).where(eq(leadAccounts.phone, phone)).limit(1);
+  return result[0];
 }
