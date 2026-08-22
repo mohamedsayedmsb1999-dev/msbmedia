@@ -1,6 +1,7 @@
 import { ArrowLeft, Check, MessageCircle, Sparkles, UsersRound } from "lucide-react";
 import { useState } from "react";
 import SiteShell from "@/components/SiteShell";
+import PromoVideo from "@/components/PromoVideo";
 import { BRAND_IMAGE, FOUNDER_IMAGE, openWhatsApp, services } from "@/lib/site-data";
 
 const quiz = [
@@ -39,6 +40,8 @@ export default function Home() {
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><span className="eyebrow"><Sparkles className="h-4 w-4" />مسارات نعرفها جيدًا</span><h2 className="section-title">خدماتنا في مساحة أوضح وأسرع</h2></div><a href="/services" className="text-sm font-black text-[#ffd400]">كل الخدمات ←</a></div>
       <div className="horizontal-grid mt-9">{services.slice(0, 3).map(service => { const Icon = service.icon; return <article className="dark-card" key={service.title}><span className={`icon-box ${service.tone}`}><Icon className="h-5 w-5" /></span><h3>{service.title}</h3><p>{service.copy}</p></article>; })}</div>
     </section>
+
+    <section className="site-container pb-20"><PromoVideo /></section>
 
     <section className="border-y border-white/10 bg-[#07133c] py-20">
       <div className="site-container grid gap-8 lg:grid-cols-[.9fr_1.1fr]">

@@ -8,6 +8,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { createLeadAccount, createPaymentReceipt, createSupportTicket, getLeadAccountByPhone } from "./db";
 import { storagePut } from "./storage";
+import { answerMSBConsultation } from "./msbAssistant";
 
 const contactInput = z.string().trim().min(3).max(120);
 
@@ -53,6 +54,16 @@ export const appRouter = router({
         if (!account || account.passwordHash !== passwordHash) throw new TRPCError({ code: "UNAUTHORIZED", message: "بيانات الدخول غير صحيحة." });
         return { success: true, name: account.name };
       }),
+  }),
+  assistant: router({
+    chat: publicProcedure
+      .input(z.object({
+        history: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string().trim().min(1).max(1200),
+        })).min(1).max(10),
+      }))
+      .mutation(async ({ input }) => answerMSBConsultation(input.history)),
   }),
   support: router({
     create: publicProcedure
