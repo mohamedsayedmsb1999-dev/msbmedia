@@ -65,8 +65,21 @@ export default function Home() {
 
   const supportMutation = trpc.support.create.useMutation({
     onSuccess: data => {
+      const submitted = supportForm;
       setSupportForm({ name: "", phone: "", email: "", subject: "", message: "" });
-      toast.success(data.emailDispatched ? "تم إرسال طلبك إلى الدعم بنجاح." : "تم تسجيل طلبك وإبلاغ فريق MSB Media.");
+      if (data.emailDispatched) {
+        toast.success("تم إرسال طلبك إلى الدعم بنجاح.");
+      } else {
+        const body = [
+          `الاسم: ${submitted.name}`,
+          `الهاتف: ${submitted.phone}`,
+          `البريد: ${submitted.email || "غير مُضاف"}`,
+          "",
+          submitted.message,
+        ].join("\n");
+        window.location.assign(`mailto:mohamedsayedmsb1999@gmail.com?subject=${encodeURIComponent(`MSB Media — ${submitted.subject}`)}&body=${encodeURIComponent(body)}`);
+        toast.success("تم تسجيل طلبك وإبلاغ الفريق وفتح مسار البريد المباشر.");
+      }
     },
     onError: error => toast.error(error.message || "تعذّر إرسال الطلب. حاول مرة أخرى."),
   });
