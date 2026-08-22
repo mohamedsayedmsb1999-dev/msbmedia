@@ -8,7 +8,7 @@ import { BRAND_IMAGE } from "@/lib/site-data";
 const navItems = [
   { href: "/", label: "الرئيسية" },
   { href: "/services", label: "خدماتنا" },
-  { href: "/portfolio", label: "سابقة الأعمال" },
+  { href: "/portfolio", label: "سابقة الأعمال · Portfolio" },
   { href: "/payment", label: "طرق الدفع" },
   { href: "/support", label: "الدعم الفني" },
 ];

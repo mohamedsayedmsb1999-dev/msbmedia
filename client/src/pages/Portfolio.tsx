@@ -1,7 +1,56 @@
 import SiteShell from "@/components/SiteShell";
-import { CirclePlay, ChevronLeft, ChevronRight, Film, ShieldCheck } from "lucide-react";
-import { useState } from "react";
-import { UGC_VIDEO } from "@/lib/site-data";
+import { BarChart3, Layers3, MonitorSmartphone, Sparkles } from "lucide-react";
+import { BRAND_IMAGE } from "@/lib/site-data";
 
-const reviewSlides = ["مكان مخصص لمراجعة موثقة من عميل في الصعيد بعد موافقته.", "مكان مخصص لمراجعة موثقة من عميل في وجه بحري بعد موافقته.", "لا ننشر تعليقات أو أختام ثقة مصطنعة؛ المصدر والموافقة جزء من المراجعة."];
-export default function Portfolio() { const [slide, setSlide] = useState(0); return <SiteShell><section className="page-hero"><div className="site-container"><span className="eyebrow"><Film className="h-4 w-4" />سابقة الأعمال</span><h1>مساحة تُظهر طريقة تفكيرنا</h1><p>عينات مرئية عامة للمعاينة، ومكان واضح للأعمال والمراجعات المعتمدة.</p></div></section><section className="site-container py-16"><div className="portfolio-grid">{["افتتاحية بصرية", "محتوى UGC قصير", "دعوة واضحة للإجراء"].map((title, index) => <article className="video-card" key={title}><video controls muted loop playsInline preload="metadata"><source src={UGC_VIDEO} type="video/mp4" /></video><div className="video-overlay"><span>UGC SAMPLE {index + 1}</span><CirclePlay className="h-7 w-7" /><h2>{title}</h2><p>عينة مرخصة عامة، وليست منسوبة إلى عميل.</p></div></article>)}</div><div className="mt-12 grid gap-5 lg:grid-cols-[.75fr_1.25fr]"><div className="dark-card"><ShieldCheck className="h-7 w-7 text-[#ffd400]" /><h2>المراجعات عند توثيقها</h2><p>نضيف رأي العميل بلهجته وسياقه الحقيقي بعد الحصول على موافقته. لا نستخدم مراجعات مصطنعة أو أختام ثقة عامة.</p></div><div className="review-slider"><p className="text-xs font-black tracking-[.2em] text-[#ffd400]">CLIENT VOICE · VERIFIED ONLY</p><blockquote>“{reviewSlides[slide]}”</blockquote><div className="mt-7 flex items-center justify-between"><div className="flex gap-2">{reviewSlides.map((_, i) => <button onClick={() => setSlide(i)} key={i} className={`h-2.5 w-2.5 rounded-full ${i === slide ? "bg-[#ffd400]" : "bg-white/20"}`} aria-label={`انتقل إلى الشريحة ${i + 1}`} />)}</div><div className="flex gap-2"><button onClick={() => setSlide((slide + reviewSlides.length - 1) % reviewSlides.length)} className="slider-control"><ChevronRight className="h-4 w-4" /></button><button onClick={() => setSlide((slide + 1) % reviewSlides.length)} className="slider-control"><ChevronLeft className="h-4 w-4" /></button></div></div></div></div></section></SiteShell>; }
+const achievements = [
+  {
+    title: "منظومة محتوى UGC بالذكاء الاصطناعي",
+    text: "مسار بصري من الفكرة والسكريبت إلى نسخ متعددة تناسب الإعلان والمحتوى القصير.",
+    icon: Sparkles,
+    type: "ugc",
+    labels: ["SCRIPT", "HOOK", "SHORT FORM"],
+  },
+  {
+    title: "هيكل حملة إعلانية منظم",
+    text: "لوحة تخطيط توضح كيف يرتّب فريقنا الرسائل والمواد وأولويات الاختبار.",
+    icon: BarChart3,
+    type: "campaign",
+    labels: ["AUDIENCE", "CREATIVE", "OPTIMIZE"],
+  },
+  {
+    title: "مساحة اشتراكات الذكاء الاصطناعي",
+    text: "تنظيم واضح للأدوات التي نستخدمها ضمن اشتراك Gemini PRO وخدمات الإنتاج الذكي.",
+    icon: Layers3,
+    type: "suite",
+    labels: ["Gemini PRO", "Veo 3", "Google flow", "Nano 🍌"],
+  },
+];
+
+export default function Portfolio() {
+  return <SiteShell>
+    <section className="page-hero">
+      <div className="site-container">
+        <span className="eyebrow"><MonitorSmartphone className="h-4 w-4" />سابقة الأعمال · Portfolio</span>
+        <h1>لوحات تعرض طريقة عملنا باحتراف</h1>
+        <p>ثلاث لوحات توضيحية تعكس بيئة العمل في MSB Media والخدمات التي يبنيها فريق خبرائنا.</p>
+      </div>
+    </section>
+    <section className="site-container py-16 sm:py-20">
+      <div className="achievement-grid">
+        {achievements.map(item => {
+          const Icon = item.icon;
+          return <article className={`achievement-card ${item.type}`} key={item.title}>
+            <div className="achievement-top"><span className="achievement-icon"><Icon className="h-5 w-5" /></span><img src={BRAND_IMAGE} alt="MSB Media" /></div>
+            <div className="achievement-art" aria-hidden="true">
+              {item.type === "ugc" && <><div className="phone-frame"><div className="phone-crop"></div><div className="phone-lines"><i></i><i></i><i></i></div></div><div className="script-sheet"><span></span><span></span><span></span><span></span></div></>}
+              {item.type === "campaign" && <><div className="campaign-grid"><span className="campaign-a"></span><span className="campaign-b"></span><span className="campaign-c"></span><span className="campaign-d"></span></div><div className="campaign-bars"><i></i><i></i><i></i><i></i><i></i></div></>}
+              {item.type === "suite" && <div className="tool-orbs"><span>G</span><span>V3</span><span>F</span><span>🍌</span></div>}
+            </div>
+            <div className="achievement-content"><div className="achievement-labels">{item.labels.map(label => <span key={label}>{label}</span>)}</div><h2>{item.title}</h2><p>{item.text}</p></div>
+            <small>لوحة توضيحية لخدمات MSB Media</small>
+          </article>;
+        })}
+      </div>
+    </section>
+  </SiteShell>;
+}
