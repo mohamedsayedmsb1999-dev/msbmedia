@@ -1,8 +1,60 @@
-import SiteShell from "@/components/SiteShell";
-import { Copy, FileImage, ShieldCheck, UploadCloud } from "lucide-react";
+import { Copy, FileImage, MessageCircle, Share2, ShieldCheck, UploadCloud } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+import SiteShell from "@/components/SiteShell";
+import { openWhatsApp } from "@/lib/site-data";
+import { submitPaymentReceipt } from "@/lib/msbDataApi";
 
-const copy = async (text: string) => { await navigator.clipboard.writeText(text); toast.success("تم النسخ."); };
-export default function Payment() { const [method, setMethod] = useState<"vodafone_cash" | "binance_pay">("vodafone_cash"); const [file, setFile] = useState<File | null>(null); const upload = trpc.payment.submitReceipt.useMutation({ onSuccess: () => { setFile(null); toast.success("تم رفع الإيصال وربطه بطلب الدفع."); }, onError: err => toast.error(err.message) }); const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!file) return toast.error("اختر لقطة شاشة الإيصال أولًا."); if (file.size > 5 * 1024 * 1024) return toast.error("الحد الأقصى 5 ميجابايت."); const form = new FormData(event.currentTarget); const dataUrl = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(); reader.onerror = reject; reader.readAsDataURL(file); }); upload.mutate({ method, customerName: String(form.get("name")), phone: String(form.get("phone")), binancePhone: method === "binance_pay" ? String(form.get("binancePhone")) : undefined, filename: file.name, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", dataUrl }); }; return <SiteShell><section className="page-hero"><div className="site-container"><span className="eyebrow">طرق الدفع</span><h1>دفع واضح ومراجعة منظمة</h1><p>اختر الوسيلة، ثم ارفع لقطة الإيصال ليصل لفريق المراجعة بأمان.</p></div></section><section className="site-container py-16"><div className="payment-grid"><article className="payment-card"><p className="gateway-tag vodafone">Vodafone Cash</p><h2>حول إلى أحد الرقمين</h2>{["01105697412", "01092794169"].map(number => <div className="copy-row" key={number}><b dir="ltr">{number}</b><button onClick={() => copy(number)} aria-label="نسخ الرقم"><Copy className="h-4 w-4" /></button></div>)}<p className="note">إرسال سكرين شوت الإيصال لخدمة العملاء.</p></article><article className="payment-card"><p className="gateway-tag binance">Binance Pay</p><h2>استخدم المعرّف</h2><div className="copy-row"><b dir="ltr">454798991</b><button onClick={() => copy("454798991")} aria-label="نسخ معرّف Binance"><Copy className="h-4 w-4" /></button></div><p className="note">رقم الهاتف إلزامي لتأكيد تحويل Binance Pay.</p></article><article className="payment-card upcoming"><span>قريباً</span><h2>خيارات أوسع</h2><p>الحساب البنكي، PayPal، Payoneer.</p></article></div><form onSubmit={submit} className="receipt-form"><div className="flex items-center gap-3"><span className="icon-box blue"><ShieldCheck className="h-5 w-5" /></span><div><h2>رفع إيصال الدفع</h2><p>نخزن مرجع الملف فقط، وليس الصورة داخل قاعدة البيانات.</p></div></div><div className="form-grid"><label>الاسم<input className="dark-input" name="name" required placeholder="اسمك الكامل" /></label><label>رقم الهاتف<input className="dark-input" name="phone" required inputMode="tel" placeholder="رقم للتواصل" /></label><label>طريقة الدفع<select className="dark-input" value={method} onChange={e => setMethod(e.target.value as typeof method)}><option value="vodafone_cash">Vodafone Cash</option><option value="binance_pay">Binance Pay</option></select></label>{method === "binance_pay" && <label>هاتف تأكيد Binance<input className="dark-input" name="binancePhone" required inputMode="tel" /></label>}</div><label className="upload-box"><FileImage className="h-6 w-6" /><span><b>{file?.name || "اختر لقطة شاشة الإيصال"}</b><small>JPG / PNG / WEBP حتى 5MB</small></span><input className="sr-only" required type="file" accept="image/jpeg,image/png,image/webp" onChange={e => setFile(e.target.files?.[0] || null)} /></label><button disabled={upload.isPending} className="blue-button mt-5">{upload.isPending ? "جاري الرفع..." : <><UploadCloud className="h-4 w-4" />رفع الإيصال</>}</button></form></section></SiteShell>; }
+const copy = async (text: string) => {
+  await navigator.clipboard.writeText(text);
+  toast.success("تم النسخ.");
+};
+
+export default function Payment() {
+  const [method, setMethod] = useState<"vodafone_cash" | "binance_pay">("vodafone_cash");
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const shareReceiptToWhatsApp = async () => {
+    if (!file) {
+      toast.error("اختر صورة الإيصال أولًا.");
+      return;
+    }
+    const message = "مرحبًا MSB Media، أشارك معكم إيصال دفع. يرجى مراجعة التحويل وتأكيد الاستلام.";
+    try {
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: "إيصال دفع MSB Media", text: message, files: [file] });
+        toast.success("اختر واتساب من قائمة المشاركة ثم أكّد إرسال الصورة.");
+        return;
+      }
+    } catch (error) {
+      if ((error as DOMException).name === "AbortError") return;
+    }
+    openWhatsApp(`${message}\n\nتم اختيار صورة الإيصال من الموقع. يرجى إرفاقها في المحادثة ثم الضغط على إرسال.`);
+    toast.message("تم فتح واتساب. أرفق الصورة التي اخترتها ثم اضغط إرسال.");
+  };
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!file) return toast.error("اختر لقطة شاشة الإيصال أولًا.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("الحد الأقصى 5 ميجابايت.");
+    const form = new FormData(event.currentTarget);
+    setUploading(true);
+    try {
+      const result = await submitPaymentReceipt({ method, customerName: String(form.get("name")), phone: String(form.get("phone")), binancePhone: method === "binance_pay" ? String(form.get("binancePhone")) : undefined, file });
+      setFile(null);
+      toast.success(result.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "تعذر حفظ الإيصال الآن.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return <SiteShell>
+    <section className="page-hero"><div className="site-container"><span className="eyebrow">طرق الدفع</span><h1>دفع واضح ومراجعة منظمة</h1><p>اختر الوسيلة، ثم أرسل صورة الإيصال عبر واتساب أو ارفعها لحفظ نسخة احتياطية داخل الطلب.</p></div></section>
+    <section className="site-container py-16"><div className="payment-grid"><article className="payment-card"><p className="gateway-tag vodafone">Vodafone Cash</p><h2>حول إلى أحد الرقمين</h2>{["01105697412", "01092794169"].map(number => <div className="copy-row" key={number}><b dir="ltr">{number}</b><button type="button" onClick={() => copy(number)} aria-label="نسخ الرقم"><Copy className="h-4 w-4" /></button></div>)}<p className="note">بعد التحويل، اختر صورة الإيصال ثم شاركها عبر واتساب أو ارفعها من النموذج أدناه.</p></article><article className="payment-card"><p className="gateway-tag binance">Binance Pay</p><h2>استخدم المعرّف</h2><div className="copy-row"><b dir="ltr">454798991</b><button type="button" onClick={() => copy("454798991")} aria-label="نسخ معرّف Binance"><Copy className="h-4 w-4" /></button></div><p className="note">رقم الهاتف إلزامي لتأكيد تحويل Binance Pay.</p></article><article className="payment-card upcoming"><span>قريباً</span><h2>خيارات أوسع</h2><p>الحساب البنكي، PayPal، Payoneer.</p></article></div>
+      <form onSubmit={submit} className="receipt-form"><div className="flex items-center gap-3"><span className="icon-box blue"><ShieldCheck className="h-5 w-5" /></span><div><h2>إرسال إيصال الدفع</h2><p>يمكنك مشاركة الصورة في واتساب فورًا، ثم حفظها هنا بأمان داخل طلبك ليتمكن الفريق من مراجعتها.</p></div></div><div className="form-grid"><label>الاسم<input className="dark-input" name="name" required placeholder="اسمك الكامل" /></label><label>رقم الهاتف<input className="dark-input" name="phone" required inputMode="tel" placeholder="رقم للتواصل" /></label><label>طريقة الدفع<select className="dark-input" value={method} onChange={e => setMethod(e.target.value as typeof method)}><option value="vodafone_cash">Vodafone Cash</option><option value="binance_pay">Binance Pay</option></select></label>{method === "binance_pay" && <label>هاتف تأكيد Binance<input className="dark-input" name="binancePhone" required inputMode="tel" /></label>}</div><label className="upload-box"><FileImage className="h-6 w-6" /><span><b>{file?.name || "اختر لقطة شاشة الإيصال"}</b><small>JPG / PNG / WEBP حتى 5MB</small></span><input className="sr-only" required type="file" accept="image/jpeg,image/png,image/webp" onChange={e => setFile(e.target.files?.[0] || null)} /></label><div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={shareReceiptToWhatsApp} className="yellow-button"><Share2 className="h-4 w-4" />مشاركة الإيصال إلى واتساب <MessageCircle className="h-4 w-4 text-[#128C4A]" /></button><button disabled={uploading} className="blue-button">{uploading ? "جاري الحفظ..." : <><UploadCloud className="h-4 w-4" />حفظ الإيصال بأمان</>}</button></div><p className="mt-4 text-xs leading-6 text-slate-400">تفتح مشاركة الملف قائمة النظام على الهواتف المتوافقة؛ اختر واتساب، ثم أكد الإرسال بنفسك. لا يرسل الموقع صورك تلقائيًا من دون موافقتك.</p></form>
+    </section>
+  </SiteShell>;
+}

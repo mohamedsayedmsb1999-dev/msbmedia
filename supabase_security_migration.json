@@ -1,0 +1,5 @@
+{
+  "project_id": "tfyypramrzruteuucwfm",
+  "name": "revoke_public_rls_function_access",
+  "query": "revoke execute on function public.rls_auto_enable() from public, anon, authenticated;"
+}

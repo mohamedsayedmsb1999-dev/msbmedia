@@ -1,0 +1,5 @@
+{
+  "project_id": "tfyypramrzruteuucwfm",
+  "name": "add_customer_password_sessions",
+  "query": "alter table public.customer_profiles add column password_hash text;\nalter table public.customer_profiles add column password_salt text;\n\ncreate table public.customer_sessions (\n  id uuid primary key default gen_random_uuid(),\n  customer_profile_id uuid not null references public.customer_profiles(id) on delete cascade,\n  token_hash text not null unique,\n  expires_at timestamptz not null,\n  created_at timestamptz not null default now()\n);\n\ncreate index customer_sessions_token_hash_idx on public.customer_sessions (token_hash);\ncreate index customer_sessions_expires_at_idx on public.customer_sessions (expires_at);\n\nalter table public.customer_sessions enable row level security;\nrevoke all on public.customer_sessions from anon, authenticated;"
+}
