@@ -22,7 +22,9 @@ export const services = [
   { title: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", copy: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", icon: Globe2, tone: "green" },
   { title: "اعلانات ممولة فيسبوك & انستجرام", copy: "اعلانات ممولة فيسبوك & انستجرام", icon: Megaphone, tone: "blue" },
   { title: "اشتراك Gemini PRO", copy: "Veo 3 · Google flow · Nano 🍌", icon: Bot, tone: "ai", price: "300 جنيه شهرياً" },
+  { title: "اشتراك Gemini PRO Veo 3 Google flow nano 🍌 لمدة 6 شهور", copy: "باقة أدوات ذكاء اصطناعي لفترة 6 شهور، تجمع الاستخدامات التي تساعدك على المحتوى والإنتاج داخل مسار واحد.", icon: Bot, tone: "ai", price: "450 جنيه فقط" },
   { title: "مونتاج و تنقية الصوت وإزالة الضوضاء و ترجمة للفيديوهات", copy: "مونتاج و تنقية الصوت وإزالة الضوضاء و ترجمة للفيديوهات", icon: Headphones, tone: "cyan" },
+  { title: "الترجمة النصية وإزالة الضوضاء للصوت", copy: "ترجمة نصية أوضح وتنقية للصوت تساعد الفيديو على الوصول برسالة أنظف ومباشرة.", icon: Clapperboard, tone: "yellow", price: "100 EGB للفيديو الواحد" },
 ];
 
 export const openWhatsApp = (message: string) => {
