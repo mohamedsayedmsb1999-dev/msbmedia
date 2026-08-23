@@ -5,6 +5,18 @@ export const BRAND_IMAGE = "/manus-storage/msb-brand-founder_c9e9ea0f.png";
 export const FOUNDER_IMAGE = "/manus-storage/msb-founder-city_626ec76d.jpg";
 export const UGC_VIDEO = "/manus-storage/msb-ugc-sample_6e071991.mp4";
 
+declare global {
+  interface Window {
+    fbq?: (action: "track", eventName: string, parameters?: Record<string, string | number | boolean>) => void;
+  }
+}
+
+export const trackMetaEvent = (eventName: string, parameters?: Record<string, string | number | boolean>) => {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
+    window.fbq("track", eventName, parameters);
+  }
+};
+
 export const services = [
   { title: "فيديوهات UGC بالذكاء الاصطناعي", copy: "فيديوهات UGC بالذكاء الاصطناعي", icon: Sparkles, tone: "yellow" },
   { title: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", copy: "تصميم مواقع وصفحات هبوط ومنصات تعليمية أو اكاديمية", icon: Globe2, tone: "green" },
@@ -14,5 +26,6 @@ export const services = [
 ];
 
 export const openWhatsApp = (message: string) => {
+  trackMetaEvent("Contact", { content_name: "WhatsApp consultation", content_category: "Lead" });
   window.open(`${WHATSAPP_URL}?text=${encodeURIComponent(`مرحبًا MSB Media، ${message}`)}`, "_blank", "noopener,noreferrer");
 };

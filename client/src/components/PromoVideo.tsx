@@ -16,7 +16,7 @@ export default function PromoVideo({ compact = false }: { compact?: boolean }) {
         <source src={VIDEO_URL} type="video/mp4" />
         متصفحك لا يدعم تشغيل الفيديو.
       </video>
-      <button onClick={() => openWhatsApp("شاهدت إعلان MSB Media وأريد معرفة الخدمة المناسبة لمشروعي")} className="promo-video-whatsapp"><ArrowDownLeft className="promo-arrow h-5 w-5" /><span>تواصل عبر واتساب</span><MessageCircle className="h-4 w-4" /></button>
+      <button onClick={() => openWhatsApp("شاهدت إعلان MSB Media وأريد معرفة الخدمة المناسبة لمشروعي")} className="promo-video-whatsapp"><ArrowDownLeft className="promo-arrow h-5 w-5" /><span>تواصل عبر واتساب</span><MessageCircle className="h-4 w-4 text-[#128C4A]" /></button>
     </div>
   </section>;
 }
