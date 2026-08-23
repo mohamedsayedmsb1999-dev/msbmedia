@@ -1,7 +1,7 @@
 import { Bot, Clapperboard, Globe2, Headphones, Megaphone, Sparkles } from "lucide-react";
 
 export const WHATSAPP_URL = "https://wa.me/201092794169";
-export const BRAND_IMAGE = "/manus-storage/msb-brand-founder_c9e9ea0f.png";
+export const BRAND_IMAGE = "https://msbmedia-fddqd6ca.manus.space/manus-storage/msb-brand-founder_d46d751b.png";
 export const FOUNDER_IMAGE = "/manus-storage/msb-founder-city_626ec76d.jpg";
 export const UGC_VIDEO = "/manus-storage/msb-ugc-sample_6e071991.mp4";
 
