@@ -5,7 +5,6 @@ import { AGENCY_IMAGE, FOUNDER_AI_IDENTITY_IMAGE, mediaUrl, openWhatsApp } from 
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 const verifiedConversations = [
-  { image: mediaUrl("whatsapp-academy-feedback-1_38af68ba.jpg"), label: "محادثة واتساب موثقة" },
   { image: mediaUrl("whatsapp-academy-feedback-2_14c75cc0.jpg"), label: "تواصل ومتابعة مباشرة" },
   { image: mediaUrl("whatsapp-video-feedback_fc1c8b59.jpg"), label: "ملاحظات على محتوى فيديو" },
 ];

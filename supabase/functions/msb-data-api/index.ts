@@ -127,6 +127,8 @@ async function handleJson(request: Request) {
 }
 
 async function handleReceipt(request: Request) {
+  const customerId = await currentCustomer(request);
+  if (!customerId) return json({ ok: false, message: "سجّل الدخول أو أنشئ حسابًا أولًا قبل إرسال إيصال الدفع." }, 401);
   const form = await request.formData();
   const file = form.get("file");
   const customerName = text(form.get("customerName"), 100);
@@ -136,7 +138,6 @@ async function handleReceipt(request: Request) {
   if (!(file instanceof File) || customerName.length < 2 || phone.length < 6 || !["vodafone_cash", "binance_pay"].includes(method)) return json({ ok: false, message: "تحقق من بيانات الإيصال ثم أعد المحاولة." }, 400);
   if (method === "binance_pay" && binancePhone.length < 6) return json({ ok: false, message: "اكتب رقم هاتفك لتأكيد تحويل Binance Pay." }, 400);
   if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) return json({ ok: false, message: "صورة الإيصال يجب أن تكون JPG أو PNG أو WEBP وبحد أقصى 5 ميجابايت." }, 400);
-  const customerId = await currentCustomer(request);
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "receipt";
   const storagePath = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${safeName}`;
   const { error: uploadError } = await admin.storage.from("payment-receipts").upload(storagePath, await file.arrayBuffer(), { contentType: file.type, upsert: false });
