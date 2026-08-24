@@ -18,6 +18,12 @@ describe("لوحة الألوان الثابتة", () => {
     expect(css).toContain(".service-visual img { animation:none; transition:none; }");
   });
 
+  it("يصغر الإحصاءات ويعرض مرئيات الخدمات الثابتة بقياس مناسب للهاتف", () => {
+    expect(css).toContain(".stat-card { min-height:86px; padding:.48rem .25rem; border-radius:.8rem; }");
+    expect(css).toContain(".service-visual { height:168px; }");
+    expect(css).toContain(".service-visual::after { display:none; }");
+  });
+
   it("يعتمد صفوفًا صريحة في التعريف والأسئلة بدل أزرق منخفض التباين", () => {
     expect(about).toContain("about-heading");
     expect(about).toContain("about-copy");
