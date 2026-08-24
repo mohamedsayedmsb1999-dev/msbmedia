@@ -1,17 +1,21 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { applyPageMeta } from "@/lib/seoMeta";
-import NotFound from "@/pages/NotFound";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import Services from "./pages/Services";
-import Portfolio from "./pages/Portfolio";
-import Payment from "./pages/Payment";
-import Support from "./pages/Support";
-import About from "./pages/About";
+const Home = lazy(() => import("./pages/Home"));
+const Services = lazy(() => import("./pages/Services"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Payment = lazy(() => import("./pages/Payment"));
+const Support = lazy(() => import("./pages/Support"));
+const About = lazy(() => import("./pages/About"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+
+function RouteLoading() {
+  return <div dir="rtl" className="grid min-h-screen place-items-center bg-[#020a20] px-6 text-center text-white"><div><span className="inline-flex h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-[#ffd400]" /><p className="mt-4 text-sm font-bold text-slate-200">جارٍ تجهيز الصفحة...</p></div></div>;
+}
 
 function Router() {
   const [location] = useLocation();
@@ -22,7 +26,7 @@ function Router() {
 
   // make sure to consider if you need authentication for certain routes
   return (
-    <Switch>
+    <Suspense fallback={<RouteLoading />}><Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/services"} component={Services} />
       <Route path={"/portfolio"} component={Portfolio} />
@@ -32,7 +36,7 @@ function Router() {
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
-    </Switch>
+    </Switch></Suspense>
   );
 }
 
