@@ -1,4 +1,4 @@
-import { ArrowLeft, BadgeCheck, UsersRound } from "lucide-react";
+import { ArrowLeft, BadgeCheck, BriefcaseBusiness, LayoutPanelTop, UsersRound } from "lucide-react";
 import SiteShell from "@/components/SiteShell";
 import HeroStudioImage from "@/components/HeroStudioImage";
 import { AGENCY_IMAGE, mediaUrl, openWhatsApp } from "@/lib/site-data";
@@ -7,6 +7,12 @@ import WhatsAppIcon from "@/components/WhatsAppIcon";
 const verifiedConversations = [
   { image: mediaUrl("whatsapp-academy-feedback-2_14c75cc0.jpg"), label: "تواصل ومتابعة مباشرة" },
   { image: mediaUrl("whatsapp-video-feedback_fc1c8b59.jpg"), label: "ملاحظات على محتوى فيديو" },
+];
+
+const agencyAchievements = [
+  { value: "8,151+", label: "عميل", Icon: UsersRound },
+  { value: "76+", label: "مجال", Icon: BriefcaseBusiness },
+  { value: "6", label: "صفحات مستقلة", Icon: LayoutPanelTop },
 ];
 
 export default function Home() {
@@ -18,7 +24,7 @@ export default function Home() {
           <h1 className="mt-6 max-w-3xl text-4xl font-black leading-[1.25] text-white sm:text-6xl">هدفنا الرئيسي <span className="text-[#ffd400]">نجاحك</span> وموجودين هنا عشانك</h1>
           <p className="mt-6 max-w-xl text-base leading-9 text-slate-100 sm:text-lg">نصنع مسارًا واضحًا للمحتوى والإعلانات والمواقع، حتى تنتقل فكرتك من البداية إلى تواصل أو طلب منظم بثقة.</p>
           <div className="mt-8 flex flex-wrap gap-3"><a href="/services" className="yellow-button">اذهب إلى خدماتنا <ArrowLeft className="h-4 w-4" /></a><button onClick={() => openWhatsApp("أريد حجز استشارة تسويقية")} className="blue-button"><WhatsAppIcon className="h-4 w-4 text-[#25D366]" />واتساب</button></div>
-          <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">{[["8,151+", "عميل"], ["76+", "مجال"], ["6", "صفحات مستقلة"]].map(([number, label]) => <div key={label} className="stat-card"><strong>{number}</strong><span>{label}</span></div>)}</div>
+          <section className="agency-achievements" aria-label="إنجازات MSB Media"><div className="achievement-label"><BadgeCheck className="h-3.5 w-3.5" />إنجازات الوكالة</div><div className="achievement-list">{agencyAchievements.map(({ value, label, Icon }) => <div key={label} className="achievement-stat"><span className="achievement-icon"><Icon className="h-3.5 w-3.5" /></span><div><strong>{value}</strong><span>{label}</span></div></div>)}</div></section>
         </div>
         <div className="relative mx-auto w-full max-w-md"><div className="hero-media-card relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#07133c] p-5"><HeroStudioImage src={AGENCY_IMAGE} /><div className="hero-caption absolute bottom-7 right-9 left-9 rounded-2xl border border-white/10 bg-[#020615] px-3 py-2.5"><p className="text-[9px] font-black tracking-[.12em] text-[#ffd400]">MSB MEDIA</p><p className="mt-1 text-[11px] font-bold leading-4 sm:text-xs">خدمات رقمية ومحتوى وإعلانات ضمن مسار واضح</p></div></div></div>
       </div>

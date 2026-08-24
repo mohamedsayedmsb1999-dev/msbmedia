@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
 const about = readFileSync(resolve(process.cwd(), "client/src/pages/About.tsx"), "utf8");
+const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
 
 describe("لوحة الألوان الثابتة", () => {
   it("تستخدم أزرقًا وصفرًا مدمجين مع أخضر للتأكيد دون فصل حاد أو تمويه في بطاقات التعريف", () => {
@@ -22,6 +23,13 @@ describe("لوحة الألوان الثابتة", () => {
     expect(css).toContain(".stat-card { min-height:86px; padding:.48rem .25rem; border-radius:.8rem; }");
     expect(css).toContain(".service-visual { height:168px; }");
     expect(css).toContain(".service-visual::after { display:none; }");
+  });
+
+  it("يعرض إحصاءات الرئيسية كشريط إنجازات واحد ذي أيقونات، لا كمربعات كبيرة", () => {
+    expect(css).toContain(".agency-achievements { display:flex");
+    expect(css).toContain(".achievement-stat + .achievement-stat { border-right");
+    expect(home).toContain("agency-achievements");
+    expect(home).toContain("BriefcaseBusiness");
   });
 
   it("يعتمد صفوفًا صريحة في التعريف والأسئلة بدل أزرق منخفض التباين", () => {
