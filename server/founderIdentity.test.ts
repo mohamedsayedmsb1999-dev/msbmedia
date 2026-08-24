@@ -7,11 +7,10 @@ const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "
 const data = readFileSync(resolve(process.cwd(), "client/src/lib/site-data.ts"), "utf8");
 
 describe("صورة الهوية الرقمية للمؤسس", () => {
-  it("تظهر في صفحة التعريف والرئيسية مع وصف لا يدعي الشراكات", () => {
+  it("تظهر في صفحة التعريف مع وصف لا يدعي الشراكات، دون تحميلها في الرئيسية الخفيفة", () => {
     expect(data).toContain("msb-founder-ai-identity_90f38285.jpg");
     expect(about).toContain("FOUNDER_AI_IDENTITY_IMAGE");
-    expect(home).toContain("FOUNDER_AI_IDENTITY_IMAGE");
+    expect(home).not.toContain("FOUNDER_AI_IDENTITY_IMAGE");
     expect(about).toContain("وليس إعلانًا عن شراكة رسمية");
-    expect(home).toContain("وليست هذه شعارات شراكات رسمية");
   });
 });
