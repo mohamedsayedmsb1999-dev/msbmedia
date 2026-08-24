@@ -1,7 +1,9 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { applyPageMeta } from "@/lib/seoMeta";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { useEffect } from "react";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -12,6 +14,12 @@ import Support from "./pages/Support";
 import About from "./pages/About";
 
 function Router() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    applyPageMeta(location);
+  }, [location]);
+
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
