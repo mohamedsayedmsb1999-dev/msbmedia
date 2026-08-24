@@ -150,10 +150,11 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
-
-export default defineConfig({
-  plugins,
+export default defineConfig(({ command }) => ({
+  // أدوات الموضع والتشخيص مخصصة للمعاينة المحلية فقط؛ لا تُضمّن في ملفات الزوار.
+  plugins: command === "build"
+    ? [react(), tailwindcss()]
+    : [react(), tailwindcss(), vitePluginManusRuntime(), vitePluginManusDebugCollector()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -167,6 +168,7 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    cssCodeSplit: true,
   },
   server: {
     host: true,
@@ -184,4 +186,4 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
-});
+}));

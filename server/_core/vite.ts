@@ -7,6 +7,11 @@ import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
 
 export async function setupVite(app: Express, server: Server) {
+  // Vite config is exported as a function. Resolve it in serve mode so the
+  // dev middleware keeps the client root and can serve /src/* modules.
+  const resolvedViteConfig = await (typeof viteConfig === "function"
+    ? viteConfig({ command: "serve", mode: "development", isSsrBuild: false, isPreview: false })
+    : viteConfig);
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -14,7 +19,7 @@ export async function setupVite(app: Express, server: Server) {
   };
 
   const vite = await createViteServer({
-    ...viteConfig,
+    ...resolvedViteConfig,
     configFile: false,
     server: serverOptions,
     appType: "custom",
