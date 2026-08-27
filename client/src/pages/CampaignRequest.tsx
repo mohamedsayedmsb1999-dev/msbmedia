@@ -1,0 +1,49 @@
+import SiteShell from "@/components/SiteShell";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { CampaignRequestInput, submitCampaignRequest } from "@/lib/msbDataApi";
+import { openWhatsApp, trackMetaEvent } from "@/lib/site-data";
+import { CheckCircle2, CircleDollarSign, FileText, Megaphone, Send, ShieldCheck, Target, UsersRound } from "lucide-react";
+import { FormEvent, useState } from "react";
+import { toast } from "sonner";
+
+const initialForm: CampaignRequestInput = {
+  fullName: "",
+  whatsappNumber: "",
+  businessName: "",
+  pageUrl: "",
+  description: "",
+  objective: "ecommerce_sales",
+  budgetRange: "5k_10k",
+  previousAds: false,
+  notes: "",
+};
+
+const inputClass = "mt-2 w-full rounded-xl border border-white/15 bg-[#020615] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[#ffd400] focus:ring-2 focus:ring-[#ffd400]/15";
+
+export default function CampaignRequest() {
+  const [form, setForm] = useState<CampaignRequestInput>(initialForm);
+  const [busy, setBusy] = useState(false);
+  const [submittedBrand, setSubmittedBrand] = useState("");
+
+  const setField = <K extends keyof CampaignRequestInput>(field: K, value: CampaignRequestInput[K]) => setForm(current => ({ ...current, [field]: value }));
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      await submitCampaignRequest(form);
+      trackMetaEvent("Lead", { content_name: "Ad campaign request", content_category: "Campaign" });
+      setSubmittedBrand(form.businessName.trim());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "تعذر إرسال طلب الحملة الآن. حاول مرة أخرى بعد لحظات.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (submittedBrand) {
+    return <SiteShell><main className="min-h-[calc(100vh-7rem)] bg-[#020615] py-12 sm:py-20"><section className="site-container"><div className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#07133c] text-center shadow-2xl"><div className="border-b border-white/10 bg-[radial-gradient(circle_at_top,#124eb5,transparent_62%)] px-6 py-10 sm:px-12"><span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#ffd400] text-[#020615]"><CheckCircle2 className="h-8 w-8" /></span><span className="mt-6 inline-flex rounded-full border border-[#ffd400]/35 bg-[#ffd400]/10 px-4 py-2 text-xs font-black tracking-wide text-[#ffd400]">طلب حملة إعلانية</span><h1 className="mt-5 text-3xl font-black text-white sm:text-4xl">تم استلام طلبك بنجاح!</h1></div><div className="px-6 py-9 sm:px-12"><p className="mx-auto max-w-xl text-base leading-9 text-slate-200">شكراً لاهتمامك. فريقنا يراجع تفاصيل نشاطك التجاري حالياً لتجهيز الخطة المناسبة، وسنتواصل معك قريباً.</p><p className="mt-4 text-sm font-bold text-[#ffd400]">البراند: {submittedBrand}</p><button onClick={() => openWhatsApp(`قمت بتقديم طلب إدارة حملة إعلانية لبراند ${submittedBrand} عبر الموقع وأريد متابعة التفاصيل.`)} className="yellow-button mx-auto mt-8"><WhatsAppIcon className="h-5 w-5 text-[#25D366]" />متابعة الطلب مع الإدارة على واتساب</button></div></div></section></main></SiteShell>;
+  }
+
+  return <SiteShell><main className="min-h-screen bg-[#020615] py-8 text-white sm:py-12"><section className="site-container"><div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#07133c] shadow-2xl"><header className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_12%,#174cb3_0%,#07133c_48%,#020615_100%)] px-6 py-9 sm:px-10 sm:py-12"><div className="relative max-w-3xl"><span className="inline-flex items-center gap-2 rounded-full border border-[#ffd400]/30 bg-[#ffd400]/10 px-4 py-2 text-xs font-black text-[#ffd400]"><Megaphone className="h-4 w-4" />منصة طلب الحملات الإعلانية</span><h1 className="mt-5 text-3xl font-black leading-tight sm:text-5xl">خطوة منظمة لبدء حملة <span className="text-[#ffd400]">فيسبوك وإنستجرام</span></h1><p className="mt-5 max-w-2xl text-sm leading-8 text-slate-200 sm:text-base">شاركنا تفاصيل نشاطك وهدفك الإعلاني حتى يراجع الفريق نقطة البداية المناسبة قبل التواصل معك.</p></div></header><div className="grid gap-8 p-6 sm:p-10 lg:grid-cols-[.72fr_1.28fr]"><aside className="rounded-2xl border border-white/10 bg-[#020615] p-6"><p className="text-xs font-black tracking-[.18em] text-[#ffd400]">مسار التقديم</p><div className="mt-6 space-y-5"><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#174cb3] text-white"><FileText className="h-4 w-4" /></span><div><b className="text-sm">بيانات النشاط</b><p className="mt-1 text-xs leading-6 text-slate-400">نبدأ بصورة واضحة عن البراند أو الخدمة.</p></div></div><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#174cb3] text-white"><Target className="h-4 w-4" /></span><div><b className="text-sm">هدف الحملة</b><p className="mt-1 text-xs leading-6 text-slate-400">نحدد النتيجة التي تريد الوصول إليها أولًا.</p></div></div><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#174cb3] text-white"><CircleDollarSign className="h-4 w-4" /></span><div><b className="text-sm">الميزانية المتوقعة</b><p className="mt-1 text-xs leading-6 text-slate-400">تساعدنا على ترتيب نطاق البداية المناسب.</p></div></div></div><div className="mt-8 border-t border-white/10 pt-6 text-xs leading-7 text-slate-300"><span className="flex items-center gap-2 font-black text-white"><ShieldCheck className="h-4 w-4 text-[#25D366]" />بياناتك تُستخدم لمراجعة طلب الحملة والتواصل بشأنه.</span></div></aside><form onSubmit={submit} className="min-w-0"><div className="grid gap-5 sm:grid-cols-2"><label className="text-sm font-black">الاسم بالكامل <span className="text-[#ffd400]">*</span><input required value={form.fullName} onChange={event => setField("fullName", event.target.value)} className={inputClass} placeholder="اكتب اسمك" autoComplete="name" /></label><label className="text-sm font-black">رقم الواتساب <span className="text-[#ffd400]">*</span><input required minLength={6} inputMode="tel" value={form.whatsappNumber} onChange={event => setField("whatsappNumber", event.target.value)} className={inputClass} placeholder="رقم التواصل" autoComplete="tel" /></label></div><div className="mt-5 grid gap-5 sm:grid-cols-2"><label className="text-sm font-black">اسم البراند / النشاط التجاري <span className="text-[#ffd400]">*</span><input required value={form.businessName} onChange={event => setField("businessName", event.target.value)} className={inputClass} placeholder="اسم النشاط" /></label><label className="text-sm font-black">رابط الصفحة / الموقع الحالي <span className="text-[#ffd400]">*</span><input required type="url" value={form.pageUrl} onChange={event => setField("pageUrl", event.target.value)} className={inputClass} placeholder="https://..." inputMode="url" /></label></div><label className="mt-5 block text-sm font-black">طبيعة المنتج أو الخدمة<textarea value={form.description} onChange={event => setField("description", event.target.value)} className={`${inputClass} min-h-28 resize-y`} maxLength={3000} placeholder="اكتب نبذة مختصرة تساعدنا نفهم نشاطك" /></label><div className="mt-5 grid gap-5 sm:grid-cols-2"><label className="text-sm font-black">الهدف الرئيسي من الحملة <span className="text-[#ffd400]">*</span><select value={form.objective} onChange={event => setField("objective", event.target.value as CampaignRequestInput["objective"])} className={inputClass}><option value="ecommerce_sales">زيادة مبيعات متجر إلكتروني</option><option value="messages">استقبال رسائل واتساب / ماسنجر</option><option value="leads">جمع بيانات عملاء محتملين (Leads)</option><option value="awareness">زيادة الوعي والتفاعل بالبراند</option></select></label><label className="text-sm font-black">الميزانية الإعلانية الشهرية المتوقعة <span className="text-[#ffd400]">*</span><select value={form.budgetRange} onChange={event => setField("budgetRange", event.target.value as CampaignRequestInput["budgetRange"])} className={inputClass}><option value="5k_10k">من 5,000 إلى 10,000 ج.م</option><option value="10k_25k">من 10,000 إلى 25,000 ج.م</option><option value="25k_plus">أكثر من 25,000 ج.م</option></select></label></div><fieldset className="mt-6"><legend className="text-sm font-black">هل قمت بتشغيل إعلانات سابقاً؟ <span className="text-[#ffd400]">*</span></legend><div className="mt-3 flex flex-wrap gap-3"><button type="button" onClick={() => setField("previousAds", true)} className={`rounded-xl border px-5 py-3 text-sm font-black transition ${form.previousAds ? "border-[#ffd400] bg-[#ffd400] text-[#020615]" : "border-white/15 bg-[#020615] text-slate-300"}`}>نعم</button><button type="button" onClick={() => setField("previousAds", false)} className={`rounded-xl border px-5 py-3 text-sm font-black transition ${!form.previousAds ? "border-[#ffd400] bg-[#ffd400] text-[#020615]" : "border-white/15 bg-[#020615] text-slate-300"}`}>لا</button></div></fieldset><label className="mt-6 block text-sm font-black">ملاحظات إضافية <span className="font-normal text-slate-400">(اختياري)</span><textarea value={form.notes} onChange={event => setField("notes", event.target.value)} className={`${inputClass} min-h-28 resize-y`} maxLength={3000} placeholder="أي تفاصيل إضافية تود إضافتها" /></label><button disabled={busy} className="yellow-button mt-8 w-full disabled:cursor-wait disabled:opacity-70"><Send className="h-4 w-4" />{busy ? "جارٍ إرسال طلب الحملة..." : "إرسال طلب الحملة الإعلانية"}</button><p className="mt-4 flex items-start justify-center gap-2 text-center text-xs leading-6 text-slate-400"><UsersRound className="mt-0.5 h-4 w-4 shrink-0 text-[#25D366]" />بعد الإرسال يراجع الفريق البيانات ثم يتواصل معك مباشرة.</p></form></div></div></section></main></SiteShell>;
+}

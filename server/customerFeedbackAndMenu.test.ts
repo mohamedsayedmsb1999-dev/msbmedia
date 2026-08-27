@@ -16,7 +16,8 @@ describe("لقطات العملاء والقائمة الهاتفية", () => {
   });
 
   it("يعرض زر قائمة هاتفية أكبر في الجهة اليمنى", () => {
-    expect(shell).toContain('min-h-11 min-w-11');
+    expect(shell).toContain('mobile-menu-trigger');
+    expect(shell).toContain('mobile-menu-polish.css');
     expect(shell).toContain('Menu className="h-6 w-6"');
   });
 });

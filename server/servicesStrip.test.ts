@@ -7,8 +7,8 @@ const styles = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf
 
 describe("شريط الخدمات السريع", () => {
   it("يعرض الخدمات في شريط أفقي قابل للسحب ويُبقي فيديو UGC بعده", () => {
-    expect(servicesPage).toContain('className="service-strip"');
-    expect(servicesPage.indexOf('className="service-strip"')).toBeLessThan(servicesPage.indexOf("<PromoVideo compact />"));
+    expect(servicesPage).toContain('className="service-strip service-editorial-strip"');
+    expect(servicesPage.indexOf('className="service-strip service-editorial-strip"')).toBeLessThan(servicesPage.indexOf("<PromoVideo compact />"));
   });
 
   it("يستخدم بطاقات أصغر مع الالتقاط الأفقي على الهاتف", () => {

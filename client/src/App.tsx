@@ -4,6 +4,7 @@ import { applyPageMeta } from "@/lib/seoMeta";
 import { lazy, Suspense, useEffect } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 const Home = lazy(() => import("./pages/Home"));
 const Services = lazy(() => import("./pages/Services"));
@@ -11,6 +12,9 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 const Payment = lazy(() => import("./pages/Payment"));
 const Support = lazy(() => import("./pages/Support"));
 const About = lazy(() => import("./pages/About"));
+const AiVideoComingSoon = lazy(() => import("./pages/AiVideoComingSoon"));
+const CampaignRequest = lazy(() => import("./pages/CampaignRequest"));
+const UgcVideoService = lazy(() => import("./pages/UgcVideoService"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 function RouteLoading() {
@@ -33,6 +37,9 @@ function Router() {
       <Route path={"/payment"} component={Payment} />
       <Route path={"/support"} component={Support} />
       <Route path={"/about"} component={About} />
+      <Route path={"/campaign-request"} component={CampaignRequest} />
+      <Route path={"/ugc-video"} component={UgcVideoService} />
+      <Route path={"/ai-video-preview"} component={AiVideoComingSoon} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -52,10 +59,10 @@ function App() {
         defaultTheme="dark"
         // switchable
       >
-        <TooltipProvider>
+        <LanguageProvider><TooltipProvider>
           <Toaster />
           <Router />
-        </TooltipProvider>
+        </TooltipProvider></LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

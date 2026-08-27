@@ -44,6 +44,23 @@ export async function submitSupportTicket(input: { fullName: string; phone: stri
   return parseResponse<{ message: string }>(response);
 }
 
+export type CampaignRequestInput = {
+  fullName: string;
+  whatsappNumber: string;
+  businessName: string;
+  pageUrl: string;
+  description: string;
+  objective: "ecommerce_sales" | "messages" | "leads" | "awareness";
+  budgetRange: "5k_10k" | "10k_25k" | "25k_plus";
+  previousAds: boolean;
+  notes: string;
+};
+
+export async function submitCampaignRequest(input: CampaignRequestInput) {
+  const response = await fetch(DATA_API_URL, { method: "POST", headers: { "Content-Type": "application/json", ...headers() }, body: JSON.stringify({ action: "ad_campaign_request", ...input }) });
+  return parseResponse<{ message: string; notificationSent: boolean }>(response);
+}
+
 export async function submitPaymentReceipt(input: { customerName: string; phone: string; method: "vodafone_cash" | "binance_pay"; binancePhone?: string; file: File }) {
   const body = new FormData();
   body.append("customerName", input.customerName);

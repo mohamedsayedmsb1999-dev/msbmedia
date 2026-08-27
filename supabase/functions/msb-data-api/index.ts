@@ -18,6 +18,26 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 const text = (value: unknown, max: number) => typeof value === "string" ? value.trim().slice(0, max) : "";
 const hex = (bytes: Uint8Array) => Array.from(bytes).map(byte => byte.toString(16).padStart(2, "0")).join("");
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[character] ?? character));
+const campaignObjectives = {
+  ecommerce_sales: "زيادة مبيعات متجر إلكتروني",
+  messages: "استقبال رسائل واتساب / ماسنجر",
+  leads: "جمع بيانات عملاء محتملين (Leads)",
+  awareness: "زيادة الوعي والتفاعل بالبراند",
+} as const;
+const campaignBudgets = {
+  "5k_10k": "من 5,000 إلى 10,000 ج.م",
+  "10k_25k": "من 10,000 إلى 25,000 ج.م",
+  "25k_plus": "أكثر من 25,000 ج.م",
+} as const;
+
+function isWebsiteUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
 
 async function notifyOwner(subject: string, lines: Array<[string, string]>) {
   if (!RESEND_API_KEY || !RESEND_FROM) {
@@ -121,6 +141,53 @@ async function handleJson(request: Request) {
     if (error) throw error;
     await notifyOwner("طلب دعم جديد", [["الاسم", fullName], ["الهاتف", phone], ["البريد", email || "غير مضاف"], ["العنوان", subject], ["التفاصيل", message]]);
     return json({ ok: true, message: "تم حفظ طلب الدعم. سيتابع الفريق معك عبر واتساب أو البريد." });
+  }
+
+  if (action === "ad_campaign_request") {
+    const fullName = text(input.fullName, 100);
+    const whatsappNumber = text(input.whatsappNumber, 32);
+    const businessName = text(input.businessName, 160);
+    const pageUrl = text(input.pageUrl, 1000);
+    const description = text(input.description, 3000);
+    const objective = text(input.objective, 40) as keyof typeof campaignObjectives;
+    const budgetRange = text(input.budgetRange, 40) as keyof typeof campaignBudgets;
+    const notes = text(input.notes, 3000);
+    const previousAds = input.previousAds;
+
+    if (fullName.length < 2 || whatsappNumber.length < 6 || businessName.length < 2 || !isWebsiteUrl(pageUrl) || !(objective in campaignObjectives) || !(budgetRange in campaignBudgets) || typeof previousAds !== "boolean") {
+      return json({ ok: false, message: "تحقق من البيانات المطلوبة ورابط الصفحة ثم أعد المحاولة." }, 400);
+    }
+
+    const customerId = await currentCustomer(request);
+    const { data: campaignRequest, error } = await admin.from("ad_campaign_requests").insert({
+      customer_profile_id: customerId,
+      full_name: fullName,
+      whatsapp_number: whatsappNumber,
+      business_name: businessName,
+      page_url: pageUrl,
+      description: description || null,
+      objective,
+      budget_range: budgetRange,
+      previous_ads: previousAds,
+      notes: notes || null,
+    }).select("id").single();
+    if (error) throw error;
+
+    const notificationSent = await notifyOwner("طلب حملة إعلانية جديد", [
+      ["الاسم", fullName],
+      ["واتساب", whatsappNumber],
+      ["البراند / النشاط", businessName],
+      ["رابط الصفحة أو الموقع", pageUrl],
+      ["طبيعة المنتج أو الخدمة", description || "غير مضافة"],
+      ["هدف الحملة", campaignObjectives[objective]],
+      ["الميزانية الشهرية", campaignBudgets[budgetRange]],
+      ["إعلانات سابقة", previousAds ? "نعم" : "لا"],
+      ["ملاحظات", notes || "لا توجد"],
+    ]);
+    const { error: notificationStatusError } = await admin.from("ad_campaign_requests").update({ notification_status: notificationSent ? "sent" : "failed", notified_at: new Date().toISOString() }).eq("id", campaignRequest.id);
+    if (notificationStatusError) console.warn("Campaign request notification status update failed", notificationStatusError.message);
+
+    return json({ ok: true, notificationSent, message: "تم استلام طلب الحملة. سيتواصل معك فريق MSB Media قريبًا." });
   }
 
   return json({ ok: false, message: "الطلب غير معروف." }, 400);
