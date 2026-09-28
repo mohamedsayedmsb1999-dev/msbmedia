@@ -884,6 +884,29 @@
       box-shadow: var(--shadow-card);
     }
 
+    .msb-notice { position: fixed; z-index: 10000; top: 18px; right: 18px; left: 18px; max-width: 520px; margin: auto; display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border-radius: 16px; border: 1.5px solid #111; box-shadow: 0 18px 45px rgba(0,0,0,.18); font-weight: 800; line-height: 1.7; animation: noticeIn .22s ease-out; }
+    .msb-notice.success { background: #ecfdf5; color: #065f46; border-color: #10b981; }
+    .msb-notice.error { background: #fff1f2; color: #9f1239; border-color: #fb7185; }
+    .msb-notice.info { background: #eff6ff; color: #1e3a8a; border-color: #60a5fa; }
+    .msb-notice button { margin-right: auto; border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; color: inherit; }
+    @keyframes noticeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .wallet-balance-card { background: linear-gradient(135deg, #063a87, #0b5bd3); color: #fff; border-radius: 20px; padding: 1.2rem; margin: 0 0 1.4rem; box-shadow: 0 14px 30px rgba(6,58,135,.22); }
+    .wallet-balance-card h3 { font-size: 1rem; margin-bottom: .9rem; }
+    .wallet-balance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .wallet-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 13px; padding: .7rem .5rem; text-align: center; }
+    .wallet-stat strong { display: block; font-size: 1rem; color: #ffd400; }
+    .wallet-stat span { display: block; margin-top: 3px; font-size: .68rem; color: #dbeafe; }
+    .wallet-history { background: #fff; border: 1.5px solid #111; border-radius: 16px; padding: 1rem; margin: 0 0 1.3rem; }
+    .wallet-history h4 { font-size: .95rem; margin-bottom: .55rem; }
+    .wallet-history-row { display: flex; justify-content: space-between; gap: 10px; padding: .45rem 0; border-bottom: 1px solid #eee; font-size: .74rem; }
+    .wallet-history-row:last-child { border-bottom: 0; }
+    .status-pill { border-radius: 999px; padding: .15rem .5rem; font-size: .67rem; font-weight: 900; white-space: nowrap; }
+    .status-pill.pending { background: #fef3c7; color: #92400e; }
+    .status-pill.approved { background: #d1fae5; color: #065f46; }
+    .status-pill.rejected { background: #ffe4e6; color: #9f1239; }
+    .form-hint { color: #64748b; font-size: .68rem; margin-top: .25rem; display: block; }
+    .pay-brand-svg-box img { width: 54px; height: 54px; object-fit: contain; }
+    @media (max-width: 520px) { .wallet-balance-grid { grid-template-columns: 1fr; } .wallet-stat { display: flex; align-items: center; justify-content: space-between; text-align: right; } }
     /* Footer */
     footer {
       background: var(--dark-footer);
@@ -992,7 +1015,7 @@
         </div>
         <div class="form-group">
           <label>رقم الموبايل / واتساب</label>
-          <input type="tel" id="regPhone" class="form-control" placeholder="010xxxxxxxx" required>
+          <input type="tel" id="regPhone" class="form-control" placeholder="مثال: 01092794169" pattern="^(01[0125])[0-9]{8}$" title="اكتب رقم موبايل مصري صحيح من 11 رقم" required>
         </div>
         <div class="form-group">
           <label>البريد الإلكتروني</label>
@@ -1510,7 +1533,7 @@
 
         <!-- اتصالات كاش -->
         <div class="pay-method-box">
-          <div class="pay-brand-svg-box"><img src="https://cdn.simpleicons.org/etisalat/71A400" alt="شعار اتصالات كاش" loading="lazy" width="60" height="60"></div>
+          <div class="pay-brand-svg-box"><svg width="60" height="60" viewBox="0 0 60 60" role="img" aria-label="شعار اتصالات كاش"><rect width="60" height="60" rx="15" fill="#71A400"/><path d="M30 12c-11 0-19 8-19 18s8 18 19 18 19-8 19-18-8-18-19-18Zm0 30c-7 0-13-5-13-12s6-12 13-12 13 5 13 12-6 12-13 12Z" fill="#fff"/><circle cx="37" cy="22" r="5" fill="#ffde00"/></svg></div>
           <h3 style="font-size: 1.05rem; font-weight: 900; color: #71A400;">اتصالات كاش</h3>
           <p style="font-size: 0.74rem; color: var(--text-muted);">تحويل كاش فوري من أي محفظة</p>
           <div style="font-size: 1.05rem; font-weight: 900; margin: 6px 0; color: #71A400;">01105697412</div>
@@ -1530,6 +1553,16 @@
           </button>
         </div>
       </div>
+
+      <div class="wallet-balance-card" id="walletBalanceCard" aria-live="polite">
+        <h3>محفظتك في MSB Media 💳</h3>
+        <div class="wallet-balance-grid">
+          <div class="wallet-stat"><strong id="walletTotalBalance">0.00 ج.م</strong><span>الرصيد الحالي</span></div>
+          <div class="wallet-stat"><strong id="walletUsedBalance">0.00 ج.م</strong><span>الرصيد المستخدم</span></div>
+          <div class="wallet-stat"><strong id="walletAvailableBalance">0.00 ج.م</strong><span>الرصيد المتاح</span></div>
+        </div>
+      </div>
+      <div class="wallet-history" id="walletHistory" style="display:none"><h4>آخر حركة في محفظتك</h4><div id="walletHistoryRows"></div></div>
 
       <!-- صندوق حالة العملية المعلقة -->
       <div class="pending-payment-status-box" id="pendingPaymentNotice">
@@ -1553,12 +1586,12 @@
         <form id="paymentDepositForm" onsubmit="handlePaymentVerification(event)">
           <div class="form-group">
             <label>الاسم بالكامل</label>
-            <input type="text" id="clientFullName" class="form-control" placeholder="اكتب اسمك أو اسم متجرك" required>
+            <input type="text" id="clientFullName" class="form-control" placeholder="مثال: محمد سيد أو اسم متجرك" required>
           </div>
 
           <div class="form-group">
             <label>رقم هاتفك (للتواصل وتأكيد الحساب)</label>
-            <input type="tel" id="clientPhone" class="form-control" placeholder="010xxxxxxxx" required>
+            <input type="tel" id="clientPhone" class="form-control" placeholder="مثال: 01092794169" pattern="^(01[0125])[0-9]{8}$" title="اكتب رقم موبايل مصري صحيح من 11 رقم" required>
           </div>
 
           <div class="form-group">
@@ -1571,8 +1604,8 @@
           </div>
 
           <div class="form-group">
-            <label>المبلغ المطلوب شحنه (بالجنيه المصري)</label>
-            <input type="number" id="paidBaseAmount" class="form-control" placeholder="مثال: 220" value="220" min="50" oninput="recalcFee()">
+            <label>المبلغ المطلوب شحنه (بالجنيه المصري — الحد الأدنى 250 ج.م)</label>
+            <input type="number" id="paidBaseAmount" class="form-control" placeholder="مثال: 250" value="250" min="250" oninput="recalcFee()">
           </div>
 
           <!-- تفصيل رسوم تعبئة الرصيد 2% -->
@@ -1592,8 +1625,8 @@
           </div>
 
           <div class="form-group">
-            <label>صورة إيصال التحويل (Screenshot)</label>
-            <input type="file" id="receiptImg" class="form-control" accept="image/*" required>
+            <label>صورة إيصال التحويل (Screenshot)</label><small class="form-hint">ارفع صورة واضحة بصيغة JPG أو PNG أو WEBP، أقل من 5 ميجابايت.</small>
+            <input type="file" id="receiptImg" class="form-control" accept="image/jpeg,image/png,image/webp" required>
           </div>
 
           <button type="submit" id="btnSubmitPayment" class="btn-submit-main" style="margin-top: 8px;">
@@ -1868,6 +1901,13 @@
       document.getElementById('displayTotalWithFee').innerText = totalWithFee.toFixed(2) + " ج.م";
     }
 
+    function showNotice(message, type = "info") {
+      document.querySelectorAll('.msb-notice').forEach(el => el.remove());
+      const box = document.createElement('div'); box.className = `msb-notice ${type}`;
+      box.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '⚠️' : '💡'}</span><span>${message}</span><button aria-label="إغلاق" onclick="this.parentElement.remove()">×</button>`;
+      document.body.appendChild(box); setTimeout(() => box.remove(), 6500);
+    }
+
     function checkPendingPaymentState() {
       if (!currentUser) return;
       const pendingKey = 'msb_pending_pay_' + currentUser.email;
@@ -1920,10 +1960,22 @@
       if (!customerToken) return null;
       try {
         const result = await apiJson({ action: 'wallet_summary' });
-        const approved = (result.deposits || []).filter(d => d.status === 'approved').reduce((sum, d) => sum + Number(d.amount), 0);
-        const pending = (result.deposits || []).filter(d => d.status === 'pending').length;
-        const notice = document.getElementById('pendingPaymentNotice');
-        if (notice) { notice.classList.toggle('active', pending > 0); }
+        const deposits = result.deposits || [], orders = result.orders || [];
+        const used = orders.filter(o => o.status !== 'rejected').reduce((sum, o) => sum + Number(o.amount || 0), 0);
+        const current = Number(result.balance || 0);
+        const total = current + used;
+        const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = `${value.toFixed(2)} ج.م`; };
+        set('walletTotalBalance', total); set('walletUsedBalance', used); set('walletAvailableBalance', current);
+        const history = document.getElementById('walletHistory'), rows = document.getElementById('walletHistoryRows');
+        if (history && rows && (deposits.length || orders.length)) {
+          history.style.display = 'block';
+          const items = [...deposits.slice(0, 3).map(d => ({ label: `شحن ${Number(d.amount).toFixed(2)} ج.م`, date: d.created_at, status: d.status })), ...orders.slice(0, 3).map(o => ({ label: `${o.service_name} — ${Number(o.amount).toFixed(2)} ج.م`, date: o.created_at, status: o.status === 'rejected' ? 'rejected' : 'approved' }))].slice(0, 5);
+          rows.innerHTML = items.map(item => `<div class="wallet-history-row"><span>${item.label}<small style="display:block;color:#94a3b8">${new Date(item.date).toLocaleDateString('ar-EG')}</small></span><span class="status-pill ${item.status}">${item.status === 'approved' ? 'تمت' : item.status === 'rejected' ? 'مرفوض' : 'قيد المراجعة'}</span></div>`).join('');
+        }
+        const pending = deposits.some(d => d.status === 'pending');
+        const notice = document.getElementById('pendingPaymentNotice'), formWrapper = document.getElementById('paymentFormWrapper');
+        if (notice) notice.classList.toggle('active', pending);
+        if (formWrapper && pending) { formWrapper.style.opacity = '0.55'; formWrapper.style.pointerEvents = 'none'; }
         return result;
       } catch (error) { console.warn(error); return null; }
     }
@@ -1937,8 +1989,8 @@
         const result = await apiJson({ action: 'sign_in', phone, password: pass });
         customerToken = result.token; currentUser = { name: result.customer.full_name, phone: result.customer.phone, email };
         localStorage.setItem('msb-customer-token', customerToken); localStorage.setItem('msb_current_user', JSON.stringify(currentUser));
-        updateAuthStateUI(); closeAuthModal(); alert(`أهلاً بك مجدداً يا ${currentUser.name}! تم تسجيل الدخول بأمان.`);
-      } catch (error) { alert(error.message); }
+        updateAuthStateUI(); closeAuthModal(); showNotice(`أهلاً بك يا ${currentUser.name} 👋 تم تسجيل الدخول بنجاح.`, "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
     }
 
     async function handleUserRegister(e) {
@@ -1947,18 +1999,18 @@
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim().toLowerCase();
       const pass = document.getElementById('regPassword').value;
-      if (name.length < 2 || phone.length < 6 || !email.includes('@') || pass.length < 6) { alert('راجع الاسم ورقم الهاتف والبريد وكلمة المرور.'); return; }
+      if (name.length < 2 || phone.length < 6 || !email.includes('@') || pass.length < 6) { showNotice("راجع البيانات: الاسم، رقم الهاتف، البريد، والباسورد 📋", "error"); return; }
       try {
         const result = await apiJson({ action: 'register', fullName: name, phone, email, password: pass });
         customerToken = result.token; currentUser = { name: result.customer.full_name, phone: result.customer.phone, email };
         localStorage.setItem('msb-customer-token', customerToken); localStorage.setItem('msb_current_user', JSON.stringify(currentUser));
-        updateAuthStateUI(); closeAuthModal(); alert(`تم إنشاء حسابك بأمان يا ${name}.`);
-      } catch (error) { alert(error.message); }
+        updateAuthStateUI(); closeAuthModal(); showNotice(`تم إنشاء حسابك يا ${name} ✅ تقدر تبدأ دلوقتي.`, "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
     }
 
     function navigateTo(pageId) {
       if (!currentUser && pageId !== 'home') {
-        alert("يرجى تسجيل الدخول أو إنشاء حساب أولاً للوصول إلى هذه الصفحة!");
+        showNotice("سجّل دخولك الأول عشان نفتحلك الخدمة 🔐", "info");
         openAuthModal();
         return;
       }
@@ -1995,41 +2047,42 @@
     }
 
     function copyText(txt) {
-      navigator.clipboard.writeText(txt).then(() => alert("تم نسخ: " + txt));
+      navigator.clipboard.writeText(txt).then(() => showNotice("اتنسخ بنجاح ✅", "success"));
     }
 
     async function handleQuickOrder(e) {
       e.preventDefault();
-      if (!currentUser || !customerToken) { alert('يرجى تسجيل الدخول أولاً.'); openAuthModal(); return; }
+      if (!currentUser || !customerToken) { showNotice("سجّل دخولك الأول عشان تكمل 🔐", "info"); openAuthModal(); return; }
       const qty = parseInt(document.getElementById('quickQty').value, 10) || 0;
-      if (!Number.isInteger(qty) || qty < selectedMinQty) { alert(`الحد الأدنى لهذه الخدمة هو ${selectedMinQty.toLocaleString()}.`); return; }
+      if (!Number.isInteger(qty) || qty < selectedMinQty) { showNotice(`الحد الأدنى للخدمة ${selectedMinQty.toLocaleString()} 🔢`, "error"); return; }
       const summary = await loadWalletSummary();
       const total = Math.round(qty * selectedRate * 100) / 100;
-      if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(50, Math.ceil(total)); recalcFee(); alert(`رصيدك غير كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر ثم ارفع الإيصال.`); return; }
+      if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(50, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر 💳`, "info"); return; }
       try {
         const result = await apiJson({ action: 'social_growth_order', serviceId: selectedServiceId, quantity: qty, targetUrl: document.getElementById('quickLink').value.trim() });
-        alert(result.message); await loadWalletSummary();
-      } catch (error) { alert(error.message); }
+        showNotice(`${result.message} ✅`, "success"); await loadWalletSummary();
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
     }
 
     async function handlePaymentVerification(e) {
       e.preventDefault();
       if (!currentUser || !customerToken) { openAuthModal(); return; }
       const file = document.getElementById('receiptImg').files[0];
-      if (!file) { alert('ارفع صورة الإيصال.'); return; }
+      if (!file) { showNotice("ارفع صورة الإيصال الواضحة 📸", "error"); return; }
       const btn = document.getElementById('btnSubmitPayment'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ حفظ الإيصال بأمان...';
       const methodMap = { 'فودافون كاش': 'vodafone_cash', 'اتصالات كاش': 'etisalat_cash', 'باينانس': 'binance_pay' };
       const body = new FormData(); body.append('action', 'wallet_deposit'); body.append('customerName', document.getElementById('clientFullName').value.trim()); body.append('phone', document.getElementById('clientPhone').value.trim()); body.append('method', methodMap[document.getElementById('paidVia').value] || 'vodafone_cash'); body.append('depositAmount', document.getElementById('paidBaseAmount').value); body.append('serviceId', String(selectedServiceId)); body.append('requestedQuantity', document.getElementById('quickQty').value); body.append('targetUrl', document.getElementById('quickLink').value.trim()); body.append('file', file);
       try {
         const response = await fetch(API_URL, { method: 'POST', headers: { 'x-msb-customer-token': customerToken }, body });
         const result = await response.json(); if (!response.ok || !result.ok) throw new Error(result.message || 'تعذر حفظ الإيصال.');
-        checkPendingPaymentState(); alert('تم حفظ الإيصال وإرسال إشعار للإدارة. بعد مراجعة التحويل سيُضاف الرصيد.');
-      } catch (error) { alert(error.message); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-lock"></i> تأكيد السداد وإرسال إشعار الإيداع'; }
+        checkPendingPaymentState(); btn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> شكراً 🙏 جاري انتظار رصيدك'; showNotice("شكراً 🙏 تم استلام الإيصال. جاري انتظار مراجعة الدفع وإضافة رصيدك.", "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-lock"></i> تأكيد السداد وإرسال إشعار الإيداع'; }
     }
 
     async function handleApprovalFromEmail() {
-      const token = new URLSearchParams(location.search).get('approve'); if (!token) return;
-      try { const result = await apiJson({ action: 'approve_wallet_deposit', token }); document.body.insertAdjacentHTML('afterbegin', `<div style="position:fixed;z-index:9999;inset:16px 16px auto;background:#063a87;color:#fff;padding:18px;border-radius:14px;text-align:center;font-weight:800">${result.message}</div>`); } catch (error) { alert(error.message); }
+      const params = new URLSearchParams(location.search), approve = params.get('approve'), reject = params.get('reject');
+      const token = approve || reject; if (!token) return;
+      try { const result = await apiJson({ action: approve ? 'approve_wallet_deposit' : 'reject_wallet_deposit', token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
     }
 
     document.addEventListener('click', function(e) {
