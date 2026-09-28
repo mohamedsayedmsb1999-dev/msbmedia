@@ -14,7 +14,7 @@ import MediaPlatformRail from "@/components/MediaPlatformRail";
 const navItems = [
   { href: "/", label: { ar: "الرئيسية", en: "Home" } },
   { href: "/services", label: { ar: "خدماتنا", en: "Services" } },
-  { href: "/social-growth-media.html", label: { ar: "نمو السوشيال ميديا", en: "Social Media Growth" }, external: true },
+  { href: "/social-growth-media.html", label: { ar: "📈 نمو السوشيال ميديا 🚀", en: "📈 Social Media Growth 🚀" }, external: true },
   { href: "/portfolio", label: { ar: "سابقة الأعمال · Portfolio", en: "Portfolio" } },
   { href: "/payment", label: { ar: "طرق الدفع", en: "Payment" } },
   { href: "/support", label: { ar: "الدعم الفني", en: "Support" } },
