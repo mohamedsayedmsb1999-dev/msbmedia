@@ -1,6 +1,6 @@
 import SiteShell from "@/components/SiteShell";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
-import { CampaignRequestInput, submitCampaignRequest } from "@/lib/msbDataApi";
+import { CampaignRequestInput, hasCustomerSession, submitCampaignRequest } from "@/lib/msbDataApi";
 import { openWhatsApp, trackMetaEvent } from "@/lib/site-data";
 import { CheckCircle2, CircleDollarSign, FileText, Megaphone, Send, ShieldCheck, Target, UsersRound } from "lucide-react";
 import { FormEvent, useState } from "react";
@@ -29,6 +29,7 @@ export default function CampaignRequest() {
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!hasCustomerSession()) { window.dispatchEvent(new Event("msb:open-auth")); toast.error("سجّل دخولك أو أنشئ حسابًا جديدًا الأول."); return; }
     setBusy(true);
     try {
       await submitCampaignRequest(form);

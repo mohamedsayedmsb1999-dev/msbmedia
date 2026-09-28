@@ -24,6 +24,7 @@ export default function Payment() {
   }, []);
 
   const shareReceiptToWhatsApp = async () => {
+    if (!hasSession) { window.dispatchEvent(new Event("msb:open-auth")); toast.error("سجّل دخولك أو أنشئ حسابًا الأول."); return; }
     if (!file) {
       toast.error("اختر صورة الإيصال أولًا.");
       return;

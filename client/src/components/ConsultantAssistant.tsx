@@ -3,6 +3,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { openWhatsApp } from "@/lib/site-data";
+import { hasCustomerSession } from "@/lib/msbDataApi";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 type SalesStage = "discover" | "analyze" | "qualify" | "close";
@@ -27,6 +28,7 @@ export default function ConsultantAssistant() {
   });
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (!hasCustomerSession()) { window.dispatchEvent(new Event("msb:open-auth")); toast.error("سجّل دخولك أو أنشئ حسابًا الأول."); return; }
     const content = draft.trim();
     if (!content || chat.isPending) return;
     const next = [...messages, { role: "user" as const, content }];

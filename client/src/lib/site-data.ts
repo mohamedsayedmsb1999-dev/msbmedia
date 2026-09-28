@@ -1,4 +1,5 @@
 import { Bot, Clapperboard, Globe2, Headphones, Megaphone, Sparkles } from "lucide-react";
+import { hasCustomerSession } from "./msbDataApi";
 
 export const WHATSAPP_URL = "https://wa.me/201092794169";
 const PUBLIC_ASSET_ORIGIN = "https://msbmedia-fddqd6ca.manus.space";
@@ -40,6 +41,11 @@ export const services = [
 ];
 
 export const openWhatsApp = (message: string) => {
+  if (!hasCustomerSession()) {
+    window.dispatchEvent(new Event("msb:open-auth"));
+    return false;
+  }
   trackMetaEvent("Contact", { content_name: "WhatsApp consultation", content_category: "Lead" });
   window.open(`${WHATSAPP_URL}?text=${encodeURIComponent(`مرحبًا MSB Media، ${message}`)}`, "_blank", "noopener,noreferrer");
+  return true;
 };
