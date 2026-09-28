@@ -183,6 +183,25 @@ async function handleJson(request: Request) {
     return json({ ok: true, message: isApprove ? "تم قبول الدفع وإضافة الرصيد للعميل ✅" : "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
   }
 
+  if (action === "approve_order" || action === "reject_order") {
+    const token = text(input.token, 200);
+    const [orderId, rawSecret] = token.split(".");
+    if (!orderId || !rawSecret) return json({ ok: false, message: "رابط قرار الطلب غير صالح." }, 400);
+    const tokenHash = await sha256(rawSecret);
+    const { data: order, error: orderError } = await admin.from("social_growth_orders").select("id, customer_profile_id, amount, status, approval_token_hash").eq("id", orderId).maybeSingle();
+    if (orderError) throw orderError;
+    if (!order || order.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط قرار الطلب غير صالح أو منتهي." }, 403);
+    if (order.status !== "manual_review") return json({ ok: true, message: order.status === "rejected" ? "تم رفض الطلب سابقًا." : "تم قبول الطلب سابقًا وبدأت مراجعته." });
+    const isApprove = action === "approve_order";
+    const { error: updateError } = await admin.from("social_growth_orders").update({ status: isApprove ? "in_progress" : "rejected" }).eq("id", order.id).eq("status", "manual_review");
+    if (updateError) throw updateError;
+    if (!isApprove) {
+      const { error: refundError } = await admin.from("wallet_ledger").insert({ customer_profile_id: order.customer_profile_id, amount: order.amount, kind: "refund", reference_id: order.id, description: "استرجاع قيمة طلب نمو سوشيال مرفوض" });
+      if (refundError && !refundError.message.includes("duplicate")) throw refundError;
+    }
+    return json({ ok: true, message: isApprove ? "تم قبول الطلب وبدأت حالته التنفيذ ✅" : "تم رفض الطلب وإرجاع قيمته إلى محفظة العميل ✅" });
+  }
+
   if (action === "social_growth_order") {
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
@@ -194,12 +213,16 @@ async function handleJson(request: Request) {
     const amount = Math.round(quantity * service.rate * 100) / 100;
     const balance = await walletBalance(customerId);
     if (balance < amount) return json({ ok: false, message: `رصيدك الحالي ${balance.toFixed(2)} ج.م، والمطلوب ${amount.toFixed(2)} ج.م.` }, 400);
-    const { data: order, error: orderError } = await admin.from("social_growth_orders").insert({ customer_profile_id: customerId, service_id: serviceId, service_name: service.name, quantity, target_url: targetUrl, amount }).select("id").single();
+    const secret = randomToken();
+    const approvalTokenHash = await sha256(secret);
+    const { data: order, error: orderError } = await admin.from("social_growth_orders").insert({ customer_profile_id: customerId, service_id: serviceId, service_name: service.name, quantity, target_url: targetUrl, amount, approval_token_hash: approvalTokenHash }).select("id").single();
     if (orderError) throw orderError;
     const { error: ledgerError } = await admin.from("wallet_ledger").insert({ customer_profile_id: customerId, amount: -amount, kind: "order", reference_id: order.id, description: `طلب يدوي: ${service.name} — ${quantity}` });
     if (ledgerError) throw ledgerError;
-    await notifyOwner("طلب خدمة نمو سوشيال جديد", [["معرف الطلب", order.id], ["الخدمة", service.name], ["الكمية", String(quantity)], ["الرابط", targetUrl], ["القيمة", `${amount.toFixed(2)} ج.م`]]);
-    return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. التنفيذ يدوي حاليًا وسنراجع الطلب." });
+    const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
+    const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
+    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار قبول أو رفض", [["معرف الطلب", order.id], ["الخدمة", service.name], ["الكمية", String(quantity)], ["الرابط", targetUrl], ["القيمة", `${amount.toFixed(2)} ج.م`], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
+    return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. جاري انتظار مراجعة الإدارة." });
   }
 
   if (action === "support") {

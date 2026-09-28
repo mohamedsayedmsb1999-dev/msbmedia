@@ -340,6 +340,13 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .account-welcome-panel { margin: 1rem 4% 0; padding: .9rem 1rem; display:flex; align-items:center; gap:.8rem; background:linear-gradient(135deg,#06255d,#0b5bd3); color:#fff; border:1px solid rgba(255,212,0,.7); border-radius:18px; box-shadow:0 12px 28px rgba(3,24,67,.2); }
+    .account-welcome-icon { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; border-radius:14px; background:#ffd400; color:#061534; font-size:1.15rem; }
+    .account-welcome-kicker { display:block; color:#9fd0ff; font-size:.65rem; font-weight:900; }
+    .account-welcome-panel h2 { margin:2px 0; font-size:1.05rem; }
+    .account-welcome-panel p { margin:0; color:#dbeafe; font-size:.7rem; }
+    .account-welcome-panel button { margin-right:auto; border:0; border-radius:999px; background:#ffd400; color:#061534; padding:.5rem .75rem; font-size:.7rem; font-weight:900; cursor:pointer; white-space:nowrap; }
+    @media (max-width:600px) { .account-welcome-panel { align-items:flex-start; } .account-welcome-panel button { align-self:center; font-size:.62rem; padding:.45rem .55rem; } }
     /* 5. الصفحة الرئيسية */
     .hero-container {
       padding: 1.4rem 4% 2rem;
@@ -1061,6 +1068,11 @@
   </aside>
 
   <!-- ==================== الصفحة 1: الرئيسية ==================== -->
+  <div class="account-welcome-panel" id="accountWelcomePanel" style="display:none;">
+    <div class="account-welcome-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+    <div><span class="account-welcome-kicker">لوحة حسابك في MSBMEDIA</span><h2>أهلاً بك يا <strong id="welcomeUserName"></strong> 👋</h2><p>رصيدك وطلباتك وكل خدماتك قدامك في مكان واحد.</p></div>
+    <button onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i> شوف محفظتك</button>
+  </div>
   <div id="page-home" class="app-page active-page">
     <section class="hero-container">
       <div>
@@ -1821,10 +1833,17 @@
     setInterval(cycleIslamicTicker, 3200);
 
     function updateAuthStateUI() {
+      const header = document.getElementById('headerAuthBtn');
+      const welcome = document.getElementById('accountWelcomePanel');
+      const welcomeName = document.getElementById('welcomeUserName');
       if (currentUser) {
-        document.getElementById('headerAuthBtn').innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> ${currentUser.name.split(' ')[0]}`;
+        const firstName = String(currentUser.name || 'عميلنا').trim().split(/\s+/)[0] || 'عميلنا';
+        header.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> ';
+        const nameNode = document.createElement('span'); nameNode.textContent = firstName; header.appendChild(nameNode);
+        if (welcome && welcomeName) { welcome.style.display = 'flex'; welcomeName.textContent = currentUser.name || 'عميلنا'; }
       } else {
-        document.getElementById('headerAuthBtn').innerHTML = `<i class="fa-solid fa-user"></i> حسابي`;
+        header.innerHTML = '<i class="fa-solid fa-user"></i> حسابي';
+        if (welcome) welcome.style.display = 'none';
       }
       checkPendingPaymentState();
     }
@@ -2080,9 +2099,12 @@
     }
 
     async function handleApprovalFromEmail() {
-      const params = new URLSearchParams(location.search), approve = params.get('approve'), reject = params.get('reject');
-      const token = approve || reject; if (!token) return;
-      try { const result = await apiJson({ action: approve ? 'approve_wallet_deposit' : 'reject_wallet_deposit', token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
+      const params = new URLSearchParams(location.search);
+      const approveWallet = params.get('approve'), rejectWallet = params.get('reject');
+      const approveOrder = params.get('approve_order'), rejectOrder = params.get('reject_order');
+      const token = approveWallet || rejectWallet || approveOrder || rejectOrder; if (!token) return;
+      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : 'reject_order';
+      try { const result = await apiJson({ action, token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
     }
 
     document.addEventListener('click', function(e) {
