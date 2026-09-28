@@ -233,6 +233,7 @@ async function handleJson(request: Request) {
     const message = text(input.message, 5000);
     if (fullName.length < 2 || phone.length < 6 || subject.length < 3 || message.length < 10) return json({ ok: false, message: "تحقق من بيانات طلب الدعم ثم أعد المحاولة." }, 400);
     const customerId = await currentCustomer(request);
+    if (!customerId) return json({ ok: false, message: "سجّل الدخول أو أنشئ حسابًا جديدًا قبل إرسال طلب الدعم." }, 401);
     const { error } = await admin.from("support_tickets").insert({ customer_profile_id: customerId, full_name: fullName, phone, email: email || null, subject, message });
     if (error) throw error;
     await notifyOwner("طلب دعم جديد", [["الاسم", fullName], ["الهاتف", phone], ["البريد", email || "غير مضاف"], ["العنوان", subject], ["التفاصيل", message]]);
@@ -255,6 +256,7 @@ async function handleJson(request: Request) {
     }
 
     const customerId = await currentCustomer(request);
+    if (!customerId) return json({ ok: false, message: "سجّل الدخول أو أنشئ حسابًا جديدًا قبل إرسال طلب الحملة." }, 401);
     const { data: campaignRequest, error } = await admin.from("ad_campaign_requests").insert({
       customer_profile_id: customerId,
       full_name: fullName,
