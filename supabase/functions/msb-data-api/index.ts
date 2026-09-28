@@ -53,7 +53,7 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
     return false;
   }
   try {
-    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${escapeHtml(value)}</td></tr>`).join("")}</table></div>`;
+    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const rendered = value.split(" | ").map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:#0b5bd3;color:#fff;border-radius:8px;text-decoration:none">${part.includes("reject") ? "❌ رفض الدفع" : "✅ قبول الدفع"}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
@@ -164,20 +164,23 @@ async function handleJson(request: Request) {
     return json({ ok: true, balance, deposits: deposits ?? [], orders: orders ?? [] });
   }
 
-  if (action === "approve_wallet_deposit") {
+  if (action === "approve_wallet_deposit" || action === "reject_wallet_deposit") {
     const token = text(input.token, 200);
     const [depositId, rawSecret] = token.split(".");
-    if (!depositId || !rawSecret) return json({ ok: false, message: "رابط الاعتماد غير صالح." }, 400);
+    if (!depositId || !rawSecret) return json({ ok: false, message: "رابط القرار غير صالح." }, 400);
     const tokenHash = await sha256(rawSecret);
     const { data: deposit, error: depositError } = await admin.from("wallet_deposits").select("id, customer_profile_id, amount, status, approval_token_hash").eq("id", depositId).maybeSingle();
     if (depositError) throw depositError;
-    if (!deposit || deposit.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط الاعتماد غير صالح أو منتهي." }, 403);
-    if (deposit.status !== "pending") return json({ ok: true, message: deposit.status === "approved" ? "تم اعتماد الإيداع سابقًا." : "تم التعامل مع الإيداع سابقًا." });
-    const { error: updateError } = await admin.from("wallet_deposits").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", deposit.id).eq("status", "pending");
+    if (!deposit || deposit.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط القرار غير صالح أو منتهي." }, 403);
+    if (deposit.status !== "pending") return json({ ok: true, message: deposit.status === "approved" ? "تم اعتماد الإيداع سابقًا." : "تم رفض الإيداع سابقًا." });
+    const isApprove = action === "approve_wallet_deposit";
+    const { error: updateError } = await admin.from("wallet_deposits").update({ status: isApprove ? "approved" : "rejected", approved_at: isApprove ? new Date().toISOString() : null }).eq("id", deposit.id).eq("status", "pending");
     if (updateError) throw updateError;
-    const { error: ledgerError } = await admin.from("wallet_ledger").insert({ customer_profile_id: deposit.customer_profile_id, amount: deposit.amount, kind: "deposit", reference_id: deposit.id, description: "اعتماد إيداع عبر رابط الإدارة" });
-    if (ledgerError && !ledgerError.message.includes("duplicate")) throw ledgerError;
-    return json({ ok: true, message: "تم اعتماد الدفع وإضافة الرصيد للعميل." });
+    if (isApprove) {
+      const { error: ledgerError } = await admin.from("wallet_ledger").insert({ customer_profile_id: deposit.customer_profile_id, amount: deposit.amount, kind: "deposit", reference_id: deposit.id, description: "اعتماد إيداع من إدارة MSB Media" });
+      if (ledgerError && !ledgerError.message.includes("duplicate")) throw ledgerError;
+    }
+    return json({ ok: true, message: isApprove ? "تم قبول الدفع وإضافة الرصيد للعميل ✅" : "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
   }
 
   if (action === "social_growth_order") {
@@ -280,13 +283,13 @@ async function handleReceipt(request: Request) {
   if (!(file instanceof File) || customerName.length < 2 || phone.length < 6 || !isSafePaymentMethod(method)) return json({ ok: false, message: "تحقق من بيانات الإيصال ثم أعد المحاولة." }, 400);
   if (method === "binance_pay" && binancePhone.length < 6) return json({ ok: false, message: "اكتب رقم هاتفك لتأكيد تحويل Binance Pay." }, 400);
   if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) return json({ ok: false, message: "صورة الإيصال يجب أن تكون JPG أو PNG أو WEBP وبحد أقصى 5 ميجابايت." }, 400);
-  if (action === "wallet_deposit" && (!Number.isFinite(depositAmount) || depositAmount <= 0 || depositAmount > 1000000)) return json({ ok: false, message: "اكتب مبلغ شحن صحيحًا." }, 400);
+  if (action === "wallet_deposit" && (!Number.isFinite(depositAmount) || depositAmount < 250 || depositAmount > 1000000)) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 250 ج.م." }, 400);
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "receipt";
   const storagePath = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${safeName}`;
   const { error: uploadError } = await admin.storage.from("payment-receipts").upload(storagePath, await file.arrayBuffer(), { contentType: file.type, upsert: false });
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
-    if (!Number.isFinite(depositAmount) || depositAmount <= 0 || depositAmount > 1000000) return json({ ok: false, message: "اكتب مبلغ شحن صحيحًا." }, 400);
+    if (!Number.isFinite(depositAmount) || depositAmount < 250 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 250 ج.م." }, 400);
     const fee = Math.round(depositAmount * 0.02 * 100) / 100;
     const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
     const secret = randomToken();
@@ -295,7 +298,8 @@ async function handleReceipt(request: Request) {
     const { data: deposit, error: depositError } = await admin.from("wallet_deposits").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, amount: depositAmount, fee, total_amount: totalAmount, service_id: service ? serviceId : null, service_name: service?.name ?? null, requested_quantity: service && Number.isInteger(requestedQuantity) ? requestedQuantity : null, target_url: isWebsiteUrl(targetUrl) ? targetUrl : null, receipt_storage_path: storagePath, receipt_filename: safeName, approval_token_hash: approvalTokenHash }).select("id").single();
     if (depositError) throw depositError;
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
-    const sent = await notifyOwner("طلب شحن رصيد جديد — يحتاج اعتماد", [["معرف الطلب", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["الطريقة", method], ["المبلغ الصافي", `${depositAmount.toFixed(2)} ج.م`], ["الإجمالي المحول", `${totalAmount.toFixed(2)} ج.م`], ["رابط اعتماد الدفع", approvalUrl], ["اسم الإيصال", safeName]]);
+    const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الطلب", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["الطريقة", method], ["المبلغ الصافي", `${depositAmount.toFixed(2)} ج.م`], ["الإجمالي المحول", `${totalAmount.toFixed(2)} ج.م`], ["الإيصال", safeName], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
