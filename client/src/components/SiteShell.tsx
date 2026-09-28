@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { BrainCircuit, Facebook, Globe2, Languages, LogIn, Megaphone, Menu, MonitorSmartphone, Share2, X, Youtube } from "lucide-react";
+import { BrainCircuit, CircleUserRound, Facebook, Globe2, Languages, LayoutDashboard, LogIn, LogOut, Megaphone, Menu, MonitorSmartphone, Share2, WalletCards, X, Youtube } from "lucide-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { trackMetaEvent, WHATSAPP_URL } from "@/lib/site-data";
@@ -70,6 +70,10 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   const initialPageView = useRef(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [clientSession, setClientSession] = useState<{ name: string; phone?: string } | null>(() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem("msb-client") || "null"); } catch { return null; }
+  });
 
   useEffect(() => {
     if (initialPageView.current) {
@@ -81,9 +85,21 @@ export default function SiteShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const openAuth = () => setAuthOpen(true);
+    const refreshSession = () => {
+      try { setClientSession(JSON.parse(localStorage.getItem("msb-client") || "null")); } catch { setClientSession(null); }
+    };
     window.addEventListener("msb:open-auth", openAuth);
-    return () => window.removeEventListener("msb:open-auth", openAuth);
+    window.addEventListener("msb:customer-authenticated", refreshSession);
+    window.addEventListener("storage", refreshSession);
+    return () => { window.removeEventListener("msb:open-auth", openAuth); window.removeEventListener("msb:customer-authenticated", refreshSession); window.removeEventListener("storage", refreshSession); };
   }, []);
+
+  const signOutClient = () => {
+    localStorage.removeItem("msb-client");
+    localStorage.removeItem("msb-customer-token");
+    setClientSession(null);
+    toast.success("تم تسجيل الخروج بأمان.");
+  };
 
   const shareWebsite = async () => {
     const payload = { title: "MSB Media", text: "اكتشف خدمات MSB Media", url: window.location.href };
@@ -109,6 +125,12 @@ export default function SiteShell({ children }: { children: ReactNode }) {
     </aside>
     <div className="site-main">
       <header className="mobile-topbar"><button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-trigger" aria-label="فتح قائمة الصفحات">{menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}</button><Link href="/" className="mobile-centered-brand"><span className="text-sm font-black">MSB <span className="text-[#4a74ff]">Media</span></span></Link>{languageControl}{menuOpen && <nav className="mobile-page-menu">{navItems.map(item => item.comingSoon ? <span key={item.label.ar} className="sidebar-link nav-ai-entry cursor-not-allowed opacity-75" aria-label="MSB AI Video قريبًا">{item.label[language]}<small className="mr-auto rounded-full bg-[#ffd400] px-2 py-0.5 text-[10px] font-black text-[#020615]">{language === "ar" ? "قريبًا" : "Soon"}</small></span> : item.external ? <a onClick={() => setMenuOpen(false)} key={item.href} href={item.href} className="sidebar-link">{item.label[language]}</a> : <Link onClick={() => setMenuOpen(false)} key={item.href} href={item.href!} className={`sidebar-link ${location === item.href ? "is-active" : ""}`}>{item.label[language]}</Link>)}<button onClick={() => { setMenuOpen(false); setAuthOpen(true); }} className="blue-button mt-2 w-full">{language === "ar" ? "تسجيل / دخول" : "Sign in"}<LogIn className="h-4 w-4" /></button></nav>}</header>
+      {clientSession && <section className="official-client-dashboard" aria-label="لوحة حساب العميل">
+        <div className="official-client-dashboard-inner">
+          <div className="official-client-welcome"><span className="official-client-avatar"><CircleUserRound className="h-5 w-5" /></span><div><span className="official-client-kicker">لوحة حسابك في MSB Media</span><strong>أهلاً يا {clientSession.name || "عميلنا"} 👋</strong><p>حسابك شغال، تقدر تدخل لخدماتك ومحفظتك من هنا.</p></div></div>
+          <div className="official-client-actions"><a href="/social-growth-media.html" className="official-client-action primary"><LayoutDashboard className="h-4 w-4" />لوحة الخدمة</a><Link href="/payment" className="official-client-action"><WalletCards className="h-4 w-4" />المحفظة والدفع</Link><button type="button" onClick={signOutClient} className="official-client-action logout"><LogOut className="h-4 w-4" />خروج</button></div>
+        </div>
+      </section>}
       <main>{children}</main>
       <footer className="border-t border-blue-100 bg-[#063a87] py-10"><div className="site-container"><MediaPlatformRail compact /><div className="footer-capabilities">{footerCapabilities.map(item => { const Icon = item.icon; return <span key={item.label.ar}><Icon className="h-3.5 w-3.5" />{item.label[language]}</span>; })}</div><div className="mt-7 flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><p className="text-lg font-black">MSB <span className="text-[#ffd400]">Media</span></p><p className="mt-2 text-sm leading-7 text-blue-100">{language === "ar" ? "نحن فريق خبراء يجمع بين الاستراتيجية والإبداع والتقنية لتسريع مسار علامتك." : "A team that combines strategy, creativity, and technology to move your brand forward."}</p><p className="mt-3 text-xs text-blue-200">Founded &amp; Directed by Mohamed Sayed</p><p className="footer-watermark">© MSB Media — {language === "ar" ? "جميع الحقوق محفوظة" : "All rights reserved"}</p></div><div className="flex flex-wrap gap-3"><button onClick={shareWebsite} className="social-icon" aria-label="مشاركة الموقع" title="مشاركة الموقع"><Share2 className="h-5 w-5 text-[#ffd400]" /></button><a href="https://www.facebook.com/share/1GAgRTwssP/" target="_blank" rel="noreferrer" className="social-icon" aria-label="Facebook Page" title="صفحة Facebook للوكالة"><Facebook className="h-5 w-5" /></a><a href="https://www.facebook.com/profile.php?id=100084170355866" target="_blank" rel="noreferrer" className="social-icon" aria-label="Facebook Personal Profile"><Facebook className="h-5 w-5" /></a><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="social-icon" aria-label="WhatsApp"><WhatsAppIcon className="h-5 w-5 text-[#25D366]" /></a><a href="https://youtube.com/@mohamedsayed1999?si=A_QP80sXdjxGPn8z" target="_blank" rel="noreferrer" className="social-icon" aria-label="YouTube Channel"><Youtube className="h-5 w-5" /></a></div></div></div></footer>
     </div>
