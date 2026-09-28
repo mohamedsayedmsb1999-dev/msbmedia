@@ -2,6 +2,7 @@ import { normalizePhone } from "./customerCredentials";
 
 const DATA_API_URL = "https://tfyypramrzruteuucwfm.supabase.co/functions/v1/msb-data-api";
 const CUSTOMER_TOKEN_KEY = "msb-customer-token";
+const LEGACY_CUSTOMER_PROFILE_KEY = "msb_current_user";
 
 export function hasCustomerSession() {
   return typeof window !== "undefined" && Boolean(localStorage.getItem(CUSTOMER_TOKEN_KEY) && localStorage.getItem("msb-client"));
@@ -26,6 +27,7 @@ export async function registerCustomer(input: { fullName: string; phone: string;
   const result = await parseResponse<{ customer: { full_name: string; phone: string }; token: string }>(response);
   localStorage.setItem(CUSTOMER_TOKEN_KEY, result.token);
   localStorage.setItem("msb-client", JSON.stringify({ name: result.customer.full_name, phone: result.customer.phone }));
+  localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY);
   window.dispatchEvent(new Event("msb:customer-authenticated"));
   return result.customer;
 }
@@ -35,6 +37,7 @@ export async function signInCustomer(input: { phone: string; password: string })
   const result = await parseResponse<{ customer: { full_name: string; phone: string }; token: string }>(response);
   localStorage.setItem(CUSTOMER_TOKEN_KEY, result.token);
   localStorage.setItem("msb-client", JSON.stringify({ name: result.customer.full_name, phone: result.customer.phone }));
+  localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY);
   window.dispatchEvent(new Event("msb:customer-authenticated"));
   return result.customer;
 }

@@ -97,6 +97,7 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   const signOutClient = () => {
     localStorage.removeItem("msb-client");
     localStorage.removeItem("msb-customer-token");
+    localStorage.removeItem("msb_current_user");
     setClientSession(null);
     toast.success("تم تسجيل الخروج بأمان.");
   };
