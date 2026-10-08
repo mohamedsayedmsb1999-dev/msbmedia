@@ -1594,7 +1594,7 @@
         </div>
       </div>
 
-      <!-- نموذج إرفاق الإيصال مع رسوم 2% -->
+      <!-- نموذج إرفاق الإيصال مع رسوم 5% -->
       <div id="paymentFormWrapper" style="background: #fff; border: 1.8px solid #000; border-radius: var(--radius-xl); padding: 1.5rem 1.2rem; box-shadow: var(--shadow-card);">
         <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.3rem; text-align: right;">تأكيد الدفع وإرفاق الإيصال 📑</h3>
         <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem; text-align: right;">سجل بياناتك وسيصل إشعار فوري لإدارة المنصة لبدء تنفيذ الأوردر:</p>
@@ -1624,19 +1624,19 @@
             <input type="number" id="paidBaseAmount" class="form-control" placeholder="مثال: 250" value="250" min="250" oninput="recalcFee()">
           </div>
 
-          <!-- تفصيل رسوم تعبئة الرصيد 2% -->
+          <!-- تفصيل رسوم تعبئة الرصيد 5% -->
           <div style="background: #FAF8EE; border: 1px dashed #D4D4D8; border-radius: 10px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.8rem;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
               <span style="color: var(--text-muted);">المبلغ المطلوب:</span>
-              <strong id="displayBaseAmount">220.00 ج.م</strong>
+              <strong id="displayBaseAmount">250.00 ج.م</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-              <span style="color: var(--text-muted);">رسوم تعبئة الرصيد (2%):</span>
-              <strong id="displayFeeAmount" style="color: #B45309;">4.40 ج.م</strong>
+              <span style="color: var(--text-muted);">رسوم تعبئة الرصيد (5%):</span>
+              <strong id="displayFeeAmount" style="color: #B45309;">12.50 ج.م</strong>
             </div>
             <div style="display: flex; justify-content: space-between; border-top: 1px solid #E4E4E7; padding-top: 4px; font-size: 0.88rem;">
               <span style="font-weight: 900;">الإجمالي المطلوب تحويله:</span>
-              <strong id="displayTotalWithFee" style="color: #047857; font-weight: 900;">224.40 ج.م</strong>
+              <strong id="displayTotalWithFee" style="color: #047857; font-weight: 900;">262.50 ج.م</strong>
             </div>
           </div>
 
@@ -1652,7 +1652,7 @@
 
         <div class="compact-alert-band">
           <i class="fa-solid fa-circle-exclamation"></i>
-          <span>يرجى تحويل الإجمالي شاملاً الرسوم وإرفاق لقطة شاشة واضحة برقم العملية لضمان سرعة إضافة الرصيد.</span>
+          <span>يرجى تحويل الإجمالي شاملاً رسوم التعبئة 5% وإرفاق لقطة شاشة واضحة برقم العملية لضمان سرعة إضافة الرصيد.</span>
         </div>
       </div>
 
@@ -1680,7 +1680,7 @@
           <li>قم بتسجيل الدخول أو إنشاء حساب جديد في المنصة أولاً لربط عملياتك.</li>
           <li>اختر الخدمة والمنصة المطلوبة من القائمة وضع رابط المنشور أو الحساب العام (Public).</li>
           <li>حدد الكمية مع مراعاة الحدود الدنيا (المتابعين 1000، اللايكات 1000، المشاهدات 1000، الكومنتات 30).</li>
-          <li>انتقل لصفحة المحفظة وسدد القيمة مضافاً إليها رسوم التعبئة (2%) عبر وسيلة الدفع المناسبة.</li>
+          <li>انتقل لصفحة المحفظة وسدد القيمة مضافاً إليها رسوم التعبئة (5%) عبر وسيلة الدفع المناسبة.</li>
           <li>أرفق إيصال السداد، وبمجرد الموافقة ينزل الرصيد ويبدأ تنفيذ الأوردر فوراً.</li>
         </ol>
 
@@ -1947,7 +1947,7 @@
     function recalcFee() {
       const baseInput = document.getElementById('paidBaseAmount');
       const base = parseFloat(baseInput.value) || 0;
-      const fee = Math.round(base * 0.02 * 100) / 100;
+      const fee = Math.round(base * 0.05 * 100) / 100;
       const totalWithFee = Math.round((base + fee) * 100) / 100;
 
       document.getElementById('displayBaseAmount').innerText = base.toFixed(2) + " ج.م";
@@ -2111,7 +2111,7 @@
       if (!Number.isInteger(qty) || qty < selectedMinQty) { showNotice(`الحد الأدنى للخدمة ${selectedMinQty.toLocaleString()} 🔢`, "error"); return; }
       const summary = await loadWalletSummary();
       const total = Math.round(qty * selectedRate * 100) / 100;
-      if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(50, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر 💳`, "info"); return; }
+      if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(250, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر 💳`, "info"); return; }
       try {
         const result = await apiJson({ action: 'social_growth_order', serviceId: selectedServiceId, quantity: qty, targetUrl: document.getElementById('quickLink').value.trim() });
         showNotice(`${result.message} ✅`, "success"); await loadWalletSummary();

@@ -305,6 +305,7 @@ async function handleReceipt(request: Request) {
   const serviceId = Number(form.get("serviceId"));
   const requestedQuantity = Number(form.get("requestedQuantity"));
   const targetUrl = text(form.get("targetUrl"), 1000);
+  const { data: customerProfile } = await admin.from("customer_profiles").select("email").eq("id", customerId).maybeSingle();
   if (!(file instanceof File) || customerName.length < 2 || phone.length < 6 || !isSafePaymentMethod(method)) return json({ ok: false, message: "تحقق من بيانات الإيصال ثم أعد المحاولة." }, 400);
   if (method === "binance_pay" && binancePhone.length < 6) return json({ ok: false, message: "اكتب رقم هاتفك لتأكيد تحويل Binance Pay." }, 400);
   if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) return json({ ok: false, message: "صورة الإيصال يجب أن تكون JPG أو PNG أو WEBP وبحد أقصى 5 ميجابايت." }, 400);
@@ -315,7 +316,7 @@ async function handleReceipt(request: Request) {
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
     if (!Number.isFinite(depositAmount) || depositAmount < 250 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 250 ج.م." }, 400);
-    const fee = Math.round(depositAmount * 0.02 * 100) / 100;
+    const fee = Math.round(depositAmount * 0.05 * 100) / 100;
     const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
     const secret = randomToken();
     const approvalTokenHash = await sha256(secret);
@@ -324,7 +325,7 @@ async function handleReceipt(request: Request) {
     if (depositError) throw depositError;
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الطلب", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["الطريقة", method], ["المبلغ الصافي", `${depositAmount.toFixed(2)} ج.م`], ["الإجمالي المحول", `${totalAmount.toFixed(2)} ج.م`], ["الإيصال", safeName], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "etisalat_cash" ? "اتصالات كاش" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} ج.م`], ["رسوم التعبئة (5%)", `${fee.toFixed(2)} ج.م`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} ج.م`], ["الإيصال", safeName], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
