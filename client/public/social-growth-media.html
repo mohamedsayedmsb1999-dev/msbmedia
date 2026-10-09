@@ -1109,7 +1109,7 @@
 
       <div class="hero-card-box">
         <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.2rem;">⚡ تنفيذ طلب فوري</h3>
-        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">اختر الخدمة وهيتحسب الإجمالي تلقائياً:</p>
+        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">اختار الخدمة، وهتشوف الحد الأدنى والسعر ومدة التنفيذ قبل التأكيد:</p>
 
         <form onsubmit="handleQuickOrder(event)">
           <div class="form-group">
@@ -2163,9 +2163,9 @@
     async function handleApprovalFromEmail() {
       const params = new URLSearchParams(location.search);
       const approveWallet = params.get('approve'), rejectWallet = params.get('reject');
-      const approveOrder = params.get('approve_order'), rejectOrder = params.get('reject_order');
-      const token = approveWallet || rejectWallet || approveOrder || rejectOrder; if (!token) return;
-      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : 'reject_order';
+      const approveOrder = params.get('approve_order'), rejectOrder = params.get('reject_order'), completeOrder = params.get('complete_order');
+      const token = approveWallet || rejectWallet || approveOrder || rejectOrder || completeOrder; if (!token) return;
+      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : rejectOrder ? 'reject_order' : 'complete_order';
       try { const result = await apiJson({ action, token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
     }
 

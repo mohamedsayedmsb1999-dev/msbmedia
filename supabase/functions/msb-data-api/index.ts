@@ -77,7 +77,7 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
     return false;
   }
   try {
-    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const parts = value.split(" | "); const rendered = label === "قرار الإدارة" ? parts.map((part, index) => `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:${index === 0 ? "#0b5bd3" : "#b91c1c"};color:#fff;border-radius:8px;text-decoration:none">${index === 0 ? "✅ قبول الدفع" : "❌ رفض الدفع"}</a>`).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
+    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const parts = value.split(" | "); const rendered = label === "قرار الإدارة" ? parts.map((part, index) => { const button = parts.length === 3 ? ["✅ قبول الطلب", "❌ رفض الطلب", "✅ تم التنفيذ"][index] : ["✅ قبول الدفع", "❌ رفض الدفع"][index]; const color = parts.length === 3 ? ["#0b5bd3", "#b91c1c", "#047857"][index] : ["#0b5bd3", "#b91c1c"][index]; return `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:${color};color:#fff;border-radius:8px;text-decoration:none">${button}</a>`; }).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
@@ -207,7 +207,7 @@ async function handleJson(request: Request) {
     return json({ ok: true, message: isApprove ? "تم قبول الدفع وإضافة الرصيد للعميل ✅" : "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
   }
 
-  if (action === "approve_order" || action === "reject_order") {
+  if (action === "approve_order" || action === "reject_order" || action === "complete_order") {
     const token = text(input.token, 200);
     const [orderId, rawSecret] = token.split(".");
     if (!orderId || !rawSecret) return json({ ok: false, message: "رابط قرار الطلب غير صالح." }, 400);
@@ -215,7 +215,14 @@ async function handleJson(request: Request) {
     const { data: order, error: orderError } = await admin.from("social_growth_orders").select("id, customer_profile_id, amount, status, approval_token_hash").eq("id", orderId).maybeSingle();
     if (orderError) throw orderError;
     if (!order || order.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط قرار الطلب غير صالح أو منتهي." }, 403);
-    if (order.status !== "manual_review") return json({ ok: true, message: order.status === "rejected" ? "تم رفض الطلب سابقًا." : "تم قبول الطلب سابقًا وبدأت مراجعته." });
+    if (action === "complete_order") {
+      if (order.status === "completed") return json({ ok: true, message: "الطلب مكتمل بالفعل ✅" });
+      if (order.status !== "in_progress") return json({ ok: false, message: "لا يمكن وضع الطلب كمكتمل قبل قبول الطلب وبدء التنفيذ." }, 400);
+      const { error: completeError } = await admin.from("social_growth_orders").update({ status: "completed" }).eq("id", order.id).eq("status", "in_progress");
+      if (completeError) throw completeError;
+      return json({ ok: true, message: "تم تحديث الطلب إلى مكتمل ✅" });
+    }
+    if (order.status !== "manual_review") return json({ ok: true, message: order.status === "rejected" ? "تم رفض الطلب سابقًا." : order.status === "completed" ? "الطلب مكتمل بالفعل." : "تم قبول الطلب سابقًا وبدأت مراجعته." });
     const isApprove = action === "approve_order";
     const { error: updateError } = await admin.from("social_growth_orders").update({ status: isApprove ? "in_progress" : "rejected" }).eq("id", order.id).eq("status", "manual_review");
     if (updateError) throw updateError;
@@ -245,7 +252,8 @@ async function handleJson(request: Request) {
     if (ledgerError) throw ledgerError;
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
-    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار قبول أو رفض", [["معرف الطلب", order.id], ["الخدمة", service.name], ["الكمية", String(quantity)], ["الرابط", targetUrl], ["القيمة", `${amount.toFixed(2)} ج.م`], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
+    const completeUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?complete_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
+    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", order.id], ["الخدمة", service.name], ["الكمية", String(quantity)], ["الرابط", targetUrl], ["القيمة", `${amount.toFixed(2)} ج.م`], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl} | ${completeUrl}`]]);
     return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. جاري انتظار مراجعة الإدارة." });
   }
 
