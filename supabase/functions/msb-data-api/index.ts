@@ -29,22 +29,46 @@ const campaignBudgets = {
   "10k_25k": "من 10,000 إلى 25,000 ج.م",
   "25k_plus": "أكثر من 25,000 ج.م",
 } as const;
-const socialServices: Record<number, { name: string; rate: number; min: number }> = {
-  101: { name: "متابعين فيسبوك مصريين 🇪🇬", rate: 0.22, min: 1000 }, 102: { name: "متابعين فيسبوك أجانب 🌍", rate: 0.09, min: 1000 },
-  103: { name: "لايكات فيسبوك مصريين ❤️", rate: 0.8, min: 1000 }, 105: { name: "كومنتات فيسبوك مكتوبة باليد ✍️", rate: 3.5, min: 30 }, 109: { name: "مشاهدات فيديو فيسبوك 👁️", rate: 0.06, min: 1000 },
-  201: { name: "متابعين تيك توك مصريين 🇪🇬", rate: 0.22, min: 1000 }, 202: { name: "متابعين تيك توك أجانب 🌍", rate: 0.09, min: 1000 }, 203: { name: "لايكات تيك توك فوري ❤️", rate: 0.8, min: 1000 }, 204: { name: "كومنتات تيك توك مخصصة ✍️", rate: 3.5, min: 30 }, 205: { name: "مشاهدات تيك توك فائقة السرعة 👁️", rate: 0.06, min: 1000 },
-  301: { name: "متابعين إنستجرام مصريين 🇪🇬", rate: 0.22, min: 1000 }, 302: { name: "متابعين إنستجرام أجانب 🌍", rate: 0.09, min: 1000 }, 303: { name: "لايكات إنستجرام فورية ❤️", rate: 0.8, min: 1000 }, 305: { name: "كومنتات إنستجرام مصرية ✍️", rate: 3.5, min: 30 }, 306: { name: "مشاهدات ريلز إنستجرام 👁️", rate: 0.06, min: 1000 },
-  401: { name: "مشتركون يوتيوب تفعيل القنوات ▶️", rate: 0.25, min: 1000 }, 403: { name: "مشاهدات يوتيوب لرفع الريتش 👁️", rate: 0.06, min: 1000 },
+type SocialService = { name: string; rate: number; min: number; max: number; platform: "facebook" | "instagram" | "tiktok" | "youtube"; delivery: string; guarantee: string };
+const socialServices: Record<number, SocialService> = {
+  101: { name: "متابعين فيسبوك مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم تعويض نقص" },
+  102: { name: "متابعين فيسبوك أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "ثابت حسب الخدمة" },
+  103: { name: "Facebook Like 👍", rate: 0.75, min: 100, max: 5000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  104: { name: "Facebook Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  105: { name: "Facebook Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
+  109: { name: "مشاهدات فيديو فيسبوك 👁️ 🔥", rate: 0.03, min: 1000, max: 1000000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "ثابت" },
+  201: { name: "متابعين تيك توك مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  202: { name: "متابعين تيك توك أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "ثابت" },
+  203: { name: "TikTok Like 👍", rate: 0.75, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  204: { name: "TikTok Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  205: { name: "TikTok Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
+  206: { name: "مشاهدات تيك توك 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "ثابت" },
+  301: { name: "متابعين إنستجرام مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  302: { name: "متابعين إنستجرام أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  303: { name: "Instagram Like 👍", rate: 0.75, min: 100, max: 5000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  304: { name: "Instagram Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  305: { name: "Instagram Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
+  306: { name: "مشاهدات ريلز إنستجرام 👁️ 🔥", rate: 0.03, min: 1000, max: 1000000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "ثابت" },
+  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 0.25, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  402: { name: "YouTube Like 👍", rate: 0.75, min: 100, max: 5000, platform: "youtube", delivery: "24–48 ساعة", guarantee: "ثابت" },
+  403: { name: "مشاهدات يوتيوب 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "youtube", delivery: "24–48 ساعة", guarantee: "ثابت" },
 };
 const PUBLIC_SITE_URL = Deno.env.get("MSB_PUBLIC_SITE_URL") ?? "https://www.msbmedia.agency";
 
 function isWebsiteUrl(value: string) {
   try {
     const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:";
+    return (url.protocol === "https:" || url.protocol === "http:") && Boolean(url.hostname);
   } catch {
     return false;
   }
+}
+
+function matchesServicePlatform(value: string, service: SocialService) {
+  if (!isWebsiteUrl(value)) return false;
+  const host = new URL(value).hostname.toLowerCase().replace(/^www\./, "");
+  const domains = { facebook: ["facebook.com", "fb.com"], instagram: ["instagram.com"], tiktok: ["tiktok.com"], youtube: ["youtube.com", "youtu.be"] }[service.platform];
+  return domains.some(domain => host === domain || host.endsWith(`.${domain}`)) && new URL(value).pathname.length > 1;
 }
 
 async function notifyOwner(subject: string, lines: Array<[string, string]>) {
@@ -53,7 +77,7 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
     return false;
   }
   try {
-    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const parts = value.split(" | "); const rendered = label === "قرار الإدارة" ? parts.map((part, index) => `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:${index === 0 ? "#0b5bd3" : "#b91c1c"};color:#fff;border-radius:8px;text-decoration:none">${index === 0 ? "✅ قبول الدفع" : "❌ رفض الدفع"}</a>`).join(" ") : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
+    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const parts = value.split(" | "); const rendered = label === "قرار الإدارة" ? parts.map((part, index) => `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:${index === 0 ? "#0b5bd3" : "#b91c1c"};color:#fff;border-radius:8px;text-decoration:none">${index === 0 ? "✅ قبول الدفع" : "❌ رفض الدفع"}</a>`).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
@@ -135,7 +159,7 @@ async function handleJson(request: Request) {
     const { data: customer, error } = await admin.from("customer_profiles").insert({ full_name: fullName, phone, email: email || null, password_hash: passwordHash, password_salt: passwordSalt }).select("id, full_name, phone, email").single();
     if (error) throw error;
     const token = await createSession(customer.id);
-    await notifyOwner("تسجيل عميل جديد", [["الاسم", customer.full_name], ["الهاتف", customer.phone]]);
+    await notifyOwner("تسجيل عميل جديد", [["الاسم", customer.full_name], ["الهاتف", customer.phone], ["البريد", customer.email || "غير مضاف"], ["تاريخ التسجيل", new Date().toLocaleString("ar-EG")], ["ملاحظة الأمان", "كلمة المرور لا تُرسل بالبريد ولا يمكن استرجاعها كنص واضح."]]);
     return json({ ok: true, customer, token });
   }
 
@@ -209,7 +233,7 @@ async function handleJson(request: Request) {
     const quantity = Number(input.quantity);
     const targetUrl = text(input.targetUrl, 1000);
     const service = socialServices[serviceId];
-    if (!service || !Number.isInteger(quantity) || quantity < service.min || quantity > 100000000 || !isWebsiteUrl(targetUrl)) return json({ ok: false, message: "تحقق من الخدمة والكمية والرابط." }, 400);
+    if (!service || !Number.isInteger(quantity) || quantity < service.min || quantity > service.max || !matchesServicePlatform(targetUrl, service)) return json({ ok: false, message: `تحقق من الخدمة والكمية. الرابط لازم يكون رابط ${service?.platform || "المنصة"} صحيح ومناسب للخدمة.` }, 400);
     const amount = Math.round(quantity * service.rate * 100) / 100;
     const balance = await walletBalance(customerId);
     if (balance < amount) return json({ ok: false, message: `رصيدك الحالي ${balance.toFixed(2)} ج.م، والمطلوب ${amount.toFixed(2)} ج.م.` }, 400);
@@ -309,23 +333,25 @@ async function handleReceipt(request: Request) {
   if (!(file instanceof File) || customerName.length < 2 || phone.length < 6 || !isSafePaymentMethod(method)) return json({ ok: false, message: "تحقق من بيانات الإيصال ثم أعد المحاولة." }, 400);
   if (method === "binance_pay" && binancePhone.length < 6) return json({ ok: false, message: "اكتب رقم هاتفك لتأكيد تحويل Binance Pay." }, 400);
   if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) return json({ ok: false, message: "صورة الإيصال يجب أن تكون JPG أو PNG أو WEBP وبحد أقصى 5 ميجابايت." }, 400);
-  if (action === "wallet_deposit" && (!Number.isFinite(depositAmount) || depositAmount < 250 || depositAmount > 1000000)) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 250 ج.م." }, 400);
+  if (action === "wallet_deposit" && (!Number.isFinite(depositAmount) || depositAmount < 100 || depositAmount > 1000000)) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 100 ج.م." }, 400);
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "receipt";
   const storagePath = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${safeName}`;
   const { error: uploadError } = await admin.storage.from("payment-receipts").upload(storagePath, await file.arrayBuffer(), { contentType: file.type, upsert: false });
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
-    if (!Number.isFinite(depositAmount) || depositAmount < 250 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 250 ج.م." }, 400);
+    if (!Number.isFinite(depositAmount) || depositAmount < 100 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 100 ج.م." }, 400);
     const fee = Math.round(depositAmount * 0.05 * 100) / 100;
     const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
     const secret = randomToken();
     const approvalTokenHash = await sha256(secret);
     const service = socialServices[serviceId];
+    if (service && (requestedQuantity || targetUrl) && (!Number.isInteger(requestedQuantity) || requestedQuantity < service.min || requestedQuantity > service.max || !matchesServicePlatform(targetUrl, service))) return json({ ok: false, message: `تحقق من كمية ورابط خدمة ${service.platform} قبل إرسال الإيصال.` }, 400);
     const { data: deposit, error: depositError } = await admin.from("wallet_deposits").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, amount: depositAmount, fee, total_amount: totalAmount, service_id: service ? serviceId : null, service_name: service?.name ?? null, requested_quantity: service && Number.isInteger(requestedQuantity) ? requestedQuantity : null, target_url: isWebsiteUrl(targetUrl) ? targetUrl : null, receipt_storage_path: storagePath, receipt_filename: safeName, approval_token_hash: approvalTokenHash }).select("id").single();
     if (depositError) throw depositError;
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "etisalat_cash" ? "اتصالات كاش" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} ج.م`], ["رسوم التعبئة (5%)", `${fee.toFixed(2)} ج.م`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} ج.م`], ["الإيصال", safeName], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
+    const { data: signedReceipt } = await admin.storage.from("payment-receipts").createSignedUrl(storagePath, 60 * 60 * 24 * 7);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "etisalat_cash" ? "اتصالات كاش" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} ج.م`], ["رسوم التعبئة (5%)", `${fee.toFixed(2)} ج.م`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} ج.م`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
