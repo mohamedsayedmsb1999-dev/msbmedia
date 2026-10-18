@@ -31,20 +31,20 @@ const campaignBudgets = {
 } as const;
 type SocialService = { name: string; rate: number; min: number; max: number; platform: "facebook" | "instagram" | "tiktok" | "youtube"; delivery: string; guarantee: string };
 const socialServices: Record<number, SocialService> = {
-  101: { name: "متابعين فيسبوك مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم تعويض نقص" },
-  102: { name: "متابعين فيسبوك أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "ثابت حسب الخدمة" },
+  101: { name: "متابعين فيسبوك مصريين 🇪🇬 🔥", rate: 0.28, min: 100, max: 500000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم تعويض نقص" },
+  102: { name: "متابعين فيسبوك أجانب 🌍 🚀", rate: 0.067, min: 1000, max: 500000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "ثابت حسب الخدمة" },
   103: { name: "Facebook Like 👍", rate: 0.75, min: 100, max: 5000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   104: { name: "Facebook Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   105: { name: "Facebook Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
   109: { name: "مشاهدات فيديو فيسبوك 👁️ 🔥", rate: 0.03, min: 1000, max: 1000000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "ثابت" },
-  201: { name: "متابعين تيك توك مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
-  202: { name: "متابعين تيك توك أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "ثابت" },
+  201: { name: "متابعين تيك توك مصريين 🇪🇬 🔥", rate: 0.28, min: 100, max: 500000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  202: { name: "متابعين تيك توك أجانب 🌍 🚀", rate: 0.067, min: 1000, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "ثابت" },
   203: { name: "TikTok Like 👍", rate: 0.75, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   204: { name: "TikTok Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   205: { name: "TikTok Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
   206: { name: "مشاهدات تيك توك 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "ثابت" },
-  301: { name: "متابعين إنستجرام مصريين 🇪🇬 🔥", rate: 0.22, min: 100, max: 500000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
-  302: { name: "متابعين إنستجرام أجانب 🌍 🚀", rate: 0.05, min: 1000, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  301: { name: "متابعين إنستجرام مصريين 🇪🇬 🔥", rate: 0.28, min: 100, max: 500000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
+  302: { name: "متابعين إنستجرام أجانب 🌍 🚀", rate: 0.067, min: 1000, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "30 يوم" },
   303: { name: "Instagram Like 👍", rate: 0.75, min: 100, max: 5000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   304: { name: "Instagram Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   305: { name: "Instagram Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
@@ -77,7 +77,17 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
     return false;
   }
   try {
-    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8"><h2>MSB Media — ${escapeHtml(subject)}</h2><table>${lines.map(([label, value]) => { const parts = value.split(" | "); const rendered = label === "قرار الإدارة" ? parts.map((part, index) => { const button = parts.length === 3 ? ["✅ قبول الطلب", "❌ رفض الطلب", "✅ تم التنفيذ"][index] : ["✅ قبول الدفع", "❌ رفض الدفع"][index]; const color = parts.length === 3 ? ["#0b5bd3", "#b91c1c", "#047857"][index] : ["#0b5bd3", "#b91c1c"][index]; return `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:10px 14px;background:${color};color:#fff;border-radius:8px;text-decoration:none">${button}</a>`; }).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" "); return `<tr><td style="padding:4px 0;font-weight:700">${escapeHtml(label)}:</td><td style="padding:4px 8px">${rendered}</td></tr>`; }).join("")}</table></div>`;
+    const html = `<div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.8;max-width:760px"><h2>MSB Media — ${escapeHtml(subject)}</h2><table style="width:100%;border-collapse:collapse">${lines.map(([label, value]) => {
+      const parts = value.split(" | ");
+      const rendered = label === "قرار الإدارة" ? parts.map((part, index) => {
+        const labels = ["✅ قبول الطلب", "⚙️ قيد المعالجة", "◐ تنفيذ جزئي", "✅ تم التنفيذ", "❌ رفض الطلب"];
+        const colors = ["#0b5bd3", "#7c3aed", "#b45309", "#047857", "#b91c1c"];
+        const button = labels[index] || "تنفيذ الإجراء";
+        const color = colors[index] || "#334155";
+        return `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:11px 14px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-weight:700">${button}</a>`;
+      }).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" ");
+      return `<tr><td style="padding:6px 0;font-weight:700;border-bottom:1px solid #eee">${escapeHtml(label)}:</td><td style="padding:6px 8px;border-bottom:1px solid #eee">${rendered}</td></tr>`;
+    }).join("")}</table></div>`;
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
@@ -93,7 +103,6 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
     return false;
   }
 }
-
 async function sha256(value: string) {
   const encoded = new TextEncoder().encode(value);
   return hex(new Uint8Array(await crypto.subtle.digest("SHA-256", encoded)));
@@ -207,7 +216,7 @@ async function handleJson(request: Request) {
     return json({ ok: true, message: isApprove ? "تم قبول الدفع وإضافة الرصيد للعميل ✅" : "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
   }
 
-  if (action === "approve_order" || action === "reject_order" || action === "complete_order") {
+  if (["approve_order", "process_order", "partial_order", "complete_order", "reject_order"].includes(action)) {
     const token = text(input.token, 200);
     const [orderId, rawSecret] = token.split(".");
     if (!orderId || !rawSecret) return json({ ok: false, message: "رابط قرار الطلب غير صالح." }, 400);
@@ -215,22 +224,26 @@ async function handleJson(request: Request) {
     const { data: order, error: orderError } = await admin.from("social_growth_orders").select("id, customer_profile_id, amount, status, approval_token_hash").eq("id", orderId).maybeSingle();
     if (orderError) throw orderError;
     if (!order || order.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط قرار الطلب غير صالح أو منتهي." }, 403);
-    if (action === "complete_order") {
-      if (order.status === "completed") return json({ ok: true, message: "الطلب مكتمل بالفعل ✅" });
-      if (order.status !== "in_progress") return json({ ok: false, message: "لا يمكن وضع الطلب كمكتمل قبل قبول الطلب وبدء التنفيذ." }, 400);
-      const { error: completeError } = await admin.from("social_growth_orders").update({ status: "completed" }).eq("id", order.id).eq("status", "in_progress");
-      if (completeError) throw completeError;
-      return json({ ok: true, message: "تم تحديث الطلب إلى مكتمل ✅" });
-    }
-    if (order.status !== "manual_review") return json({ ok: true, message: order.status === "rejected" ? "تم رفض الطلب سابقًا." : order.status === "completed" ? "الطلب مكتمل بالفعل." : "تم قبول الطلب سابقًا وبدأت مراجعته." });
-    const isApprove = action === "approve_order";
-    const { error: updateError } = await admin.from("social_growth_orders").update({ status: isApprove ? "in_progress" : "rejected" }).eq("id", order.id).eq("status", "manual_review");
-    if (updateError) throw updateError;
-    if (!isApprove) {
+
+    const transitions: Record<string, { from: string[]; to: string; message: string }> = {
+      approve_order: { from: ["manual_review"], to: "in_progress", message: "تم قبول الطلب وبدأت حالته التنفيذ ✅" },
+      process_order: { from: ["in_progress"], to: "processing", message: "تم نقل الطلب إلى قيد المعالجة ⚙️" },
+      partial_order: { from: ["in_progress", "processing"], to: "partial", message: "تم تحديث الطلب إلى تنفيذ جزئي ◐" },
+      complete_order: { from: ["in_progress", "processing", "partial"], to: "completed", message: "تم تحديث الطلب إلى مكتمل ✅" },
+    };
+    if (action === "reject_order") {
+      if (order.status !== "manual_review") return json({ ok: false, message: "الرفض متاح فقط قبل بدء التنفيذ. استخدم زر الحالة المناسب بعد بدء الطلب." }, 400);
+      const { error: updateError } = await admin.from("social_growth_orders").update({ status: "rejected" }).eq("id", order.id).eq("status", "manual_review");
+      if (updateError) throw updateError;
       const { error: refundError } = await admin.from("wallet_ledger").insert({ customer_profile_id: order.customer_profile_id, amount: order.amount, kind: "refund", reference_id: order.id, description: "استرجاع قيمة طلب نمو سوشيال مرفوض" });
       if (refundError && !refundError.message.includes("duplicate")) throw refundError;
+      return json({ ok: true, message: "تم رفض الطلب وإرجاع قيمته إلى محفظة العميل ✅" });
     }
-    return json({ ok: true, message: isApprove ? "تم قبول الطلب وبدأت حالته التنفيذ ✅" : "تم رفض الطلب وإرجاع قيمته إلى محفظة العميل ✅" });
+    const transition = transitions[action];
+    if (!transition.from.includes(order.status)) return json({ ok: false, message: `لا يمكن تنفيذ هذا الإجراء والطلب حالته الحالية: ${order.status}` }, 400);
+    const { error: updateError } = await admin.from("social_growth_orders").update({ status: transition.to }).eq("id", order.id).in("status", transition.from);
+    if (updateError) throw updateError;
+    return json({ ok: true, message: transition.message });
   }
 
   if (action === "social_growth_order") {
@@ -250,10 +263,13 @@ async function handleJson(request: Request) {
     if (orderError) throw orderError;
     const { error: ledgerError } = await admin.from("wallet_ledger").insert({ customer_profile_id: customerId, amount: -amount, kind: "order", reference_id: order.id, description: `طلب يدوي: ${service.name} — ${quantity}` });
     if (ledgerError) throw ledgerError;
-    const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
-    const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
-    const completeUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?complete_order=${encodeURIComponent(`${order.id}.${secret}`)}`;
-    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", order.id], ["الخدمة", service.name], ["الكمية", String(quantity)], ["الرابط", targetUrl], ["القيمة", `${amount.toFixed(2)} ج.م`], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl} | ${completeUrl}`]]);
+    const token = encodeURIComponent(`${order.id}.${secret}`);
+    const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve_order=${token}`;
+    const processUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?process_order=${token}`;
+    const partialUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?partial_order=${token}`;
+    const completeUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?complete_order=${token}`;
+    const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${token}`;
+    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", order.id], ["كود الخدمة", String(serviceId).padStart(4, "0")], ["الخدمة", service.name], ["الكمية", String(quantity)], ["سعر الوحدة", `${service.rate.toFixed(3)} ج.م`], ["معادلة الحساب", `${quantity} × ${service.rate.toFixed(3)} = ${amount.toFixed(2)} ج.م`], ["الرابط", targetUrl], ["القيمة النهائية", `${amount.toFixed(2)} ج.م`], ["قرار الإدارة", `${approvalUrl} | ${processUrl} | ${partialUrl} | ${completeUrl} | ${rejectUrl}`]]);
     return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. جاري انتظار مراجعة الإدارة." });
   }
 

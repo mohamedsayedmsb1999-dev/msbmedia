@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MSB Media | By Mohamed Sayed</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -945,7 +945,19 @@
       .hero-heading { font-size: 1.95rem; }
       .top-header { padding: 0.6rem 3%; }
     }
-  </style>
+
+    /* لوحة الطلبات الاحترافية: كروت مرنة للموبايل والكمبيوتر */
+    .orders-toolbar{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;justify-content:space-between;margin:1rem 0}
+    .orders-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .order-card{background:#fff;border:1px solid #e8e5d8;border-radius:18px;padding:1rem;box-shadow:0 10px 28px rgba(20,20,20,.08);transition:transform .18s ease,box-shadow .18s ease;min-width:0}
+    .order-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(20,20,20,.12)}
+    .order-card-top,.order-card-meta,.order-card-stats{display:flex;gap:.55rem;align-items:center;justify-content:space-between}
+    .order-card-top{margin-bottom:.8rem}.order-code{font-family:ui-monospace,monospace;color:#b42318;font-size:.72rem;font-weight:900;background:#fff1f0;padding:.28rem .45rem;border-radius:7px}
+    .order-card h3{font-size:.9rem;line-height:1.55;margin:.35rem 0 .55rem;color:#151515}.order-card-meta{font-size:.72rem;color:#71717a;margin-bottom:.65rem;align-items:flex-start}.order-card-meta a{color:#075bd6;word-break:break-all;text-decoration:none}.order-card-meta a:hover{text-decoration:underline}
+    .order-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin:.75rem 0}.order-stat{background:#f8f8f5;border:1px solid #ecebe4;border-radius:9px;text-align:center;padding:.45rem .25rem}.order-stat small{display:block;color:#71717a;font-size:.62rem;margin-bottom:.2rem}.order-stat strong{font-size:.78rem;color:#18181b}.order-progress-label{display:flex;justify-content:space-between;font-size:.65rem;color:#71717a;margin-top:.6rem}.order-progress{height:6px;background:#ececec;border-radius:99px;overflow:hidden}.order-progress>span{display:block;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:inherit}
+    .orders-empty{background:#fff;border:1px dashed #d4d4d8;border-radius:16px;padding:2.3rem 1rem;text-align:center;color:#71717a}
+    @media(max-width:760px){.orders-grid{grid-template-columns:1fr}.order-card{padding:.85rem}.order-card h3{font-size:.82rem}.orders-toolbar{align-items:stretch}.orders-toolbar .services-filter-pills{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start!important;padding-bottom:.25rem}.orders-toolbar .filter-pill-btn{white-space:nowrap;font-size:.68rem;padding:.45rem .65rem}}
+</style>
 </head>
 <body>
 
@@ -1083,7 +1095,7 @@
         <span class="hero-badge-pill">🔥 أقوى سيرفر تزويد وتفاعل في مصر</span>
         <h1 class="hero-heading">زوّد متابعينك ومبيعاتك <span>في ثواني معدودة!</span> 🚀</h1>
         <p class="hero-desc">كل اللي تحتاجه لصفحتك أو متجرك في مكان واحد! متابعين حقيقيين، لايكات، وكومنتات مصرية مكتوبة باليد بتكسر التردد وتضاعف مبيعاتك فورياً وبأمان 100% بدون باسوردات! 💯✨</p>
-        
+
         <div class="hero-animated-character-box">
           <div class="girl-floating-avatar" title="MSB Media — نمو وتفاعل">
             <span class="hero-avatar-mark">MSB</span>
@@ -1117,36 +1129,36 @@
             <div class="custom-service-picker-wrapper">
               <div class="custom-picker-selected" id="pickerTrigger" onclick="togglePickerDropdown()">
                 <div id="pickerSelectedText">
-                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 🇪🇬 (220 ج.م/1,000)
+                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 🇪🇬 (280 ج.م/1,000)
                 </div>
                 <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
               </div>
 
               <div class="custom-picker-dropdown" id="pickerDropdownMenu">
                 <div class="picker-category-title">👥 زيادة المتابعين (الحد الأدنى: 1,000)</div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 🇪🇬', 0.22, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين</div>
-                  <span class="picker-price-tag">220 ج.م / 1,000</span>
+                  <span class="picker-price-tag">280 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك أجانب 🌍', 0.09, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 102)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك أجانب 🌍', 0.067, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 102)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك أجانب</div>
-                  <span class="picker-price-tag">90 ج.م / 1,000</span>
+                  <span class="picker-price-tag">67 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك مصريين 🇪🇬', 0.22, 1000, 1000, 'fa-brands fa-tiktok', '#000', 201)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك مصريين 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-tiktok', '#000', 201)">
                   <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> متابعين تيك توك مصريين</div>
-                  <span class="picker-price-tag">220 ج.م / 1,000</span>
+                  <span class="picker-price-tag">280 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك أجانب 🌍', 0.09, 1000, 1000, 'fa-brands fa-tiktok', '#000', 202)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك أجانب 🌍', 0.067, 1000, 1000, 'fa-brands fa-tiktok', '#000', 202)">
                   <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> متابعين تيك توك أجانب</div>
-                  <span class="picker-price-tag">90 ج.م / 1,000</span>
+                  <span class="picker-price-tag">67 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام مصريين 🇪🇬', 0.22, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 301)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام مصريين 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 301)">
                   <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> متابعين إنستجرام مصريين</div>
-                  <span class="picker-price-tag">220 ج.م / 1,000</span>
+                  <span class="picker-price-tag">280 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام أجانب 🌍', 0.09, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 302)">
+                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام أجانب 🌍', 0.067, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 302)">
                   <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> متابعين إنستجرام أجانب</div>
-                  <span class="picker-price-tag">90 ج.م / 1,000</span>
+                  <span class="picker-price-tag">67 ج.م / 1,000</span>
                 </div>
 
                 <div class="picker-category-title">💬 التعليقات المخصصة (الحد الأدنى: 30 كومنت)</div>
@@ -1213,7 +1225,7 @@
 
           <div class="price-strip">
             <span>التكلفة الإجمالية:</span>
-            <span id="quickTotalDisplay" style="font-size: 1.2rem; font-weight: 900;">220 ج.م</span>
+            <span id="quickTotalDisplay" style="font-size: 1.2rem; font-weight: 900;">28 ج.م</span>
           </div>
 
           <button type="submit" class="btn-submit-main">
@@ -1232,6 +1244,10 @@
         <h2 style="font-size: 1.45rem; font-weight: 900; margin-top: 4px;">الأسعار الرسمية والحد الأدنى لكل خدمة</h2>
       </div>
 
+      <div class="service-search-box" style="max-width:560px;margin:0 auto 12px;position:relative;">
+        <label for="smmServiceSearch" style="display:block;text-align:right;font-weight:900;font-size:.82rem;margin-bottom:5px;">🔎 ابحث باسم الخدمة أو كود الخدمة</label>
+        <input id="smmServiceSearch" type="search" placeholder="مثال: 0101 أو متابعين فيسبوك" oninput="searchServiceCatalog(this.value)" style="margin:0;width:100%;border:1.5px solid #111;border-radius:10px;padding:.65rem .8rem;">
+      </div>
       <div class="services-filter-pills">
         <button class="filter-pill-btn active" onclick="filterSmmTable('all', this)">كل الخدمات</button>
         <button class="filter-pill-btn" onclick="filterSmmTable('facebook', this)">فيسبوك</button>
@@ -1254,19 +1270,19 @@
           </thead>
           <tbody>
             <tr data-platform="facebook">
-              <td class="smm-id-cell">FB-101</td>
+              <td class="smm-id-cell">0101</td>
               <td class="smm-name-cell">
                 <strong>متابعين فيسبوك مصريين 🇪🇬</strong>
                 <small>صفحات وبروفايل [Egypt Targeted]</small>
               </td>
-              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
-              <td class="smm-price-cell">220 ج.م</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 ج.م</td>
               <td class="smm-badge-cell"><span>30 يوم</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك مصريين 🇪🇬', 0.22, 1000, 1000, 101)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك مصريين 🇪🇬', 0.28, 1000, 1000, 101)">اطلب</button></td>
             </tr>
 
             <tr data-platform="facebook">
-              <td class="smm-id-cell">FB-102</td>
+              <td class="smm-id-cell">0102</td>
               <td class="smm-name-cell">
                 <strong>متابعين فيسبوك أجانب 🌍</strong>
                 <small>سيرفر عالمي بدون نقصان [Non-Drop]</small>
@@ -1274,11 +1290,11 @@
               <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
               <td class="smm-price-cell">90 ج.م</td>
               <td class="smm-badge-cell"><span>ثابت</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك أجانب 🌍', 0.09, 1000, 1000, 102)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك أجانب 🌍', 0.067, 1000, 1000, 102)">اطلب</button></td>
             </tr>
 
             <tr data-platform="facebook">
-              <td class="smm-id-cell">FB-105</td>
+              <td class="smm-id-cell">0105</td>
               <td class="smm-name-cell">
                 <strong>كومنت فيسبوك مخصص باليد ✍️</strong>
                 <small>نصوص تختارها بنفسك [Custom]</small>
@@ -1290,7 +1306,7 @@
             </tr>
 
             <tr data-platform="facebook">
-              <td class="smm-id-cell">FB-103</td>
+              <td class="smm-id-cell">0103</td>
               <td class="smm-name-cell">
                 <strong>لايكات بوستات فيسبوك ❤️</strong>
                 <small>حسابات مصرية نشطة [Egypt Profiles]</small>
@@ -1302,7 +1318,7 @@
             </tr>
 
             <tr data-platform="facebook">
-              <td class="smm-id-cell">FB-109</td>
+              <td class="smm-id-cell">0109</td>
               <td class="smm-name-cell">
                 <strong>مشاهدات فيديو وريلز فيسبوك 👁️</strong>
                 <small>سرعة قصوى ونسبة بقاء عالية</small>
@@ -1314,19 +1330,19 @@
             </tr>
 
             <tr data-platform="tiktok">
-              <td class="smm-id-cell">TK-201</td>
+              <td class="smm-id-cell">0201</td>
               <td class="smm-name-cell">
                 <strong>متابعين تيك توك مصريين 🇪🇬</strong>
                 <small>حسابات حقيقية عربية ومصرية</small>
               </td>
-              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
-              <td class="smm-price-cell">220 ج.م</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 ج.م</td>
               <td class="smm-badge-cell"><span>نشط</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك مصريين 🇪🇬', 0.22, 1000, 1000, 201)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك مصريين 🇪🇬', 0.28, 1000, 1000, 201)">اطلب</button></td>
             </tr>
 
             <tr data-platform="tiktok">
-              <td class="smm-id-cell">TK-202</td>
+              <td class="smm-id-cell">0202</td>
               <td class="smm-name-cell">
                 <strong>متابعين تيك توك أجانب 🌍</strong>
                 <small>مظهر حقيقي فوري وسريع</small>
@@ -1334,11 +1350,11 @@
               <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
               <td class="smm-price-cell">90 ج.م</td>
               <td class="smm-badge-cell"><span>فوري</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك أجانب 🌍', 0.09, 1000, 1000, 202)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك أجانب 🌍', 0.067, 1000, 1000, 202)">اطلب</button></td>
             </tr>
 
             <tr data-platform="tiktok">
-              <td class="smm-id-cell">TK-204</td>
+              <td class="smm-id-cell">0204</td>
               <td class="smm-name-cell">
                 <strong>كومنتات تيك توك مخصصة ✍️</strong>
                 <small>عربي مخصص لرفع الإكسبلور</small>
@@ -1350,7 +1366,7 @@
             </tr>
 
             <tr data-platform="tiktok">
-              <td class="smm-id-cell">TK-203</td>
+              <td class="smm-id-cell">0203</td>
               <td class="smm-name-cell">
                 <strong>لايكات تيك توك فوري ❤️</strong>
                 <small>بدء تلقائي خلال دقائق معدودة</small>
@@ -1362,7 +1378,7 @@
             </tr>
 
             <tr data-platform="tiktok">
-              <td class="smm-id-cell">TK-205</td>
+              <td class="smm-id-cell">0205</td>
               <td class="smm-name-cell">
                 <strong>مشاهدات تيك توك فائقة 👁️</strong>
                 <small>سرعة البرق خلال ثوانٍ معدودة</small>
@@ -1374,19 +1390,19 @@
             </tr>
 
             <tr data-platform="instagram">
-              <td class="smm-id-cell">IG-301</td>
+              <td class="smm-id-cell">0301</td>
               <td class="smm-name-cell">
                 <strong>متابعين إنستجرام مصريين 🇪🇬</strong>
                 <small>بروفايلات حقيقية ومظهر ممتاز</small>
               </td>
-              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
-              <td class="smm-price-cell">220 ج.م</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 ج.م</td>
               <td class="smm-badge-cell"><span>حقيقي</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام مصريين 🇪🇬', 0.22, 1000, 1000, 301)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام مصريين 🇪🇬', 0.28, 1000, 1000, 301)">اطلب</button></td>
             </tr>
 
             <tr data-platform="instagram">
-              <td class="smm-id-cell">IG-302</td>
+              <td class="smm-id-cell">0302</td>
               <td class="smm-name-cell">
                 <strong>متابعين إنستجرام أجانب 🌍</strong>
                 <small>ضمان تعويض النقص لمدة 30 يوم</small>
@@ -1394,11 +1410,11 @@
               <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
               <td class="smm-price-cell">90 ج.م</td>
               <td class="smm-badge-cell"><span>30 يوم</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام أجانب 🌍', 0.09, 1000, 1000, 302)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام أجانب 🌍', 0.067, 1000, 1000, 302)">اطلب</button></td>
             </tr>
 
             <tr data-platform="instagram">
-              <td class="smm-id-cell">IG-305</td>
+              <td class="smm-id-cell">0305</td>
               <td class="smm-name-cell">
                 <strong>كومنت إنستجرام مصريين ✍️</strong>
                 <small>مخصص لزيادة مبيعات المتاجر</small>
@@ -1410,7 +1426,7 @@
             </tr>
 
             <tr data-platform="instagram">
-              <td class="smm-id-cell">IG-303</td>
+              <td class="smm-id-cell">0303</td>
               <td class="smm-name-cell">
                 <strong>لايكات إنستجرام فورية ❤️</strong>
                 <small>جودة عالية وسرعة استجابة فائقة</small>
@@ -1422,7 +1438,7 @@
             </tr>
 
             <tr data-platform="instagram">
-              <td class="smm-id-cell">IG-306</td>
+              <td class="smm-id-cell">0306</td>
               <td class="smm-name-cell">
                 <strong>مشاهدات ريلز إنستجرام 👁️</strong>
                 <small>رفع ريتش الفيديو للإكسبلور فورياً</small>
@@ -1434,7 +1450,7 @@
             </tr>
 
             <tr data-platform="youtube">
-              <td class="smm-id-cell">YT-401</td>
+              <td class="smm-id-cell">0401</td>
               <td class="smm-name-cell">
                 <strong>مشتركون يوتيوب تفعيل الأرباح ▶️</strong>
                 <small>تخطي شروط التفعيل بأمان تام للقناة</small>
@@ -1446,7 +1462,7 @@
             </tr>
 
             <tr data-platform="youtube">
-              <td class="smm-id-cell">YT-403</td>
+              <td class="smm-id-cell">0403</td>
               <td class="smm-name-cell">
                 <strong>مشاهدات يوتيوب رفع الريتش 👁️</strong>
                 <small>نسبة بقاء عالية واقتراح الفيديو</small>
@@ -1464,7 +1480,7 @@
     <!-- شريطان متحركان متعاكسان -->
     <div class="marquee-wrapper">
       <div class="marquee-track">
-        <div class="marquee-item"><i class="fa-brands fa-tiktok"></i> تيك توك مصريين (220ج) وأجانب (50ج)</div>
+        <div class="marquee-item"><i class="fa-brands fa-tiktok"></i> تيك توك مصريين (280ج) وأجانب (67ج)</div>
         <div class="marquee-item"><i class="fa-brands fa-facebook"></i> فيسبوك صفحات وبروفايل</div>
         <div class="marquee-item"><i class="fa-brands fa-instagram"></i> إنستجرام حقيقي ومضمون</div>
         <div class="marquee-item"><i class="fa-brands fa-youtube"></i> مشتركون يوتيوب (250ج للـ 1000)</div>
@@ -1669,14 +1685,10 @@
 
   <!-- ==================== الصفحة 3: الطلبات ==================== -->
   <div id="page-orders" class="app-page">
-    <div style="padding: 1.8rem 4%; max-width: 1100px; margin: 0 auto; text-align: right;">
-      <div style="text-align:center; margin-bottom:1.2rem;"><span class="hero-badge-pill">📦 متابعة حسابك</span><h1 style="font-size:1.8rem;font-weight:900;">طلباتك في MSB Media</h1><p style="color:var(--text-muted);font-size:.82rem;">كل طلباتك وتفاصيلها وحالتها في جدول واحد واضح.</p></div>
-      <div class="services-filter-pills" id="ordersFilterPills" style="justify-content:center;">
-        <button class="filter-pill-btn active" onclick="filterOrdersDashboard('all', this)">الكل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('pending', this)">⏳ قيد الانتظار</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('in_progress', this)">🔄 قيد التنفيذ</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('completed', this)">✅ مكتمل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('rejected', this)">❌ ملغي</button>
-      </div>
-      <div class="smm-table-touch-container" style="background:#fff;border:1px solid var(--border-light);border-radius:16px;box-shadow:var(--shadow-card);">
-        <table class="smm-standard-table" id="customerOrdersTable"><thead><tr><th>رقم الطلب</th><th>التاريخ</th><th>الخدمة</th><th>الرابط</th><th>الكمية</th><th>التكلفة</th><th>الحالة</th></tr></thead><tbody id="customerOrdersBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">سجّل الدخول لعرض طلباتك.</td></tr></tbody></table>
-      </div>
+    <div style="padding:1.8rem 4%;max-width:1180px;margin:0 auto;text-align:right;">
+      <div style="text-align:center;margin-bottom:1.2rem;"><span class="hero-badge-pill">📦 متابعة حسابك</span><h1 style="font-size:1.8rem;font-weight:900;">طلباتك في MSB Media</h1><p style="color:var(--text-muted);font-size:.82rem;">كل طلب في بطاقة واضحة، والرابط والكمية والتكلفة والحالة قدامك.</p></div>
+      <div class="orders-toolbar"><div class="services-filter-pills" id="ordersFilterPills" style="justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;"><button class="filter-pill-btn active" onclick="filterOrdersDashboard('all', this)">الكل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('pending', this)">⏳ قيد الانتظار</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('processing', this)">⚙️ قيد المعالجة</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('in_progress', this)">🔄 قيد التنفيذ</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('partial', this)">◐ جزئي</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('completed', this)">✅ مكتمل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('rejected', this)">❌ ملغى</button></div></div>
+      <div id="customerOrdersGrid" class="orders-grid"><div class="orders-empty">سجّل الدخول لعرض طلباتك.</div></div>
     </div>
   </div>
 
@@ -1755,7 +1767,7 @@
         </div>
         <h3 style="font-size: 1.2rem; font-weight: 900; margin-bottom: 0.3rem;">المحادثة الفورية المباشرة</h3>
         <p style="color: var(--text-muted); font-size: 0.84rem; margin-bottom: 1.2rem;">تواصل معنا مباشرة عبر واتساب لبدء أو متابعة أي طلب في أي وقت:</p>
-        
+
         <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled" style="font-size: 0.95rem; padding: 0.75rem 1.6rem;">
           <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> بدء محادثة واتساب الآن
         </a>
@@ -1833,7 +1845,7 @@
     }
     let customerToken = localStorage.getItem(CUSTOMER_TOKEN_KEY) || '';
     let currentUser = readCustomerProfile();
-    let selectedRate = 0.22;
+    let selectedRate = 0.28;
     let selectedMinQty = 100;
     let selectedMaxQty = 500000;
     let selectedPlatform = "facebook";
@@ -1914,9 +1926,9 @@
       selectedPlatform = arguments.length > 8 ? arguments[8] : selectedPlatform;
       selectedServiceId = serviceId;
 
-      document.getElementById('pickerSelectedText').innerHTML = `<i class="${iconClass}" style="color: ${iconColor};"></i> ${name}`;
+      document.getElementById('pickerSelectedText').innerHTML = `<i class="${iconClass}" style="color: ${iconColor};"></i> ${name} <small style="font-weight:900;color:#087548;">(#${String(serviceId).padStart(4,'0')})</small>`;
       document.getElementById('pickerDropdownMenu').classList.remove('open');
-      
+
       const qtyInput = document.getElementById('quickQty');
       qtyInput.min = minQty;
       qtyInput.max = selectedMaxQty;
@@ -1934,7 +1946,7 @@
       selectedMaxQty = minQty === 100 ? 500000 : 1000000;
       selectedServiceId = serviceId;
 
-      document.getElementById('pickerSelectedText').innerText = name;
+      document.getElementById('pickerSelectedText').innerText = `${name} (#${String(serviceId).padStart(4,'0')})`;
       const qtyInput = document.getElementById('quickQty');
       qtyInput.min = minQty;
       qtyInput.max = selectedMaxQty;
@@ -1946,18 +1958,21 @@
       document.getElementById('quickLink').focus();
     }
 
-    function filterSmmTable(platform, btn) {
-      document.querySelectorAll('.filter-pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const rows = document.querySelectorAll('#smmTable tbody tr');
-      rows.forEach(r => {
-        if (platform === 'all' || r.getAttribute('data-platform') === platform) {
-          r.style.display = '';
-        } else {
-          r.style.display = 'none';
-        }
+    let currentServicePlatformFilter = 'all';
+    let serviceSearchQuery = '';
+    function applyServiceCatalogFilters(){
+      document.querySelectorAll('#smmTable tbody tr').forEach(row => {
+        const platformOk = currentServicePlatformFilter === 'all' || row.getAttribute('data-platform') === currentServicePlatformFilter;
+        const searchOk = !serviceSearchQuery || row.textContent.toLowerCase().includes(serviceSearchQuery);
+        row.style.display = platformOk && searchOk ? '' : 'none';
       });
+    }
+    function searchServiceCatalog(value){ serviceSearchQuery = String(value || '').trim().toLowerCase(); applyServiceCatalogFilters(); }
+    function filterSmmTable(platform, btn) {
+      currentServicePlatformFilter = platform;
+      document.querySelectorAll('.services-table-section .filter-pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyServiceCatalogFilters();
     }
 
     function calculateDynamicPrice() {
@@ -2163,9 +2178,9 @@
     async function handleApprovalFromEmail() {
       const params = new URLSearchParams(location.search);
       const approveWallet = params.get('approve'), rejectWallet = params.get('reject');
-      const approveOrder = params.get('approve_order'), rejectOrder = params.get('reject_order'), completeOrder = params.get('complete_order');
-      const token = approveWallet || rejectWallet || approveOrder || rejectOrder || completeOrder; if (!token) return;
-      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : rejectOrder ? 'reject_order' : 'complete_order';
+      const approveOrder = params.get('approve_order'), processOrder = params.get('process_order'), partialOrder = params.get('partial_order'), rejectOrder = params.get('reject_order'), completeOrder = params.get('complete_order');
+      const token = approveWallet || rejectWallet || approveOrder || processOrder || partialOrder || rejectOrder || completeOrder; if (!token) return;
+      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : processOrder ? 'process_order' : partialOrder ? 'partial_order' : rejectOrder ? 'reject_order' : 'complete_order';
       try { const result = await apiJson({ action, token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
     }
 
@@ -2177,17 +2192,27 @@
     });
 
     const SERVICE_CATALOG = {
-      101:["متابعين فيسبوك مصريين 🇪🇬 🔥",.22,100,500000,"facebook","30 يوم تعويض نقص","24–48 ساعة"],102:["متابعين فيسبوك أجانب 🌍 🚀",.05,1000,500000,"facebook","ثابت حسب الخدمة","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","حسب جودة الرابط","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","ثابت","24–48 ساعة"],
-      201:["متابعين تيك توك مصريين 🇪🇬 🔥",.22,100,500000,"tiktok","30 يوم","24–48 ساعة"],202:["متابعين تيك توك أجانب 🌍 🚀",.05,1000,500000,"tiktok","ثابت","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","حسب جودة الرابط","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","ثابت","24–48 ساعة"],
-      301:["متابعين إنستجرام مصريين 🇪🇬 🔥",.22,100,500000,"instagram","30 يوم","24–48 ساعة"],302:["متابعين إنستجرام أجانب 🌍 🚀",.05,1000,500000,"instagram","30 يوم","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","حسب جودة الرابط","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","ثابت","24–48 ساعة"],
+      101:["متابعين فيسبوك مصريين 🇪🇬 🔥",.28,100,500000,"facebook","30 يوم تعويض نقص","24–48 ساعة"],102:["متابعين فيسبوك أجانب 🌍 🚀",.067,1000,500000,"facebook","ثابت حسب الخدمة","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","حسب جودة الرابط","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","ثابت","24–48 ساعة"],
+      201:["متابعين تيك توك مصريين 🇪🇬 🔥",.28,100,500000,"tiktok","30 يوم","24–48 ساعة"],202:["متابعين تيك توك أجانب 🌍 🚀",.067,1000,500000,"tiktok","ثابت","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","حسب جودة الرابط","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","ثابت","24–48 ساعة"],
+      301:["متابعين إنستجرام مصريين 🇪🇬 🔥",.28,100,500000,"instagram","30 يوم","24–48 ساعة"],302:["متابعين إنستجرام أجانب 🌍 🚀",.067,1000,500000,"instagram","30 يوم","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","حسب جودة الرابط","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","ثابت","24–48 ساعة"],
       401:["مشتركون يوتيوب ▶️ 🔥",.25,100,500000,"youtube","30 يوم","24–72 ساعة"],402:["YouTube Like 👍",.75,100,5000,"youtube","ثابت","24–48 ساعة"],403:["مشاهدات يوتيوب 👁️ 🚀",.03,1000,1000000,"youtube","ثابت","24–48 ساعة"]};
     const PLATFORM_DOMAINS={facebook:["facebook.com","fb.com"],instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"]};
     function isClientPlatformUrl(value, platform){try{const u=new URL(value);const h=u.hostname.toLowerCase().replace(/^www\./,'');return ["http:","https:"].includes(u.protocol)&&u.pathname.length>1&&PLATFORM_DOMAINS[platform].some(d=>h===d||h.endsWith('.'+d));}catch(_){return false;}}
-    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🛡️ تعويض النقص: ${guarantee}</span><span>⏱️ التنفيذ: ${delivery}</span><span>🔗 استخدم رابطًا عامًا قابلًا للفتح</span>`;}
-    function renderServiceCatalog(){const menu=document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':'#111';return `<div class="picker-option" onclick="chooseServiceOption('${name}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name}</div><span class="picker-price-tag">${/Like|Love|Haha/.test(name) ? `${(rate*100).toFixed(0)} ج/100` : `${(rate*1000).toFixed(0)} ج.م / 1,000`}</span></div>`;}).join('');}
-    function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=platform.slice(0,2).toUpperCase()+'-'+id;const isReaction=/Like|Love|Haha/.test(name);const price=isReaction?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م/1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 تعبئة ${delivery} · 🛡️ ${guarantee}</small></td><td style="font-weight:800;color:#047857;white-space:nowrap;">${min.toLocaleString('ar-EG')}</td><td class="smm-price-cell">${price}</td><td class="smm-badge-cell"><span>${delivery}</span></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
+    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><span>🛡️ تعويض النقص: ${guarantee}</span><span>⏱️ التنفيذ: ${delivery}</span><span>🔗 استخدم رابطًا عامًا قابلًا للفتح</span>`;}
+    function renderServiceCatalog(){const menu=document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':'#111';return `<div class="picker-option" onclick="chooseServiceOption('${name}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(#${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${/Like|Love|Haha/.test(name) ? `${(rate*100).toFixed(0)} ج/100` : `${(rate*1000).toFixed(0)} ج.م / 1,000`}</span></div>`;}).join('');}
+    function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isReaction=/Like|Love|Haha/.test(name);const price=isReaction?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م/1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 تعبئة ${delivery} · 🛡️ ${guarantee}</small></td><td style="font-weight:800;color:#047857;white-space:nowrap;">${min.toLocaleString('ar-EG')}</td><td class="smm-price-cell">${price}</td><td class="smm-badge-cell"><span>${delivery}</span></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
     function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
-    function renderOrdersDashboard(orders){const body=document.getElementById('customerOrdersBody');if(!body)return;const normalized=orders.map(o=>({...o,uiStatus:o.status==='manual_review'?'pending':o.status})).filter(o=>currentOrdersFilter==='all'||o.uiStatus===currentOrdersFilter);const label={pending:'⏳ قيد الانتظار',in_progress:'🔄 قيد التنفيذ',completed:'✅ مكتمل',rejected:'❌ ملغي'};body.innerHTML=normalized.length?normalized.map(o=>`<tr><td style="font-size:.7rem;direction:ltr">${o.id}</td><td>${new Date(o.created_at).toLocaleDateString('ar-EG')}</td><td><strong>${o.service_name}</strong></td><td><a href="${o.target_url}" target="_blank" rel="noopener" style="word-break:break-all;color:#075bd6">${o.target_url}</a></td><td>${Number(o.quantity).toLocaleString('ar-EG')}</td><td>${Number(o.amount).toFixed(2)} ج.م</td><td><span class="status-pill ${o.uiStatus==='in_progress'?'approved':o.uiStatus==='completed'?'approved':o.uiStatus==='rejected'?'rejected':'pending'}">${label[o.uiStatus]||'قيد الانتظار'}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">مفيش طلبات في الحالة دي.</td></tr>';}
+    function renderOrdersDashboard(orders){
+      const grid=document.getElementById('customerOrdersGrid'); if(!grid)return;
+      const normalized=orders.map(o=>({...o,uiStatus:o.status==='manual_review'?'pending':o.status})).filter(o=>currentOrdersFilter==='all'||o.uiStatus===currentOrdersFilter);
+      const label={pending:'⏳ قيد الانتظار',in_progress:'🔄 قيد التنفيذ',processing:'⚙️ قيد المعالجة',partial:'◐ جزئي',completed:'✅ مكتمل',rejected:'❌ ملغي'};
+      const progress={pending:15,in_progress:45,processing:65,partial:82,completed:100,rejected:0};
+      if(!normalized.length){grid.innerHTML='<div class="orders-empty">مفيش طلبات في الحالة دي.</div>';return;}
+      grid.innerHTML=normalized.map(o=>{const status=o.uiStatus||'pending';const pct=progress[status]??15;return `<article class="order-card"><div class="order-card-top"><span class="order-code">#${String(o.id).slice(-8)}</span><span class="status-pill ${status==='rejected'?'rejected':status==='completed'?'approved':'pending'}">${label[status]||'قيد الانتظار'}</span></div><h3>${escapeHtmlClient(o.service_name||'خدمة نمو سوشيال')}</h3><div class="order-card-meta"><span>📅 ${new Date(o.created_at).toLocaleString('ar-EG')}</span><a href="${escapeAttrClient(o.target_url)}" target="_blank" rel="noopener">🔗 ${escapeHtmlClient(o.target_url)}</a></div><div class="order-card-stats"><div class="order-stat"><small>الكمية</small><strong>${Number(o.quantity).toLocaleString('ar-EG')}</strong></div><div class="order-stat"><small>التكلفة</small><strong>${Number(o.amount).toFixed(2)} ج.م</strong></div><div class="order-stat"><small>الحالة</small><strong>${label[status]||'قيد الانتظار'}</strong></div></div><div class="order-progress-label"><span>نسبة التنفيذ</span><b>${pct}%</b></div><div class="order-progress"><span style="width:${pct}%"></span></div></article>`;}).join('');
+    }
+    function escapeHtmlClient(value){return String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+    function escapeAttrClient(value){return escapeHtmlClient(value);}
+
     window.onload = function() {
       renderServiceCatalog();
       renderServiceCatalogTable();
