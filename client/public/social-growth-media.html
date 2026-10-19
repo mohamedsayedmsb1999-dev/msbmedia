@@ -957,6 +957,8 @@
     .order-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin:.75rem 0}.order-stat{background:#f8f8f5;border:1px solid #ecebe4;border-radius:9px;text-align:center;padding:.45rem .25rem}.order-stat small{display:block;color:#71717a;font-size:.62rem;margin-bottom:.2rem}.order-stat strong{font-size:.78rem;color:#18181b}.order-progress-label{display:flex;justify-content:space-between;font-size:.65rem;color:#71717a;margin-top:.6rem}.order-progress{height:6px;background:#ececec;border-radius:99px;overflow:hidden}.order-progress>span{display:block;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:inherit}
     .orders-empty{background:#fff;border:1px dashed #d4d4d8;border-radius:16px;padding:2.3rem 1rem;text-align:center;color:#71717a}
     @media(max-width:760px){.orders-grid{grid-template-columns:1fr}.order-card{padding:.85rem}.order-card h3{font-size:.82rem}.orders-toolbar{align-items:stretch}.orders-toolbar .services-filter-pills{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start!important;padding-bottom:.25rem}.orders-toolbar .filter-pill-btn{white-space:nowrap;font-size:.68rem;padding:.45rem .65rem}}
+
+    .picker-search-wrap{padding:.65rem;position:sticky;top:0;background:#fff;z-index:2}.picker-search-wrap input{width:100%;padding:.65rem;border:1px solid #d4d4d8;border-radius:10px;font-family:inherit}.picker-platform-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.45rem .65rem;border-bottom:1px solid #eee}.picker-platform-tabs button{white-space:nowrap;border:1px solid #e5e7eb;background:#fafafa;border-radius:999px;padding:.35rem .55rem;font-family:inherit;font-size:.7rem;font-weight:800}.picker-platform-tabs button:active{background:#ffdd00}.custom-comments-active #quickQty{background:#f0fdf4}.faq-grid{display:grid;gap:.65rem}.faq-grid details{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.75rem}.faq-grid summary{cursor:pointer;font-weight:900}.faq-grid p{color:var(--text-muted);font-size:.82rem;line-height:1.8;margin:.5rem 0 0}.support-chat{background:#f8fafc;border-radius:12px;padding:.75rem;margin-top:1rem}
 </style>
 </head>
 <body>
@@ -1068,11 +1070,12 @@
             <i class="fa-solid fa-globe" style="color: var(--primary-yellow);"></i> الرئيسية MSBMEDIA
           </a>
         </li>
-        <li><a href="javascript:void(0)" onclick="navigateTo('home')" id="nav-home" class="active-link"><i class="fa-solid fa-bolt"></i> طلب فوري</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('home')" id="nav-home" class="active-link"><i class="fa-solid fa-cart-shopping"></i> طلب جديد</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('wallet')" id="nav-wallet"><i class="fa-solid fa-money-bill-transfer"></i> إضافة الأموال</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('orders')" id="nav-orders"><i class="fa-solid fa-boxes-stacked"></i> الطلبات</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('services')" id="nav-services"><i class="fa-solid fa-list-check"></i> الخدمات</a></li>
-        <li><a href="javascript:void(0)" onclick="navigateTo('refund')" id="nav-refund"><i class="fa-solid fa-shield-halved"></i> الضمان</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('refund')" id="nav-refund"><i class="fa-solid fa-circle-question"></i> الأسئلة الشائعة</a></li>
+        <li id="logoutNavItem" style="display:none"><a href="javascript:void(0)" onclick="logoutCustomer()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('support')" id="nav-support"><i class="fa-solid fa-headset"></i> الدعم</a></li>
       </ul>
     </div>
@@ -1120,7 +1123,7 @@
       </div>
 
       <div class="hero-card-box">
-        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.2rem;">⚡ تنفيذ طلب فوري</h3>
+        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.2rem;">🛒 تنفيذ طلب جديد</h3>
         <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">اختار الخدمة، وهتشوف الحد الأدنى والسعر ومدة التنفيذ قبل التأكيد:</p>
 
         <form onsubmit="handleQuickOrder(event)">
@@ -1135,6 +1138,7 @@
               </div>
 
               <div class="custom-picker-dropdown" id="pickerDropdownMenu">
+                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button></div><div id="pickerServiceOptions">
                 <div class="picker-category-title">👥 زيادة المتابعين (الحد الأدنى: 1,000)</div>
                 <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين</div>
@@ -1161,18 +1165,18 @@
                   <span class="picker-price-tag">67 ج.م / 1,000</span>
                 </div>
 
-                <div class="picker-category-title">💬 التعليقات المخصصة (الحد الأدنى: 30 كومنت)</div>
-                <div class="picker-option" onclick="chooseServiceOption('كومنتات فيسبوك مكتوبة باليد ✍️', 3.50, 30, 30, 'fa-brands fa-facebook', '#1877F2', 105)">
+                <div class="picker-category-title">💬 التعليقات المخصصة (الحد الأدنى: 20 كومنت)</div>
+                <div class="picker-option" onclick="chooseServiceOption('كومنتات فيسبوك مكتوبة باليد ✍️', 1.30, 20, 20, 'fa-brands fa-facebook', '#1877F2', 106)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> كومنت فيسبوك مخصص</div>
-                  <span class="picker-price-tag">350 ج.م / 100</span>
+                  <span class="picker-price-tag">1300 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('كومنتات تيك توك مخصصة ✍️', 3.50, 30, 30, 'fa-brands fa-tiktok', '#000', 204)">
+                <div class="picker-option" onclick="chooseServiceOption('كومنتات تيك توك مخصصة ✍️', 1.30, 20, 20, 'fa-brands fa-tiktok', '#000', 207)">
                   <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> كومنت تيك توك مخصص</div>
-                  <span class="picker-price-tag">350 ج.م / 100</span>
+                  <span class="picker-price-tag">1300 ج.م / 1,000</span>
                 </div>
-                <div class="picker-option" onclick="chooseServiceOption('كومنتات إنستجرام مصرية ✍️', 3.50, 30, 30, 'fa-brands fa-instagram', '#E1306C', 305)">
+                <div class="picker-option" onclick="chooseServiceOption('كومنتات إنستجرام مخصصة ✍️', 1.30, 20, 20, 'fa-brands fa-instagram', '#E1306C', 307)">
                   <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> كومنت إنستجرام مخصص</div>
-                  <span class="picker-price-tag">350 ج.م / 100</span>
+                  <span class="picker-price-tag">1300 ج.م / 1,000</span>
                 </div>
 
                 <div class="picker-category-title">❤️ الإعجابات والتفاعلات (الحد الأدنى: 1,000 لايك)</div>
@@ -1214,8 +1218,12 @@
 
           <div id="serviceDetailsPanel" style="display:flex;flex-wrap:wrap;gap:8px;background:#f7faff;border:1px solid var(--border-light);border-radius:10px;padding:10px;margin:.65rem 0;font-size:.72rem;font-weight:800;color:var(--text-muted);"><span>🔥 الريفيل: 30 يوم</span><span>🚀 التعبئة: 24–48 ساعة</span><span>🛡️ ضمان حسب الخدمة</span></div>
           <div class="form-group">
-            <label>رابط الحساب أو المنشور (Public Link) 🔗</label>
+            <label id="quickLinkLabel">رابط الحساب أو الصفحة 🔗</label>
             <input type="url" id="quickLink" class="form-control" placeholder="https://..." required>
+            <small id="quickLinkHint" class="form-hint">للمتابعين استخدم رابط الصفحة أو الحساب العام.</small>
+            <div id="customCommentsWrap" style="display:none;margin-top:.7rem"><label>التعليقات — كل سطر تعليق واحد ✍️</label><textarea id="customComments" class="form-control" rows="6" placeholder="محمد
+موقع
+وكالة"></textarea><small class="form-hint">كل سطر = تعليق واحد. الخدمة بدون ضمان وبدون إعادة تعبئة.</small></div>
           </div>
 
           <div class="form-group">
@@ -1229,7 +1237,7 @@
           </div>
 
           <button type="submit" class="btn-submit-main">
-            <i class="fa-solid fa-bolt"></i> تأكيد الطلب والانتقال للمحفظة
+            <i class="fa-solid fa-bolt"></i> تأكيد الطلب
           </button>
         </form>
       </div>
@@ -1242,11 +1250,6 @@
       <div class="services-table-header">
         <span class="hero-badge-pill">قائمة الخدمات المعتمدة</span>
         <h2 style="font-size: 1.45rem; font-weight: 900; margin-top: 4px;">الأسعار الرسمية والحد الأدنى لكل خدمة</h2>
-      </div>
-
-      <div class="service-search-box" style="max-width:560px;margin:0 auto 12px;position:relative;">
-        <label for="smmServiceSearch" style="display:block;text-align:right;font-weight:900;font-size:.82rem;margin-bottom:5px;">🔎 ابحث باسم الخدمة أو كود الخدمة</label>
-        <input id="smmServiceSearch" type="search" placeholder="مثال: 0101 أو متابعين فيسبوك" oninput="searchServiceCatalog(this.value)" style="margin:0;width:100%;border:1.5px solid #111;border-radius:10px;padding:.65rem .8rem;">
       </div>
       <div class="services-filter-pills">
         <button class="filter-pill-btn active" onclick="filterSmmTable('all', this)">كل الخدمات</button>
@@ -1299,10 +1302,10 @@
                 <strong>كومنت فيسبوك مخصص باليد ✍️</strong>
                 <small>نصوص تختارها بنفسك [Custom]</small>
               </td>
-              <td style="font-weight: 800; color: #B45309; white-space: nowrap;">30</td>
-              <td class="smm-price-cell">350 ج/100</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">20</td>
+              <td class="smm-price-cell">1300 ج/1,000</td>
               <td class="smm-badge-cell"><span>مخصص</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات فيسبوك مكتوبة باليد ✍️', 3.50, 30, 30, 105)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات فيسبوك مكتوبة باليد ✍️', 1.30, 20, 20, 106); updateServiceDetails(106)">اطلب</button></td>
             </tr>
 
             <tr data-platform="facebook">
@@ -1359,10 +1362,10 @@
                 <strong>كومنتات تيك توك مخصصة ✍️</strong>
                 <small>عربي مخصص لرفع الإكسبلور</small>
               </td>
-              <td style="font-weight: 800; color: #B45309; white-space: nowrap;">30</td>
-              <td class="smm-price-cell">350 ج/100</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">20</td>
+              <td class="smm-price-cell">1300 ج/1,000</td>
               <td class="smm-badge-cell"><span>مخصص</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات تيك توك مخصصة ✍️', 3.50, 30, 30, 204)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات تيك توك مخصصة ✍️', 1.30, 20, 20, 207); updateServiceDetails(207)">اطلب</button></td>
             </tr>
 
             <tr data-platform="tiktok">
@@ -1419,10 +1422,10 @@
                 <strong>كومنت إنستجرام مصريين ✍️</strong>
                 <small>مخصص لزيادة مبيعات المتاجر</small>
               </td>
-              <td style="font-weight: 800; color: #B45309; white-space: nowrap;">30</td>
-              <td class="smm-price-cell">350 ج/100</td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">20</td>
+              <td class="smm-price-cell">1300 ج/1,000</td>
               <td class="smm-badge-cell"><span>مخصص</span></td>
-              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات إنستجرام مصرية ✍️', 3.50, 30, 30, 305)">اطلب</button></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات إنستجرام مخصصة ✍️', 1.30, 20, 20, 307); updateServiceDetails(307)">اطلب</button></td>
             </tr>
 
             <tr data-platform="instagram">
@@ -1638,7 +1641,7 @@
           </div>
 
           <div class="form-group">
-            <label>المبلغ المطلوب شحنه (بالجنيه المصري — الحد الأدنى 100 ج.م)</label>
+            <label>المبلغ المطلوب شحنه (بالجنيه المصري — الحد الأدنى 100 ج.م — غير شامل رسوم التعبئة)</label>
             <input type="number" id="paidBaseAmount" class="form-control" placeholder="مثال: 100" value="100" min="100" oninput="recalcFee()">
           </div>
 
@@ -1711,6 +1714,40 @@
           <li>أرفق إيصال السداد، وبمجرد الموافقة ينزل الرصيد ويبدأ تنفيذ الأوردر فوراً.</li>
         </ol>
 
+        <div class="faq-grid" style="margin-top:1.2rem">
+          <h3>💳 الدفع والإيداع</h3>
+          <details><summary>إيه الحد الأدنى للإيداع؟</summary><p>الحد الأدنى 100 جنيه، ورسوم التعبئة 5% بتظهر قبل التحويل.</p></details>
+          <details><summary>الإيصال بيروح فين؟</summary><p>بيتخزن بأمان وبيوصل للإدارة مع تفاصيل العملية في رسالة البريد.</p></details>
+          <details><summary>رصيدي بينزل إمتى؟</summary><p>بعد مراجعة الإيصال والموافقة اليدوية.</p></details>
+          <details><summary>ينفع أعمل أكتر من إيداع؟</summary><p>أيوه، كل إيداع بيتسجل كعملية مستقلة بحالته.</p></details>
+          <details><summary>الرسوم بتتخصم من الرصيد؟</summary><p>لا، الرسوم بتتحسب على المبلغ المطلوب إضافته وبتظهر كإجمالي تحويل.</p></details>
+          <h3>🛒 الطلبات</h3>
+          <details><summary>أتابع طلبي إزاي؟</summary><p>من خانة الطلبات، هتشوف الرابط والكمية والتكلفة والحالة.</p></details>
+          <details><summary>يعني إيه قيد الانتظار؟</summary><p>الطلب اتسجل ولسه في انتظار مراجعة الإدارة.</p></details>
+          <details><summary>يعني إيه قيد المعالجة؟</summary><p>الطلب دخل مرحلة التجهيز اليدوي.</p></details>
+          <details><summary>يعني إيه قيد التنفيذ؟</summary><p>بدأنا تنفيذ الطلب على الرابط المرسل.</p></details>
+          <details><summary>يعني إيه جزئي؟</summary><p>تم تنفيذ جزء من الكمية، والإدارة تتابع الباقي حسب الخدمة.</p></details>
+          <details><summary>إمتى الطلب يبقى مكتمل؟</summary><p>بعد تنفيذ الكمية المطلوبة وتحديث الحالة من الإدارة.</p></details>
+          <details><summary>هل أقدر أغير الرابط بعد الإرسال؟</summary><p>لا، راجع الرابط قبل التأكيد لأنه بيتسجل مع الطلب.</p></details>
+          <h3>👤 الحساب</h3>
+          <details><summary>هل لازم أسجل حساب؟</summary><p>أيوه، عشان كل الإيداعات والطلبات تفضل مرتبطة بحسابك.</p></details>
+          <details><summary>هل بياناتي محفوظة؟</summary><p>بيانات الحساب والعمليات بتتخزن في قاعدة البيانات، وكلمة السر لا تُرسل بالبريد.</p></details>
+          <details><summary>إزاي أسجل خروج؟</summary><p>افتح القائمة واضغط تسجيل الخروج.</p></details>
+          <details><summary>رقم الهاتف لازم يكون إيه؟</summary><p>رقم موبايل مصري صحيح من 11 رقم.</p></details>
+          <details><summary>ينفع أستخدم حسابين؟</summary><p>الأفضل حساب واحد عشان مايحصلش تداخل في البيانات.</p></details>
+          <details><summary>أعمل إيه لو نسيت كلمة السر؟</summary><p>استخدم الدعم مؤقتًا لاستعادة الوصول، وسيتم إضافة الاستعادة الآمنة في مرحلة الحساب القادمة.</p></details>
+          <h3>🎧 الدعم والشروط</h3>
+          <details><summary>أبعت مشكلة للدعم إزاي؟</summary><p>من صفحة الدعم اكتب عنوان المشكلة والتفاصيل ورقم الطلب إن وجد.</p></details>
+          <details><summary>هل أبعت كلمة السر للدعم؟</summary><p>لا، ممنوع إرسال كلمة السر أو بيانات البطاقة.</p></details>
+          <details><summary>رابط المتابعين يكون إيه؟</summary><p>رابط الصفحة أو الحساب العام القابل للفتح.</p></details>
+          <details><summary>رابط اللايكات والمشاهدات يكون إيه؟</summary><p>رابط المنشور أو الفيديو، مش رابط الصفحة الرئيسية.</p></details>
+          <details><summary>خدمة التعليقات بتتحسب إزاي؟</summary><p>كل سطر تعليق = تعليق واحد، والكمية والتكلفة بيتحسبوا تلقائيًا.</p></details>
+          <details><summary>هل التعليقات عليها ضمان؟</summary><p>لا، خدمة التعليقات المخصصة بدون ضمان وبدون إعادة تعبئة.</p></details>
+          <details><summary>إيه أهم سبب لرفض الطلب؟</summary><p>رابط غير مناسب للمنصة أو حساب خاص أو كمية خارج الحد المسموح.</p></details>
+          <details><summary>هل أقدر أطلب نفس الخدمة مرة تانية؟</summary><p>أيوه، طالما رصيدك كافي والرابط والكمية صحيحين.</p></details>
+          <details><summary>فين أتواصل لو في مشكلة عاجلة؟</summary><p>من صفحة الدعم أو واتساب المنصة مع رقم الطلب.</p></details>
+        </div>
+
         <div style="text-align: center; margin-top: 1.2rem;">
           <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled">
             <i class="fa-brands fa-whatsapp"></i> للاستفسارات تواصل مع الدعم الفني
@@ -1725,8 +1762,8 @@
     <div style="padding: 1.8rem 4%; max-width: 800px; margin: 0 auto; text-align: right;">
       <div style="text-align: center; margin-bottom: 1.5rem;">
         <span class="hero-badge-pill">🛡️ الأمان والشفافية</span>
-        <h1 style="font-size: 1.8rem; font-weight: 900;">سياسة الاسترجاع وضمان التعويض</h1>
-        <p style="color: var(--text-muted); font-size: 0.82rem;">شروط واضحة ومحددة تضمن حقوق جميع عملائنا</p>
+        <h1 style="font-size: 1.8rem; font-weight: 900;">الأسئلة الشائعة</h1>
+        <p style="color: var(--text-muted); font-size: 0.82rem;">إجابات مختصرة على أهم أسئلة الدفع والطلبات والحساب والدعم</p>
       </div>
 
       <div style="background: #fff; border: 1.8px solid #000; border-radius: 16px; padding: 1.4rem; line-height: 1.7; box-shadow: var(--shadow-card);">
@@ -1756,21 +1793,15 @@
 
   <!-- ==================== الصفحة 5: خدمة العملاء ==================== -->
   <div id="page-support" class="app-page">
-    <div style="padding: 1.8rem 4%; max-width: 750px; margin: 0 auto; text-align: center;">
-      <span class="hero-badge-pill">💬 دعم فني متواصل 24/7</span>
-      <h1 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 0.6rem;">خدمة العملاء والتواصل المباشر</h1>
-      <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.84rem;">فريق MSB Media بإشراف Mohamed Sayed متواجد على مدار الساعة لمتابعة طلباتك</p>
-
-      <div style="background: #fff; border: 1.8px solid #000; border-radius: 16px; padding: 1.6rem; box-shadow: var(--shadow-card);">
-        <div style="width: 55px; height: 55px; background: #E8F8F0; color: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 0.8rem;">
-          <i class="fa-brands fa-whatsapp"></i>
-        </div>
-        <h3 style="font-size: 1.2rem; font-weight: 900; margin-bottom: 0.3rem;">المحادثة الفورية المباشرة</h3>
-        <p style="color: var(--text-muted); font-size: 0.84rem; margin-bottom: 1.2rem;">تواصل معنا مباشرة عبر واتساب لبدء أو متابعة أي طلب في أي وقت:</p>
-
-        <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled" style="font-size: 0.95rem; padding: 0.75rem 1.6rem;">
-          <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> بدء محادثة واتساب الآن
-        </a>
+    <div style="padding:1.8rem 4%;max-width:780px;margin:0 auto;text-align:right">
+      <div style="text-align:center;margin-bottom:1.2rem"><span class="hero-badge-pill">💬 مركز الدعم والتذاكر</span><h1 style="font-size:1.8rem;font-weight:900">اكتب مشكلتك بالتفصيل</h1><p style="color:var(--text-muted);font-size:.84rem">هنسجل التذكرة ونبعتلك الرد داخل حسابك بعد مراجعتها.</p></div>
+      <div class="terms-box-card">
+        <form id="supportTicketForm" onsubmit="submitSupportTicket(event)">
+          <div class="form-group"><label>عنوان المشكلة</label><input id="supportSubject" class="form-control" maxlength="180" placeholder="مثال: الإيداع لسه ما اتراجعش" required></div>
+          <div class="form-group"><label>المشكلة بالتفصيل</label><textarea id="supportMessage" class="form-control" rows="7" minlength="10" maxlength="5000" placeholder="اكتب رقم الطلب أو الإيداع، وإيه اللي حصل بالظبط..." required></textarea><small class="form-hint">ممنوع تبعت كلمة السر أو بيانات البطاقة. اكتب رقم الطلب فقط لو محتاج متابعة.</small></div>
+          <button class="btn-submit-main" type="submit"><i class="fa-solid fa-paper-plane"></i> إرسال التذكرة</button>
+        </form>
+        <div id="supportTicketStatus" style="margin-top:1rem"></div>
       </div>
     </div>
   </div>
@@ -1852,6 +1883,9 @@
     let selectedServiceName = "متابعين فيسبوك مصريين 🇪🇬 🔥";
     let selectedServiceId = 101;
     let currentOrdersFilter = "all";
+    let pickerPlatformFilter = "all";
+    let pickerSearchQuery = "";
+    const PAGE_KEY = "msb-growth-page";
 
     const islamicPhrases = [
       "بسم الله الرحمن الرحيم",
@@ -1895,11 +1929,13 @@
       const welcome = document.getElementById('accountWelcomePanel');
       const welcomeName = document.getElementById('welcomeUserName');
       if (currentUser) {
+        const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'block';
         const firstName = String(currentUser.name || 'عميلنا').trim().split(/\s+/)[0] || 'عميلنا';
         header.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> ';
         const nameNode = document.createElement('span'); nameNode.textContent = firstName; header.appendChild(nameNode);
         if (welcome && welcomeName) { welcome.style.display = 'flex'; welcomeName.textContent = currentUser.name || 'عميلنا'; }
       } else {
+        const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'none';
         header.innerHTML = '<i class="fa-solid fa-user"></i> حسابي';
         if (welcome) welcome.style.display = 'none';
       }
@@ -1978,9 +2014,12 @@
     function calculateDynamicPrice() {
       const qtyInput = document.getElementById('quickQty');
       let qty = parseFloat(qtyInput.value) || 0;
+      if ([106,207,307].includes(Number(selectedServiceId))) { const comments=(document.getElementById('customComments')?.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); qty=comments.length; qtyInput.value=qty; }
       const total = Math.round(qty * selectedRate);
       document.getElementById('quickTotalDisplay').innerText = total + " ج.م";
     }
+
+    document.addEventListener('input', e => { if (e.target && e.target.id === 'customComments') calculateDynamicPrice(); });
 
     function recalcFee() {
       const baseInput = document.getElementById('paidBaseAmount');
@@ -2102,6 +2141,10 @@
       } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
     }
 
+    function logoutCustomer(){ localStorage.removeItem(CUSTOMER_TOKEN_KEY); localStorage.removeItem(CUSTOMER_PROFILE_KEY); localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY); customerToken=''; currentUser=null; updateAuthStateUI(); navigateTo('home'); showNotice('تم تسجيل الخروج بأمان 👋','success'); }
+
+    async function submitSupportTicket(e){ e.preventDefault(); if(!currentUser||!customerToken){openAuthModal();return;} const subject=document.getElementById('supportSubject').value.trim(), message=document.getElementById('supportMessage').value.trim(); try{const result=await apiJson({action:'support',fullName:currentUser.name,phone:currentUser.phone,email:currentUser.email,subject,message}); document.getElementById('supportTicketStatus').innerHTML='<div class="compact-alert-band">✅ '+escapeHtmlClient(result.message||'تم إرسال التذكرة.')+'</div>'; e.target.reset();}catch(err){showNotice(err.message||'تعذر إرسال التذكرة','error');}}
+
     function navigateTo(pageId) {
       if (!currentUser && pageId !== 'home') {
         showNotice("سجّل دخولك الأول عشان نفتحلك الخدمة 🔐", "info");
@@ -2109,6 +2152,7 @@
         return;
       }
 
+      localStorage.setItem(PAGE_KEY, pageId);
       document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active-page'));
       document.querySelectorAll('.sidebar-links a').forEach(link => link.classList.remove('active-link'));
 
@@ -2155,7 +2199,7 @@
       const total = Math.round(qty * selectedRate * 100) / 100;
       if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(100, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر 💳`, "info"); return; }
       try {
-        const result = await apiJson({ action: 'social_growth_order', serviceId: selectedServiceId, quantity: qty, targetUrl: document.getElementById('quickLink').value.trim() });
+        const result = await apiJson({ action: 'social_growth_order', serviceId: selectedServiceId, quantity: qty, targetUrl: document.getElementById('quickLink').value.trim(), customComments: [106,207,307].includes(Number(selectedServiceId)) ? (document.getElementById('customComments')?.value || '') : '' });
         showNotice(`${result.message} ✅`, "success"); await loadWalletSummary();
       } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
     }
@@ -2167,7 +2211,7 @@
       if (!file) { showNotice("ارفع صورة الإيصال الواضحة 📸", "error"); return; }
       const btn = document.getElementById('btnSubmitPayment'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ حفظ الإيصال بأمان...';
       const methodMap = { 'فودافون كاش': 'vodafone_cash', 'اتصالات كاش': 'etisalat_cash', 'باينانس': 'binance_pay' };
-      const body = new FormData(); body.append('action', 'wallet_deposit'); body.append('customerName', document.getElementById('clientFullName').value.trim()); body.append('phone', document.getElementById('clientPhone').value.trim()); body.append('method', methodMap[document.getElementById('paidVia').value] || 'vodafone_cash'); body.append('depositAmount', document.getElementById('paidBaseAmount').value); body.append('serviceId', String(selectedServiceId)); body.append('requestedQuantity', document.getElementById('quickQty').value); body.append('targetUrl', document.getElementById('quickLink').value.trim()); body.append('file', file);
+      const body = new FormData(); body.append('action', 'wallet_deposit'); body.append('customerName', document.getElementById('clientFullName').value.trim()); body.append('phone', document.getElementById('clientPhone').value.trim()); body.append('method', methodMap[document.getElementById('paidVia').value] || 'vodafone_cash'); body.append('depositAmount', document.getElementById('paidBaseAmount').value); body.append('serviceId', ''); body.append('requestedQuantity', ''); body.append('targetUrl', ''); body.append('file', file);
       try {
         const response = await fetch(API_URL, { method: 'POST', headers: { 'x-msb-customer-token': customerToken }, body });
         const result = await response.json(); if (!response.ok || !result.ok) throw new Error(result.message || 'تعذر حفظ الإيصال.');
@@ -2192,14 +2236,18 @@
     });
 
     const SERVICE_CATALOG = {
-      101:["متابعين فيسبوك مصريين 🇪🇬 🔥",.28,100,500000,"facebook","30 يوم تعويض نقص","24–48 ساعة"],102:["متابعين فيسبوك أجانب 🌍 🚀",.067,1000,500000,"facebook","ثابت حسب الخدمة","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","حسب جودة الرابط","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","ثابت","24–48 ساعة"],
-      201:["متابعين تيك توك مصريين 🇪🇬 🔥",.28,100,500000,"tiktok","30 يوم","24–48 ساعة"],202:["متابعين تيك توك أجانب 🌍 🚀",.067,1000,500000,"tiktok","ثابت","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","حسب جودة الرابط","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","ثابت","24–48 ساعة"],
-      301:["متابعين إنستجرام مصريين 🇪🇬 🔥",.28,100,500000,"instagram","30 يوم","24–48 ساعة"],302:["متابعين إنستجرام أجانب 🌍 🚀",.067,1000,500000,"instagram","30 يوم","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","حسب جودة الرابط","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","ثابت","24–48 ساعة"],
+      101:["متابعين فيسبوك مصريين 🇪🇬 🔥",.28,100,500000,"facebook","30 يوم تعويض نقص","24–48 ساعة"],102:["متابعين فيسبوك أجانب 🌍 🚀",.067,1000,500000,"facebook","ثابت حسب الخدمة","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","حسب جودة الرابط","24–72 ساعة"],106:["كومنتات فيسبوك مكتوبة باليد ✍️",1.30,20,500000,"facebook","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","ثابت","24–48 ساعة"],
+      201:["متابعين تيك توك مصريين 🇪🇬 🔥",.28,100,500000,"tiktok","30 يوم","24–48 ساعة"],202:["متابعين تيك توك أجانب 🌍 🚀",.067,1000,500000,"tiktok","ثابت","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","حسب جودة الرابط","24–72 ساعة"],207:["كومنتات تيك توك مخصصة ✍️",1.30,20,500000,"tiktok","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","ثابت","24–48 ساعة"],
+      301:["متابعين إنستجرام مصريين 🇪🇬 🔥",.28,100,500000,"instagram","30 يوم","24–48 ساعة"],302:["متابعين إنستجرام أجانب 🌍 🚀",.067,1000,500000,"instagram","30 يوم","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","حسب جودة الرابط","24–72 ساعة"],307:["كومنتات إنستجرام مخصصة ✍️",1.30,20,500000,"instagram","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","ثابت","24–48 ساعة"],
       401:["مشتركون يوتيوب ▶️ 🔥",.25,100,500000,"youtube","30 يوم","24–72 ساعة"],402:["YouTube Like 👍",.75,100,5000,"youtube","ثابت","24–48 ساعة"],403:["مشاهدات يوتيوب 👁️ 🚀",.03,1000,1000000,"youtube","ثابت","24–48 ساعة"]};
     const PLATFORM_DOMAINS={facebook:["facebook.com","fb.com"],instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"]};
     function isClientPlatformUrl(value, platform){try{const u=new URL(value);const h=u.hostname.toLowerCase().replace(/^www\./,'');return ["http:","https:"].includes(u.protocol)&&u.pathname.length>1&&PLATFORM_DOMAINS[platform].some(d=>h===d||h.endsWith('.'+d));}catch(_){return false;}}
-    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><span>🛡️ تعويض النقص: ${guarantee}</span><span>⏱️ التنفيذ: ${delivery}</span><span>🔗 استخدم رابطًا عامًا قابلًا للفتح</span>`;}
-    function renderServiceCatalog(){const menu=document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':'#111';return `<div class="picker-option" onclick="chooseServiceOption('${name}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(#${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${/Like|Love|Haha/.test(name) ? `${(rate*100).toFixed(0)} ج/100` : `${(rate*1000).toFixed(0)} ج.م / 1,000`}</span></div>`;}).join('');}
+    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const isComments=[106,207,307].includes(Number(id));const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><span>🛡️ ${isComments?'بدون ضمان وبدون إعادة تعبئة':'تعويض النقص: '+guarantee}</span><span>⏱️ التنفيذ: ${delivery}</span><span>💡 ${isComments?'كل سطر تعليق واحد':'استخدم الرابط المناسب للخدمة'}</span>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty');if(isComments){label.textContent='رابط المنشور أو البوست 🔗';hint.textContent='استخدم رابط المنشور الذي ستظهر عليه التعليقات.';wrap.style.display='block';qty.readOnly=true;document.body.classList.add('custom-comments-active');}else{const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':'للايكات والمشاهدات والتعليقات استخدم رابط المنشور أو الفيديو.';wrap.style.display='none';qty.readOnly=false;document.body.classList.remove('custom-comments-active');}}
+    function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':'#111';const isComments=[106,207,307].includes(Number(id));const label=isComments?`${(rate*1000).toFixed(0)} ج.م / 1,000`:/Like|Love|Haha/.test(name)?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(#${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
+    function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
+    function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
+    function filterPickerServices(value){pickerSearchQuery=String(value||'').trim().toLowerCase();applyPickerFilters();}
+    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();}
     function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isReaction=/Like|Love|Haha/.test(name);const price=isReaction?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م/1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 تعبئة ${delivery} · 🛡️ ${guarantee}</small></td><td style="font-weight:800;color:#047857;white-space:nowrap;">${min.toLocaleString('ar-EG')}</td><td class="smm-price-cell">${price}</td><td class="smm-badge-cell"><span>${delivery}</span></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
     function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
     function renderOrdersDashboard(orders){
@@ -2219,6 +2267,7 @@
       updateServiceDetails(selectedServiceId);
       updateAuthStateUI();
       calculateDynamicPrice();
+      const savedPage=localStorage.getItem(PAGE_KEY); if(savedPage && savedPage!=='home' && currentUser) navigateTo(savedPage);
       recalcFee();
       loadWalletSummary();
       handleApprovalFromEmail();
