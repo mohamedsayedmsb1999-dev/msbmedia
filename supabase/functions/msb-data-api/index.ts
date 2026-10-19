@@ -43,7 +43,7 @@ const socialServices: Record<number, SocialService> = {
   203: { name: "TikTok Like 👍", rate: 0.75, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   204: { name: "TikTok Love ♥️", rate: 0.90, min: 100, max: 5000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   205: { name: "TikTok Haha 😂", rate: 0.30, min: 100, max: 5000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
-  207: { name: "متابعين تيكتوك مخصصة مصريين 100% ✍️", rate: 1.4, min: 10, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
+  207: { name: "تعليقات تيكتوك مخصصة مصريين 100% ✍️", rate: 1.4, min: 10, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   206: { name: "مشاهدات تيك توك 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "tiktok", delivery: "24–48 ساعة", guarantee: "ثابت" },
   301: { name: "متابعين إنستجرام مصريين 100% 🇪🇬 🔥", rate: 0.28, min: 100, max: 500000, platform: "instagram", delivery: "24–48 ساعة", guarantee: "30 يوم" },
   302: { name: "متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]", rate: 0.067, min: 1000, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "30 يوم" },
