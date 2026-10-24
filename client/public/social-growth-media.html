@@ -971,6 +971,7 @@
     @keyframes msbLogoFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(3deg)}}@keyframes msbOrbit{to{transform:rotate(336deg)}}@keyframes msbSpark{0%,100%{opacity:.45;transform:scale(.86) rotate(0)}50%{opacity:1;transform:scale(1.18) rotate(18deg)}}
     @media(max-width:700px){.pre-order-notice{grid-template-columns:1fr;padding:.75rem}.pre-order-logo-frame{min-height:0;width:100%;max-width:100%;aspect-ratio:4/3}.pre-order-copy{padding:.8rem}.pre-order-copy p{font-size:.72rem}}
     @media(prefers-reduced-motion:reduce){.msb-logo-core,.msb-orbit,.msb-logo-spark{animation:none}}
+.bottom-promo-wrap{padding:0 4% 1.8rem;display:flex;justify-content:center}.bottom-promo-wrap .hero-animated-character-box{width:min(100%,620px);margin:0 auto}.bottom-promo-wrap .floating-social-box{margin-top:.8rem;justify-content:center}
 </style>
 </head>
 <body>
@@ -1111,23 +1112,6 @@
         <h1 class="hero-heading">زوّد متابعينك ومبيعاتك <span>في ثواني معدودة!</span> 🚀</h1>
         <p class="hero-desc">كل اللي تحتاجه لصفحتك أو متجرك في مكان واحد! متابعين حقيقيين، لايكات، وتعليقات مصرية مخصصة بتكسر التردد وتضاعف مبيعاتك فورياً وبأمان 100% بدون باسوردات! 💯✨</p>
 
-        <div class="hero-animated-character-box">
-          <div class="girl-floating-avatar" title="MSB Media — نمو وتفاعل">
-            <span class="hero-avatar-mark">MSB</span>
-            <span class="hero-avatar-spark">✦</span>
-          </div>
-          <div class="character-speech-bubble">
-            <div style="font-weight: 900; font-size: 0.88rem; color: #000; margin-bottom: 2px;">
-              "المتابعين والريتش وصلوا في دقيقة! 🔥😍"
-            </div>
-            <div style="font-size: 0.74rem; color: #666;">
-              تفاعل مصري حقيقي فوري بضمان كامل 💯
-            </div>
-          </div>
-        </div>
-
-        <div class="floating-social-box">
-          <div class="social-ball sb-fb"><i class="fa-brands fa-facebook-f"></i></div>
           <div class="social-ball sb-tk"><i class="fa-brands fa-tiktok"></i></div>
           <div class="social-ball sb-ig"><i class="fa-brands fa-instagram"></i></div>
           <div class="social-ball sb-yt"><i class="fa-brands fa-youtube"></i></div>
@@ -1578,8 +1562,30 @@
         </div>
       </div>
     </section>
-  </div>
 
+    <section class="bottom-promo-wrap" aria-label="تجربة نمو وتفاعل MSB">
+      <div class="hero-animated-character-box">
+        <div class="girl-floating-avatar" title="MSB Media — نمو وتفاعل">
+          <span class="hero-avatar-mark">MSB</span>
+          <span class="hero-avatar-spark">✦</span>
+        </div>
+        <div class="character-speech-bubble">
+          <div style="font-weight: 900; font-size: 0.88rem; color: #000; margin-bottom: 2px;">
+            "المتابعين والريتش وصلوا في دقيقة! 🔥😍"
+          </div>
+          <div style="font-size: 0.74rem; color: #666;">
+            تفاعل مصري حقيقي فوري بضمان كامل 💯
+          </div>
+        </div>
+      </div>
+      <div class="floating-social-box">
+        <div class="social-ball sb-fb"><i class="fa-brands fa-facebook-f"></i></div>
+        <div class="social-ball sb-tk"><i class="fa-brands fa-tiktok"></i></div>
+        <div class="social-ball sb-ig"><i class="fa-brands fa-instagram"></i></div>
+        <div class="social-ball sb-yt"><i class="fa-brands fa-youtube"></i></div>
+      </div>
+    </section>
+  </div>
   <!-- ==================== الصفحة 2: المحفظة والدفع الآلي ==================== -->
   <div id="page-wallet" class="app-page">
     <div class="wallet-page-wrapper">
@@ -2284,13 +2290,13 @@
       comments: `✍️ كل سطر = تعليق واحد<br>📣 اكتب التعليقات كل تعليق في سطر مستقل.<br>⚠️ الخدمة بدون ضمان وبدون إعادة تعبئة.`,
       default: `⏱️ التنفيذ حسب ضغط الخدمة<br>🔗 استخدم الرابط العام الصحيح الخاص بالمنصة.<br>⚠️ راجع الرابط والكمية قبل إرسال الطلب.`
     };
-    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const numericId=Number(id);const isAiSubscription=numericId===501;const isCustom=[106,207,307].includes(numericId);const isTikTokCustom=numericId===207;const isEgyptianFollowers=[101,201,301].includes(numericId);const terms=isAiSubscription?`🕛 التسليم: 0–24 ساعة<br>📌 خانة اللينك: اكتب Gmail الخاص بك فقط.<br>📌 الحساب فيه 1000 كريديت شهريًا متجدد + كل الأدوات شغالة [Flow / Veo / Nano Banana / Anti-Gravity وغيرها].<br>📌 مدة الاشتراك: 18 شهر.<br>📌 الضمان: بدون ضمان.<br>🛑 المتابعة مع الدعم لأي استفسار.`:isTikTokCustom?SERVICE_TERMS.tiktokCustom:isEgyptianFollowers?SERVICE_TERMS.egyptianFollowers:isCustom?SERVICE_TERMS.comments:SERVICE_TERMS.default;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><div class="service-terms-copy">${terms}</div>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty'),qtyGroup=document.getElementById('quickQtyGroup');if(isAiSubscription){label.textContent='Gmail جوجل المطلوب 📧';hint.textContent='مثال: yourname@gmail.com — مسموح Gmail ينتهي بـ @gmail.com فقط.';const input=document.getElementById('quickLink');input.type='email';input.placeholder='yourname@gmail.com';input.pattern='^[A-Za-z0-9._%+-]+@gmail\.com$';input.setAttribute('inputmode','email');wrap.style.display='none';if(qtyGroup)qtyGroup.style.display='none';qty.value=1;qty.readOnly=true;document.getElementById('quickTotalDisplay').textContent='250 ج.م';document.body.classList.add('ai-subscription-active');}else{const input=document.getElementById('quickLink');input.type='url';input.placeholder='https://...';input.removeAttribute('pattern');input.removeAttribute('inputmode');const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':isCustom?'رابط المنشور أو البوست 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':isCustom?'استخدم رابط المنشور العام الصحيح.':'للايكات والمشاهدات والتعليقات استخدم رابط المنشور أو الفيديو.';if(isCustom){wrap.style.display='block';qty.readOnly=true;document.body.classList.add('custom-comments-active');}else{wrap.style.display='none';qty.readOnly=false;document.body.classList.remove('custom-comments-active');}if(qtyGroup)qtyGroup.style.display='block';document.body.classList.remove('ai-subscription-active');}}
+    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const numericId=Number(id);const isAiSubscription=numericId===501;const isCustom=[106,207,307].includes(numericId);const isTikTokCustom=numericId===207;const isEgyptianFollowers=[101,201,301].includes(numericId);const terms=isAiSubscription?`🕛 التسليم: 0–24 ساعة<br>📌 خانة اللينك: اكتب Gmail الخاص بك فقط.<br>📌 الحساب فيه 1000 كريديت شهريًا متجدد + كل الأدوات شغالة [Flow / Veo / Nano Banana / Anti-Gravity وغيرها].<br>📌 مدة الاشتراك: 18 شهر.<br>📌 الضمان: بدون ضمان.<br>🛑 المتابعة مع الدعم لأي استفسار.`:isTikTokCustom?SERVICE_TERMS.tiktokCustom:isEgyptianFollowers?SERVICE_TERMS.egyptianFollowers:isCustom?SERVICE_TERMS.comments:SERVICE_TERMS.default;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><div class="service-terms-copy">${terms}</div>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty'),qtyGroup=document.getElementById('quickQtyGroup');if(isAiSubscription){label.textContent='Gmail جوجل المطلوب 📧';hint.textContent='مثال: yourname@gmail.com — مسموح Gmail ينتهي بـ @gmail.com فقط.';const input=document.getElementById('quickLink');input.type='email';input.placeholder='yourname@gmail.com';input.pattern='^[A-Za-z0-9._%+-]+@gmail\.com$';input.setAttribute('inputmode','email');wrap.style.display='none';if(qtyGroup)qtyGroup.style.display='block';document.getElementById('qtyLabelText').textContent='الكمية المطلوبة (1) 🔢';qty.value=1;qty.readOnly=true;document.getElementById('quickTotalDisplay').textContent='250 ج.م';document.body.classList.add('ai-subscription-active');}else{const input=document.getElementById('quickLink');input.type='url';input.placeholder='https://...';input.removeAttribute('pattern');input.removeAttribute('inputmode');const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':isCustom?'رابط المنشور أو البوست 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':isCustom?'استخدم رابط المنشور العام الصحيح.':'للايكات والمشاهدات والتعليقات استخدم رابط المنشور أو الفيديو.';if(isCustom){wrap.style.display='block';qty.readOnly=true;document.body.classList.add('custom-comments-active');}else{wrap.style.display='none';qty.readOnly=false;document.body.classList.remove('custom-comments-active');}if(qtyGroup)qtyGroup.style.display='block';document.body.classList.remove('ai-subscription-active');}}
     function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':platform==='google'?'fa-brands fa-google':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':platform==='google'?'#4285F4':'#111';const isComments=[106,207,307].includes(Number(id));const label=isComments?`${(rate*1000).toFixed(0)} ج.م / 1,000`:/Like|Love|Haha/.test(name)?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
     function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
     function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
     function filterPickerServices(value){pickerSearchQuery=String(value||'').trim().toLowerCase();applyPickerFilters();}
     function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();}
-    function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isReaction=/Like|Love|Haha/.test(name);const price=isReaction?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م/1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 تعبئة ${delivery} · 🛡️ ${guarantee}</small></td><td style="font-weight:800;color:#047857;white-space:nowrap;">${min.toLocaleString('ar-EG')}</td><td class="smm-price-cell">${price}</td><td class="smm-badge-cell"><span>${delivery}</span></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
+    function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isReaction=/Like|Love|Haha/.test(name);const isAi=Number(id)===501;const price=isAi?'250 ج.م / اشتراك':isReaction?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م/1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 تعبئة ${delivery} · 🛡️ ${guarantee}</small></td><td style="font-weight:800;color:#047857;white-space:nowrap;">${min.toLocaleString('ar-EG')}</td><td class="smm-price-cell">${price}</td><td class="smm-badge-cell"><span>${delivery}</span></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
     function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
     function renderOrdersDashboard(orders){
       const grid=document.getElementById('customerOrdersGrid'); if(!grid)return;
