@@ -960,6 +960,17 @@
 
     .picker-search-wrap{padding:.65rem;position:sticky;top:0;background:#fff;z-index:2}.picker-search-wrap input{width:100%;padding:.65rem;border:1px solid #d4d4d8;border-radius:10px;font-family:inherit}.picker-platform-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.45rem .65rem;border-bottom:1px solid #eee}.picker-platform-tabs button{white-space:nowrap;border:1px solid #e5e7eb;background:#fafafa;border-radius:999px;padding:.35rem .55rem;font-family:inherit;font-size:.7rem;font-weight:800}.picker-platform-tabs button:active{background:#ffdd00}.custom-comments-active #quickQty{background:#f0fdf4}.faq-grid{display:grid;gap:.65rem}.faq-grid details{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.75rem}.faq-grid summary{cursor:pointer;font-weight:900}.faq-grid p{color:var(--text-muted);font-size:.82rem;line-height:1.8;margin:.5rem 0 0}.support-chat{background:#f8fafc;border-radius:12px;padding:.75rem;margin-top:1rem}
 .service-terms-copy{width:100%;line-height:1.75;color:#475569;font-weight:700;font-size:.72rem;background:#fff;padding:.6rem;border-radius:8px;margin-top:.35rem}
+
+    .pre-order-notice{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(0,1.8fr);gap:1rem;align-items:stretch;background:#fff;border:1.5px solid #111;border-radius:20px;padding:1rem;margin:1rem 0 1.4rem;box-shadow:0 12px 30px rgba(30,64,175,.12);overflow:hidden}
+    .pre-order-logo-frame{position:relative;display:grid;place-items:center;min-height:190px;aspect-ratio:4/3;background:#fff;border:1px solid #dbeafe;border-radius:16px;overflow:hidden;isolation:isolate}
+    .pre-order-logo-frame:before{content:"";position:absolute;inset:12%;border-radius:24px;background:linear-gradient(135deg,#eff6ff,#fffbea);box-shadow:inset 0 0 0 1px #fef08a;z-index:-1}
+    .msb-logo-core{display:grid;place-items:center;width:116px;height:116px;border-radius:30px;background:linear-gradient(145deg,#0b5bd3 0%,#2563eb 62%,#facc15 63%,#fde047 100%);color:#fff;box-shadow:0 15px 30px rgba(37,99,235,.32),0 0 0 7px rgba(250,204,21,.2);transform:rotate(-4deg);animation:msbLogoFloat 2.8s ease-in-out infinite}
+    .msb-logo-core strong{font-size:2rem;letter-spacing:.08em;line-height:1}.msb-logo-core span{font-size:.62rem;letter-spacing:.32em;font-weight:900;margin-left:.3em}
+    .msb-orbit{position:absolute;border:2px solid rgba(37,99,235,.22);border-radius:50%;width:82%;height:48%;transform:rotate(-24deg);animation:msbOrbit 5s linear infinite}.orbit-two{width:58%;height:78%;border-color:rgba(250,204,21,.48);transform:rotate(34deg);animation-direction:reverse}.msb-logo-spark{position:absolute;right:14%;top:16%;color:#facc15;font-size:1.65rem;animation:msbSpark 1.8s ease-in-out infinite}
+    .pre-order-copy{background:linear-gradient(135deg,#f8fbff,#fffdf0);border:1px solid #dbeafe;border-radius:16px;padding:1rem}.pre-order-copy h3{margin:0 0 .65rem;color:#0b3b91;font-size:1.05rem}.pre-order-copy p{margin:.42rem 0;color:#334155;font-size:.76rem;line-height:1.75;font-weight:700}.pre-order-copy p:last-child{color:#7c2d12;background:#fff7ed;border-radius:10px;padding:.45rem .6rem}
+    @keyframes msbLogoFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(3deg)}}@keyframes msbOrbit{to{transform:rotate(336deg)}}@keyframes msbSpark{0%,100%{opacity:.45;transform:scale(.86) rotate(0)}50%{opacity:1;transform:scale(1.18) rotate(18deg)}}
+    @media(max-width:700px){.pre-order-notice{grid-template-columns:1fr;padding:.75rem}.pre-order-logo-frame{min-height:0;width:100%;max-width:100%;aspect-ratio:4/3}.pre-order-copy{padding:.8rem}.pre-order-copy p{font-size:.72rem}}
+    @media(prefers-reduced-motion:reduce){.msb-logo-core,.msb-orbit,.msb-logo-spark{animation:none}}
 </style>
 </head>
 <body>
@@ -1133,13 +1144,13 @@
             <div class="custom-service-picker-wrapper">
               <div class="custom-picker-selected" id="pickerTrigger" onclick="togglePickerDropdown()">
                 <div id="pickerSelectedText">
-                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 🇪🇬 (280 ج.م/1,000)
+                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 100% 🇪🇬 (280 ج.م/1,000)
                 </div>
                 <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
               </div>
 
               <div class="custom-picker-dropdown" id="pickerDropdownMenu">
-                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button></div><div id="pickerServiceOptions">
+                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button><button type="button" onclick="setPickerPlatform('google')"><i class="fa-brands fa-google"></i> Google AI</button></div><div id="pickerServiceOptions">
                 <div class="picker-category-title">👥 زيادة المتابعين (الحد الأدنى: 1,000)</div>
                 <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين</div>
@@ -1213,6 +1224,11 @@
                   <div class="picker-option-left"><i class="fa-brands fa-youtube" style="color: #FF0000;"></i> مشتركون يوتيوب</div>
                   <span class="picker-price-tag">250 ج.م / 1,000</span>
                 </div>
+                <div class="picker-category-title">🤖 اشتراك أدوات الذكاء الاصطناعي</div>
+                <div class="picker-option" onclick="chooseServiceOption('اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥', 250, 1, 1, 'fa-brands fa-google', '#4285F4', 501, 1, 'google')">
+                  <div class="picker-option-left"><i class="fa-brands fa-google" style="color:#4285F4"></i> اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥</div>
+                  <span class="picker-price-tag">250 ج.م / 18 شهر</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1227,7 +1243,7 @@
 وكالة"></textarea><small class="form-hint">كل سطر = تعليق واحد. الخدمة بدون ضمان وبدون إعادة تعبئة.</small></div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="quickQtyGroup">
             <label id="qtyLabelText">الكمية المطلوبة (من 100 إلى 500,000) 🔢</label>
             <input type="number" id="quickQty" class="form-control" value="100" min="100" max="500000" step="10" oninput="calculateDynamicPrice()">
           </div>
@@ -1242,6 +1258,23 @@
           </button>
         </form>
       </div>
+
+      <section class="pre-order-notice" aria-labelledby="preOrderNoticeTitle">
+        <div class="pre-order-logo-frame" aria-label="شعار MSBMEDIA متحرك">
+          <div class="msb-orbit orbit-one"></div><div class="msb-orbit orbit-two"></div>
+          <div class="msb-logo-core"><strong>MSB</strong><span>MEDIA</span></div>
+          <div class="msb-logo-spark">✦</div>
+        </div>
+        <div class="pre-order-copy">
+          <h3 id="preOrderNoticeTitle">📖 اقرأ قبل الطلب</h3>
+          <p>🔓 جميع الحسابات يجب أن تكون عامة قبل الطلب، وليست خاصة.</p>
+          <p>🚫 يرجى عدم وضع أكثر من طلب لنفس الرابط بنفس الوقت إلا بعد اكتمال الطلب الأول.</p>
+          <p>📝 لا يمكننا إلغاء أو تعديل أي طلب بعد وضعه نهائياً إلا إذا وجد فيه مشاكل، لذلك يرجى التأكد من الطلبات قبل وضعها.</p>
+          <p>🔒 إذا تم تحويل الحساب إلى برايفت أو تم حذف المنشور أو المقطع بعد وضع الطلب سيتم اعتبار الطلب مكتمل ولا يمكننا إلغاؤه نهائياً.</p>
+          <p>✅ عندما تقوم بوضع طلب جديد فأنت توافق على شروط وأحكام الموقع.</p>
+          <p>💳 عندما تقوم بشحن الرصيد لا يمكننا بأي حال من الأحوال إعادة إرسال الرصيد مجدداً إلى حساباتك، لذلك تأكد من الرصيد الذي تحتاجه قبل الشحن بالموقع.</p>
+        </div>
+      </section>
     </section>
 
     <!-- ============================================================
@@ -1257,7 +1290,7 @@
         <button class="filter-pill-btn" onclick="filterSmmTable('facebook', this)">فيسبوك</button>
         <button class="filter-pill-btn" onclick="filterSmmTable('tiktok', this)">تيك توك</button>
         <button class="filter-pill-btn" onclick="filterSmmTable('instagram', this)">إنستجرام</button>
-        <button class="filter-pill-btn" onclick="filterSmmTable('youtube', this)">يوتيوب</button>
+        <button class="filter-pill-btn" onclick="filterSmmTable('youtube', this)">يوتيوب</button><button class="filter-pill-btn" onclick="filterSmmTable('google', this)">Google AI</button>
       </div>
 
       <div class="smm-table-touch-container">
@@ -2016,7 +2049,7 @@
 
     function calculateDynamicPrice() {
       const qtyInput = document.getElementById('quickQty');
-      let qty = parseFloat(qtyInput.value) || 0;
+      let qty = Number(selectedServiceId)===501 ? 1 : (parseFloat(qtyInput.value) || 0);
       if ([106,207,307].includes(Number(selectedServiceId))) { const comments=(document.getElementById('customComments')?.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); qty=comments.length; qtyInput.value=qty; }
       const total = Math.round(qty * selectedRate);
       document.getElementById('quickTotalDisplay').innerText = total + " ج.م";
@@ -2194,10 +2227,10 @@
     async function handleQuickOrder(e) {
       e.preventDefault();
       if (!currentUser || !customerToken) { showNotice("سجّل دخولك الأول عشان تكمل 🔐", "info"); openAuthModal(); return; }
-      const qty = parseInt(document.getElementById('quickQty').value, 10) || 0;
+      const qty = Number(selectedServiceId)===501 ? 1 : (parseInt(document.getElementById('quickQty').value, 10) || 0);
       if (!Number.isInteger(qty) || qty < selectedMinQty || qty > selectedMaxQty) { showNotice(`الكمية لازم تكون من ${selectedMinQty.toLocaleString()} إلى ${selectedMaxQty.toLocaleString()} 🔢`, "error"); return; }
       const rawTarget = document.getElementById('quickLink').value.trim();
-      if (!isClientPlatformUrl(rawTarget, selectedPlatform)) { showNotice(`الرابط لازم يكون رابط ${selectedPlatform} صحيح ومناسب للخدمة المختارة 🔗`, "error"); return; }
+      if (!isClientPlatformUrl(rawTarget, selectedPlatform)) { showNotice(selectedPlatform==='google'?'اكتب Gmail صحيح ينتهي بـ @gmail.com فقط 📧':`الرابط لازم يكون رابط ${selectedPlatform} صحيح ومناسب للخدمة المختارة 🔗`, "error"); return; }
       const summary = await loadWalletSummary();
       const total = Math.round(qty * selectedRate * 100) / 100;
       if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(100, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} ج.م أو أكثر 💳`, "info"); return; }
@@ -2242,17 +2275,17 @@
       101:["متابعين فيسبوك مصريين 100% 🇪🇬 🔥",.28,100,500000,"facebook","30 يوم تعويض نقص","24–48 ساعة"],102:["متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]",.067,1000,500000,"facebook","ثابت حسب الخدمة","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","حسب جودة الرابط","24–72 ساعة"],106:["تعليقات فيسبوك مخصصة ✍️",1.30,20,500000,"facebook","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","ثابت","24–48 ساعة"],
       201:["متابعين تيك توك مصريين 100% 🇪🇬 🔥",.28,100,500000,"tiktok","30 يوم","24–48 ساعة"],202:["متابعين تيك توك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]",.067,1000,500000,"tiktok","ثابت","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","حسب جودة الرابط","24–72 ساعة"],207:["تعليقات تيكتوك مخصصة مصريين 100% ✍️",1.40,10,500000,"tiktok","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","ثابت","24–48 ساعة"],
       301:["متابعين إنستجرام مصريين 100% 🇪🇬 🔥",.28,100,500000,"instagram","30 يوم","24–48 ساعة"],302:["متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]",.067,1000,500000,"instagram","30 يوم","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","حسب جودة الرابط","24–72 ساعة"],307:["كومنتات إنستجرام مخصصة ✍️",1.30,20,500000,"instagram","بدون ضمان وبدون إعادة تعبئة","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","ثابت","24–48 ساعة"],
-      401:["مشتركون يوتيوب ▶️ 🔥",.25,100,500000,"youtube","30 يوم","24–72 ساعة"],402:["YouTube Like 👍",.75,100,5000,"youtube","ثابت","24–48 ساعة"],403:["مشاهدات يوتيوب 👁️ 🚀",.03,1000,1000000,"youtube","ثابت","24–48 ساعة"]};
-    const PLATFORM_DOMAINS={facebook:["facebook.com","fb.com"],instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"]};
-    function isClientPlatformUrl(value, platform){try{const u=new URL(value);const h=u.hostname.toLowerCase().replace(/^www\./,'');return ["http:","https:"].includes(u.protocol)&&u.pathname.length>1&&PLATFORM_DOMAINS[platform].some(d=>h===d||h.endsWith('.'+d));}catch(_){return false;}}
+      401:["مشتركون يوتيوب ▶️ 🔥",.25,100,500000,"youtube","30 يوم","24–72 ساعة"],402:["YouTube Like 👍",.75,100,5000,"youtube","ثابت","24–48 ساعة"],403:["مشاهدات يوتيوب 👁️ 🚀",.03,1000,1000000,"youtube","ثابت","24–48 ساعة"],501:["اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥",250,1,1,"google","بدون ضمان","0–24 ساعة"]};
+    const PLATFORM_DOMAINS={facebook:["facebook.com","fb.com"],instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"],google:[]};
+    function isClientPlatformUrl(value, platform){if(platform==='google') return /^[A-Z0-9._%+-]+@gmail\.com$/i.test(String(value||'').trim());try{const u=new URL(value);const h=u.hostname.toLowerCase().replace(/^www\./,'');return ["http:","https:"].includes(u.protocol)&&u.pathname.length>1&&PLATFORM_DOMAINS[platform].some(d=>h===d||h.endsWith('.'+d));}catch(_){return false;}}
     const SERVICE_TERMS = {
       egyptianFollowers: `⏱️ البدء: خلال 48 ساعة<br>🚀 السرعة: 5 آلاف يوميًا<br>⭐ الجودة: حسابات مصرية وعربية حقيقية 🇪🇬🇸🇦<br>🔁 إعادة التعبئة: بدون تعويض<br><br>📣 تنبيه:<br>تأكد من تقديم طلبك بعناية قبل إرساله، حيث قد لا يكون الإلغاء ممكنًا بعد بدء التنفيذ.<br><br>⚠️ ملاحظات هامة:<br>🔍 إذا تم تغيير اسم الحساب بعد بدء التنفيذ يُعتبر الطلب مكتملًا.<br>🔗 تأكد من صحة الرابط قبل الإرسال، ولا يوجد استرداد في حالة إدخال رابط خاطئ.<br>⏳ عندما تكون الخدمة مشغولة، تتغير سرعة بدء التشغيل.<br>🚫 لا يتم قبول أكثر من طلب في نفس الوقت لنفس الحساب أثناء التنفيذ.<br>🔓 يجب أن يكون الحساب عامًا قبل بدء الطلب، وإذا تم تحويله إلى خاص أثناء التنفيذ يُعتبر الطلب مكتملًا.`,
       tiktokCustom: `⏱️ البدء: خلال 0–24 ساعة<br>🚀 السرعة: حتى 200 ألف يوميًا<br>⭐ الجودة: حسابات مصرية 🇪🇬<br>🔁 إعادة التعبئة: بدون ضمان<br><br>📣 تنبيه:<br>تأكد من إدخال رابط المنشور بشكل صحيح قبل إرسال الطلب.<br><br>⚠️ ملاحظات هامة:<br>🔓 يجب أن يكون المنشور عامًا ومتاحًا للجميع.<br>⏳ عند ازدحام الخدمة، قد تتغير سرعة البدء والتنفيذ.<br>🚫 لا تقدم طلبًا جديدًا لنفس الرابط قبل اكتمال الطلب السابق.`,
       comments: `✍️ كل سطر = تعليق واحد<br>📣 اكتب التعليقات كل تعليق في سطر مستقل.<br>⚠️ الخدمة بدون ضمان وبدون إعادة تعبئة.`,
       default: `⏱️ التنفيذ حسب ضغط الخدمة<br>🔗 استخدم الرابط العام الصحيح الخاص بالمنصة.<br>⚠️ راجع الرابط والكمية قبل إرسال الطلب.`
     };
-    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const numericId=Number(id);const isCustom=[106,207,307].includes(numericId);const isTikTokCustom=numericId===207;const isEgyptianFollowers=[101,201,301].includes(numericId);const terms=isTikTokCustom?SERVICE_TERMS.tiktokCustom:isEgyptianFollowers?SERVICE_TERMS.egyptianFollowers:isCustom?SERVICE_TERMS.comments:SERVICE_TERMS.default;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><div class="service-terms-copy">${terms}</div>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty');if(isCustom){label.textContent='رابط المنشور أو البوست 🔗';hint.textContent='استخدم رابط المنشور العام الصحيح.';wrap.style.display='block';qty.readOnly=true;document.body.classList.add('custom-comments-active');const comments=document.getElementById('customComments');if(comments)comments.placeholder=isTikTokCustom?'اكتب كل تعليق في سطر مستقل':'اكتب كل تعليق في سطر مستقل';}else{const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':'للايكات والمشاهدات والتعليقات استخدم رابط المنشور أو الفيديو.';wrap.style.display='none';qty.readOnly=false;document.body.classList.remove('custom-comments-active');}}
-    function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':'#111';const isComments=[106,207,307].includes(Number(id));const label=isComments?`${(rate*1000).toFixed(0)} ج.م / 1,000`:/Like|Love|Haha/.test(name)?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
+    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const numericId=Number(id);const isAiSubscription=numericId===501;const isCustom=[106,207,307].includes(numericId);const isTikTokCustom=numericId===207;const isEgyptianFollowers=[101,201,301].includes(numericId);const terms=isAiSubscription?`🕛 التسليم: 0–24 ساعة<br>📌 خانة اللينك: اكتب Gmail الخاص بك فقط.<br>📌 الحساب فيه 1000 كريديت شهريًا متجدد + كل الأدوات شغالة [Flow / Veo / Nano Banana / Anti-Gravity وغيرها].<br>📌 مدة الاشتراك: 18 شهر.<br>📌 الضمان: بدون ضمان.<br>🛑 المتابعة مع الدعم لأي استفسار.`:isTikTokCustom?SERVICE_TERMS.tiktokCustom:isEgyptianFollowers?SERVICE_TERMS.egyptianFollowers:isCustom?SERVICE_TERMS.comments:SERVICE_TERMS.default;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><div class="service-terms-copy">${terms}</div>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty'),qtyGroup=document.getElementById('quickQtyGroup');if(isAiSubscription){label.textContent='Gmail جوجل المطلوب 📧';hint.textContent='مثال: yourname@gmail.com — مسموح Gmail ينتهي بـ @gmail.com فقط.';const input=document.getElementById('quickLink');input.type='email';input.placeholder='yourname@gmail.com';input.pattern='^[A-Za-z0-9._%+-]+@gmail\.com$';input.setAttribute('inputmode','email');wrap.style.display='none';if(qtyGroup)qtyGroup.style.display='none';qty.value=1;qty.readOnly=true;document.getElementById('quickTotalDisplay').textContent='250 ج.م';document.body.classList.add('ai-subscription-active');}else{const input=document.getElementById('quickLink');input.type='url';input.placeholder='https://...';input.removeAttribute('pattern');input.removeAttribute('inputmode');const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':isCustom?'رابط المنشور أو البوست 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':isCustom?'استخدم رابط المنشور العام الصحيح.':'للايكات والمشاهدات والتعليقات استخدم رابط المنشور أو الفيديو.';if(isCustom){wrap.style.display='block';qty.readOnly=true;document.body.classList.add('custom-comments-active');}else{wrap.style.display='none';qty.readOnly=false;document.body.classList.remove('custom-comments-active');}if(qtyGroup)qtyGroup.style.display='block';document.body.classList.remove('ai-subscription-active');}}
+    function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':platform==='google'?'fa-brands fa-google':'fa-brands fa-youtube';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':platform==='google'?'#4285F4':'#111';const isComments=[106,207,307].includes(Number(id));const label=isComments?`${(rate*1000).toFixed(0)} ج.م / 1,000`:/Like|Love|Haha/.test(name)?`${(rate*100).toFixed(0)} ج/100`:`${(rate*1000).toFixed(0)} ج.م / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
     function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
     function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
     function filterPickerServices(value){pickerSearchQuery=String(value||'').trim().toLowerCase();applyPickerFilters();}

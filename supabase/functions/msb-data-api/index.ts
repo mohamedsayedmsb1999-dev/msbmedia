@@ -29,7 +29,7 @@ const campaignBudgets = {
   "10k_25k": "من 10,000 إلى 25,000 ج.م",
   "25k_plus": "أكثر من 25,000 ج.م",
 } as const;
-type SocialService = { name: string; rate: number; min: number; max: number; platform: "facebook" | "instagram" | "tiktok" | "youtube"; delivery: string; guarantee: string };
+type SocialService = { name: string; rate: number; min: number; max: number; platform: "facebook" | "instagram" | "tiktok" | "youtube" | "google"; delivery: string; guarantee: string };
 const socialServices: Record<number, SocialService> = {
   101: { name: "متابعين فيسبوك مصريين 100% 🇪🇬 🔥", rate: 0.28, min: 100, max: 500000, platform: "facebook", delivery: "24–48 ساعة", guarantee: "30 يوم تعويض نقص" },
   102: { name: "متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]", rate: 0.067, min: 1000, max: 500000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "ثابت حسب الخدمة" },
@@ -55,6 +55,7 @@ const socialServices: Record<number, SocialService> = {
   401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 0.25, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
   402: { name: "YouTube Like 👍", rate: 0.75, min: 100, max: 5000, platform: "youtube", delivery: "24–48 ساعة", guarantee: "ثابت" },
   403: { name: "مشاهدات يوتيوب 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "youtube", delivery: "24–48 ساعة", guarantee: "ثابت" },
+  501: { name: "اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥", rate: 250, min: 1, max: 1, platform: "google", delivery: "0–24 ساعة", guarantee: "بدون ضمان" },
 };
 const PUBLIC_SITE_URL = Deno.env.get("MSB_PUBLIC_SITE_URL") ?? "https://www.msbmedia.agency";
 
@@ -68,6 +69,7 @@ function isWebsiteUrl(value: string) {
 }
 
 function matchesServicePlatform(value: string, service: SocialService) {
+  if (service.platform === "google") return /^[A-Z0-9._%+-]+@gmail\.com$/i.test(value.trim());
   if (!isWebsiteUrl(value)) return false;
   const host = new URL(value).hostname.toLowerCase().replace(/^www\./, "");
   const domains = { facebook: ["facebook.com", "fb.com"], instagram: ["instagram.com"], tiktok: ["tiktok.com"], youtube: ["youtube.com", "youtu.be"] }[service.platform];
@@ -256,9 +258,11 @@ async function handleJson(request: Request) {
     const quantity = Number(input.quantity);
     const targetUrl = text(input.targetUrl, 1000);
     const customComments = text(input.customComments, 50000);
+    const isAiSubscription = serviceId === 501;
     const isCustomComments = [106, 207, 307].includes(serviceId);
     const commentLines = isCustomComments ? customComments.split(/\r?\n/).map(line => line.trim()).filter(Boolean) : [];
     const service = socialServices[serviceId];
+    if (isAiSubscription && Number(input.quantity) !== 1) return json({ ok: false, message: "خدمة اشتراك AI لها تكلفة ثابتة 250 جنيه." }, 400);
     if (!service || !Number.isInteger(quantity) || quantity < service.min || quantity > service.max || !matchesServicePlatform(targetUrl, service) || (isCustomComments && commentLines.length !== quantity)) return json({ ok: false, message: `تحقق من الخدمة والكمية. الرابط لازم يكون رابط ${service?.platform || "المنصة"} صحيح ومناسب للخدمة.` }, 400);
     const amount = Math.round(quantity * service.rate * 100) / 100;
     const balance = await walletBalance(customerId);
