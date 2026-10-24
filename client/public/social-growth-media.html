@@ -401,6 +401,9 @@
       align-items: center;
       gap: 12px;
       position: relative;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .girl-floating-avatar {
@@ -434,6 +437,8 @@
       border-radius: 14px;
       padding: 0.6rem 0.8rem;
       flex-grow: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .floating-social-box {
@@ -1012,7 +1017,8 @@
     @keyframes msbLogoFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(3deg)}}@keyframes msbOrbit{to{transform:rotate(336deg)}}@keyframes msbSpark{0%,100%{opacity:.45;transform:scale(.86) rotate(0)}50%{opacity:1;transform:scale(1.18) rotate(18deg)}}
     @media(max-width:700px){.pre-order-notice{grid-template-columns:1fr;padding:.75rem}.pre-order-logo-frame{min-height:0;width:100%;max-width:100%;aspect-ratio:4/3}.pre-order-copy{padding:.8rem}.pre-order-copy p{font-size:.72rem}}
     @media(prefers-reduced-motion:reduce){.msb-logo-core,.msb-orbit,.msb-logo-spark{animation:none}}
-.bottom-promo-wrap{padding:0 4% 1.8rem;display:flex;justify-content:center}.bottom-promo-wrap .hero-animated-character-box{width:min(100%,620px);margin:0 auto}.bottom-promo-wrap .floating-social-box{margin-top:.8rem;justify-content:center}
+.bottom-promo-wrap{width:100%;box-sizing:border-box;padding:0 4% 1.8rem;display:flex;justify-content:center;overflow:hidden}.bottom-promo-wrap .hero-animated-character-box{width:min(100%,620px);margin:0 auto}
+@media (max-width:540px){.bottom-promo-wrap .hero-animated-character-box{flex-direction:column;align-items:stretch;text-align:center}.bottom-promo-wrap .girl-floating-avatar{margin:0 auto}.bottom-promo-wrap .character-speech-bubble{width:100%;box-sizing:border-box}}
 </style>
 </head>
 <body>
@@ -1620,12 +1626,6 @@
             تفاعل مصري حقيقي فوري بضمان كامل 💯
           </div>
         </div>
-      </div>
-      <div class="floating-social-box">
-        <div class="social-ball sb-fb"><i class="fa-brands fa-facebook-f"></i></div>
-        <div class="social-ball sb-tk"><i class="fa-brands fa-tiktok"></i></div>
-        <div class="social-ball sb-ig"><i class="fa-brands fa-instagram"></i></div>
-        <div class="social-ball sb-yt"><i class="fa-brands fa-youtube"></i></div>
       </div>
     </section>
   </div>
