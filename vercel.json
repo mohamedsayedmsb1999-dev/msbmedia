@@ -5,10 +5,6 @@
   "outputDirectory": "dist/public",
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/social-growth-media.html"
-    },
-    {
       "source": "/smm",
       "destination": "/social-growth-media.html"
     },
@@ -23,6 +19,13 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/smm",
+      "permanent": false
     }
   ]
 }
