@@ -1124,11 +1124,6 @@
         <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer;" onclick="toggleSidebar()">✕</button>
       </div>
       <ul class="sidebar-links">
-        <li>
-          <a href="https://msbmedia.agency" target="_blank" class="external-hub-link">
-            <i class="fa-solid fa-globe" style="color: var(--primary-yellow);"></i> الرئيسية MSBMEDIA
-          </a>
-        </li>
         <li><a href="javascript:void(0)" onclick="navigateTo('home')" id="nav-home" class="active-link"><i class="fa-solid fa-cart-shopping"></i> طلب جديد</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('wallet')" id="nav-wallet"><i class="fa-solid fa-money-bill-transfer"></i> إضافة الأموال</a></li>
         <li><a href="javascript:void(0)" onclick="navigateTo('orders')" id="nav-orders"><i class="fa-solid fa-boxes-stacked"></i> الطلبات</a></li>
@@ -1916,6 +1911,15 @@
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
+  <!-- شريط التنقل السفلي الخاص بمنصة SMM -->
+  <nav class="smm-bottom-nav" aria-label="التنقل الرئيسي">
+    <button type="button" onclick="navigateTo('home',{scrollToTable:true})"><i class="fa-solid fa-list-check"></i><span>الخدمات</span></button>
+    <button type="button" onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i><span>إضافة أموال</span></button>
+    <button type="button" class="smm-new-order-nav" onclick="navigateTo('home',{scroll:false})"><i class="fa-solid fa-plus"></i><span>طلب جديد</span></button>
+    <button type="button" onclick="navigateTo('orders')"><i class="fa-solid fa-boxes-stacked"></i><span>الطلبات</span></button>
+    <button type="button" onclick="navigateTo('support')"><i class="fa-solid fa-headset"></i><span>الدعم</span></button>
+  </nav>
+
   <!-- Footer -->
   <footer>
     <div class="footer-grid">
@@ -2268,7 +2272,7 @@
       if(!target) return false;
       target.classList.add('active-page');
       const activeNav=document.getElementById('nav-'+pageId); if(activeNav) activeNav.classList.add('active-link');
-      if(options.scroll !== false) window.scrollTo({top:0,behavior:options.instant?'auto':'smooth'});
+      if(options.scrollToTable){setTimeout(()=>document.getElementById('smmTable')?.scrollIntoView({behavior:'auto',block:'start'}),0);} else if(options.scroll !== false) window.scrollTo({top:0,behavior:options.instant?'auto':'smooth'});
       closeSidebar();
       return true;
     }
