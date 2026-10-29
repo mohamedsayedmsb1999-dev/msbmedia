@@ -5,6 +5,10 @@
   "outputDirectory": "dist/public",
   "rewrites": [
     {
+      "source": "/smm",
+      "destination": "/social-growth-media.html"
+    },
+    {
       "source": "/social-growth",
       "destination": "/social-growth-media.html"
     },
