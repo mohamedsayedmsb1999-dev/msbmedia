@@ -268,7 +268,7 @@ async function handleJson(request: Request) {
     const quantity = Number(input.quantity);
     const targetUrl = text(input.targetUrl, 1000);
     const customComments = text(input.customComments, 50000);
-    const isAiSubscription = serviceId === 501;
+    const isAiSubscription = [501, 502].includes(serviceId);
     const isCustomComments = [106, 207, 307].includes(serviceId);
     const commentLines = isCustomComments ? customComments.split(/\r?\n/).map(line => line.trim()).filter(Boolean) : [];
     const service = socialServices[serviceId];
