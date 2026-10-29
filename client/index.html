@@ -1,29 +1,2405 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta name="theme-color" content="#1748d6" />
-    <meta name="description" content="MSB Media وكالة عربية لخدمات التسويق الرقمي، فيديوهات UGC، الإعلانات الممولة، تصميم المواقع وصفحات الهبوط، والمونتاج والترجمة." />
-    <meta property="og:title" content="MSB Media | وكالة تسويق رقمي وإنتاج محتوى" />
-    <meta property="og:description" content="خدمات تسويق رقمي وفيديوهات UGC وإعلانات ومواقع وصفحات هبوط من MSB Media." />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="ar_EG" />
-    <link rel="canonical" href="https://www.msbmedia.agency/" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <title>MSB Media | وكالة تسويق رقمي وإنتاج محتوى</title>
-    <!-- Meta Pixel Code: loaded once for PageView tracking -->
-    <script>
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '2017194908991772');
-      fbq('track', 'PageView');
-    </script>
-  </head>
-  <body>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2017194908991772&ev=PageView&noscript=1" alt="" /></noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MSB Media | نمو السوشيال ميديا</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-cream: #FDFBF4;
+      --primary-yellow: #FFDD00;
+      --yellow-dark: #E6C700;
+      --dark-card: #14171F;
+      --dark-footer: #0D0F14;
+      --text-main: #11141A;
+      --text-muted: #6C727F;
+      --border-light: #ECE8D9;
+      --alert-red: #DC2626;
+      --alert-bg: #FEF2F2;
+      --whatsapp: #25D366;
+      --radius-xl: 18px;
+      --radius-pill: 50px;
+      --shadow-card: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* خلفية تفاعلية هادئة */
+    .floating-reaction {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.18;
+      animation: floatReaction 14s linear infinite;
+    }
+    @keyframes floatReaction {
+      0% { transform: translateY(105vh) scale(0.8); opacity: 0; }
+      15% { opacity: 0.25; }
+      85% { opacity: 0.25; }
+      100% { transform: translateY(-10vh) scale(1.1); opacity: 0; }
+    }
+
+    /* شريط الأذكار الأخضر الصغير الأنيق */
+    .islamic-ticker-bar {
+      background: linear-gradient(90deg, #047857, #10B981, #047857);
+      color: #ffffff;
+      padding: 0.35rem 0.8rem;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(4, 120, 87, 0.2);
+      width: 100%;
+    }
+
+    .islamic-phrase-text {
+      display: inline-block;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .islamic-phrase-text.fade-out { opacity: 0; transform: translateY(-4px); }
+    .islamic-phrase-text.fade-in { opacity: 1; transform: translateY(0); }
+
+    /* الهيدر العلوي */
+    .top-header {
+      padding: 0.6rem 3.5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #FAF7EE;
+      border-bottom: 1.5px solid #111;
+      width: 100%;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-right-side {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-toggle-btn {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 10px;
+      border: 1.8px solid #111;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      transition: all 0.2s ease;
+    }
+    .menu-toggle-btn:active {
+      transform: scale(0.92);
+      background: var(--primary-yellow);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-bulb {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      background: var(--primary-yellow);
+      border-radius: 9px;
+      border: 1.2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      color: #000;
+      box-shadow: 0 3px 8px rgba(255, 221, 0, 0.35);
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #000;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      display: block;
+    }
+
+    .header-left-side {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-top {
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-pill);
+      border: 1.2px solid #000;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-auth-top { background: #000; color: #fff; }
+    .btn-auth-top:hover { background: var(--primary-yellow); color: #000; }
+    .btn-wallet-top { background: var(--primary-yellow); color: #000; }
+    .btn-wallet-top:hover { background: var(--yellow-dark); }
+
+    /* القائمة الجانبية (Right Drawer) */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 2500;
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 270px;
+      height: 100%;
+      background: #fff;
+      z-index: 2600;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.25);
+    }
+    .sidebar-drawer.open { right: 0; }
+
+    .sidebar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      border-bottom: 1.5px solid var(--border-light);
+      padding-bottom: 0.6rem;
+    }
+
+    .sidebar-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-links li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.7rem 0.9rem;
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      border-radius: 12px;
+      transition: 0.2s;
+    }
+    .sidebar-links li a:hover, .sidebar-links li a.active-link {
+      background: #FFF9D2;
+      color: #000;
+    }
+
+    .sidebar-links li a.external-hub-link {
+      background: #000;
+      color: #fff;
+      border: 1.5px solid #000;
+    }
+
+    .sidebar-whatsapp-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #25D366;
+      color: #fff;
+      padding: 0.75rem;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 0.88rem;
+      border: 1.5px solid #1EBE5D;
+    }
+
+    /* نافذة تسجيل الدخول */
+    .auth-modal-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .auth-card-box {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 2px solid #000;
+      padding: 1.6rem 1.3rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      position: relative;
+      margin: auto;
+      text-align: right;
+    }
+
+    .auth-close-btn {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #f1f1f1;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .auth-tab-buttons {
+      display: flex;
+      border-bottom: 2px solid var(--border-light);
+      margin-bottom: 1rem;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      background: none;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .auth-tab-btn.active {
+      color: #000;
+      border-bottom: 3px solid var(--primary-yellow);
+    }
+
+    .app-page { display: none; }
+    .app-page.active-page { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .account-welcome-panel { margin: 1rem 4% 0; padding: .9rem 1rem; display:flex; align-items:center; gap:.8rem; background:linear-gradient(135deg,#06255d,#0b5bd3); color:#fff; border:1px solid rgba(255,212,0,.7); border-radius:18px; box-shadow:0 12px 28px rgba(3,24,67,.2); }
+    .account-welcome-icon { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; border-radius:14px; background:#ffd400; color:#061534; font-size:1.15rem; }
+    .account-welcome-kicker { display:block; color:#9fd0ff; font-size:.65rem; font-weight:900; }
+    .account-welcome-panel h2 { margin:2px 0; font-size:1.05rem; }
+    .account-welcome-panel p { margin:0; color:#dbeafe; font-size:.7rem; }
+    .account-welcome-panel button { margin-right:auto; border:0; border-radius:999px; background:#ffd400; color:#061534; padding:.5rem .75rem; font-size:.7rem; font-weight:900; cursor:pointer; white-space:nowrap; }
+    @media (max-width:600px) { .account-welcome-panel { align-items:flex-start; } .account-welcome-panel button { align-self:center; font-size:.62rem; padding:.45rem .55rem; } }
+    .hero-container { max-width: 1500px; margin: 0 auto; width: 100%; }
+    .services-table-section { max-width: 1500px; margin: 0 auto; }
+    @media (max-width: 860px) { .hero-container { grid-template-columns: 1fr; } .smm-standard-table { min-width: 620px; } }
+    /* 5. الصفحة الرئيسية */
+    .hero-container {
+      padding: 1.4rem 4% 2rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0.3rem 0.9rem;
+      border: 1.2px solid #111;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 900;
+      margin-bottom: 0.6rem;
+      background: #fff;
+    }
+
+    .hero-heading {
+      font-size: 2.1rem;
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-heading span {
+      background: linear-gradient(135deg, #FF9900, #FFCC00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: #4A5568;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      max-width: 520px;
+    }
+
+    .hero-animated-character-box {
+      margin: 1rem 0;
+      background: #ffffff;
+      border: 1.5px solid #000;
+      border-radius: 18px;
+      padding: 0.9rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .girl-floating-avatar {
+      width: 80px;
+      height: 80px;
+      min-width: 80px;
+      border-radius: 16px;
+      border: 2px solid var(--primary-yellow);
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(255, 221, 0, 0.4);
+      position: relative;
+      animation: floatGirl 3s ease-in-out infinite alternate;
+    }
+
+    .hero-avatar-mark { display:grid; place-items:center; width:100%; height:100%; background:linear-gradient(145deg,#ffd400,#f39c12 48%,#0b5bd3); color:#061534; font-size:1.1rem; font-weight:1000; letter-spacing:.08em; }
+    .hero-avatar-spark { position:absolute; right:-4px; top:-5px; display:grid; place-items:center; width:23px; height:23px; border:2px solid #fff; border-radius:50%; background:#0b8153; color:#fff; font-size:.75rem; }
+    .girl-floating-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes floatGirl {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
+    }
+
+    .character-speech-bubble {
+      background: #FAF8EE;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 0.6rem 0.8rem;
+      flex-grow: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .floating-social-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .social-ball {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: floatSmooth 3.5s ease-in-out infinite;
+    }
+    .hero-platform-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      margin: 0.9rem 0 1rem;
+    }
+    .hero-platform-link {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0.55rem 0.45rem;
+      border: 1.5px solid #111;
+      border-radius: 12px;
+      background: #fff;
+      color: #111;
+      font-size: 0.75rem;
+      font-weight: 900;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .hero-platform-link i {
+      font-size: 1.05rem;
+      animation: platformPulse 2.2s ease-in-out infinite;
+    }
+    .hero-platform-link:nth-child(2) i { animation-delay: .25s; }
+    .hero-platform-link:nth-child(3) i { animation-delay: .5s; }
+    .hero-platform-link:nth-child(4) i { animation-delay: .75s; }
+    .hero-platform-link:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.12); }
+    @keyframes platformPulse {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-3px) scale(1.12); }
+    }
+    .sb-fb { background: #1877F2; animation-delay: 0s; }
+    .sb-tk { background: #000; animation-delay: 0.5s; }
+    .sb-ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); animation-delay: 1s; }
+    .sb-yt { background: #FF0000; animation-delay: 1.5s; }
+
+    @media (max-width: 540px) {
+      .hero-platform-strip { gap: 5px; }
+      .hero-platform-link { gap: 4px; padding: 0.48rem 0.2rem; font-size: 0.62rem; border-radius: 10px; }
+      .hero-platform-link i { font-size: 0.9rem; }
+    }
+
+    @keyframes floatSmooth {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* كارت الطلب الفوري المدمج */
+    .hero-card-box {
+      background: #ffffff;
+      border: 1.8px solid #000;
+      border-radius: var(--radius-xl);
+      padding: 1.4rem 1.1rem;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .form-group { margin-bottom: 0.85rem; text-align: right; }
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #FAF8EE;
+      border: 1.2px solid var(--border-light);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      background: #fff;
+      border-color: #000;
+    }
+
+    /* دروب داون منتقي الخدمات */
+    .custom-service-picker-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-picker-selected {
+      background: #FAF8EE;
+      border: 1.2px solid var(--border-light);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.84rem;
+      transition: 0.2s;
+    }
+    .custom-picker-selected:hover { border-color: #000; background: #fff; }
+
+    .custom-picker-dropdown {
+      position: absolute;
+      top: 105%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid #000;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      max-height: 230px;
+      overflow-y: auto;
+      z-index: 500;
+      display: none;
+    }
+    .custom-picker-dropdown.open { display: block; }
+
+    .picker-category-title {
+      background: #FAF8EE;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #666;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .picker-option {
+      padding: 0.6rem 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-bottom: 1px solid #f2eedc;
+      transition: 0.15s;
+    }
+    .picker-option:hover { background: #FFF9D2; color: #000; }
+
+    .picker-option-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .picker-price-tag {
+      font-weight: 900;
+      color: #000;
+      background: rgba(255, 221, 0, 0.4);
+      padding: 0.1rem 0.45rem;
+      border-radius: 5px;
+      font-size: 0.74rem;
+      white-space: nowrap;
+    }
+
+    .price-strip {
+      background: #FFF9D2;
+      border: 1.2px solid var(--primary-yellow);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .btn-submit-main {
+      width: 100%;
+      background: var(--primary-yellow);
+      color: #000;
+      border: 1.5px solid #000;
+      padding: 0.75rem;
+      border-radius: var(--radius-pill);
+      font-weight: 900;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(255, 221, 0, 0.4);
+      transition: 0.2s;
+    }
+    .btn-submit-main:hover {
+      background: var(--yellow-dark);
+      transform: translateY(-2px);
+    }
+    .btn-submit-main:disabled {
+      background: #E2E8F0;
+      border-color: #CBD5E1;
+      color: #94A3B8;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* ============================================================
+       6. مربع وقائمة الخدمات المضغوطة والأنيقة (SMM Compact View)
+       تصميم دقيق ومريح لشاشات التليفون بدون فراغات عملاقة
+       ============================================================ */
+    .services-table-section {
+      padding: 1.5rem 3.5% 2.5rem;
+    }
+
+    .services-table-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .services-filter-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 1rem;
+      justify-content: flex-start;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-pill-btn {
+      background: #fff;
+      border: 1.2px solid #111;
+      padding: 0.35rem 0.9rem;
+      border-radius: var(--radius-pill);
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.2s;
+    }
+    .filter-pill-btn.active, .filter-pill-btn:hover {
+      background: var(--primary-yellow);
+      border-color: #000;
+      color: #000;
+    }
+
+    /* كارت الحاوية المضغوط للخدمات */
+    .smm-table-touch-container {
+      width: 100%;
+      background: #fff;
+      border: 1.8px solid #000;
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .smm-standard-table tbody tr { transition: background .18s ease, transform .18s ease; }
+    .smm-standard-table tbody tr:hover { transform: translateX(-2px); }
+
+    .smm-standard-table {
+      width: 100%;
+      min-width: 520px; /* مقاس مريح ومضغوط للموبايل */
+      border-collapse: collapse;
+      text-align: right;
+    }
+
+    .smm-standard-table th {
+      background: #FAF8EE;
+      padding: 0.65rem 0.75rem;
+      font-weight: 900;
+      font-size: 0.78rem;
+      border-bottom: 1.5px solid #000;
+      color: #000;
+      white-space: nowrap;
+    }
+
+    .smm-standard-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #f2eedc;
+      font-size: 0.8rem;
+      vertical-align: middle;
+    }
+    .smm-standard-table tr:hover { background: #FFFDF5; }
+
+    .smm-id-cell {
+      font-weight: 900;
+      font-size: 0.75rem;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .smm-name-cell strong {
+      display: block;
+      font-size: 0.84rem;
+      color: #000;
+      line-height: 1.25;
+    }
+    .smm-name-cell small {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .smm-price-cell {
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #000;
+      white-space: nowrap;
+    }
+
+    .smm-badge-cell span {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
+      font-weight: 800;
+      font-size: 0.7rem;
+      background: #E8F8F0;
+      color: #10B981;
+      white-space: nowrap;
+    }
+
+    .btn-smm-order-row {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-pill);
+      font-weight: 900;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .btn-smm-order-row:hover { background: var(--primary-yellow); color: #000; }
+
+    /* الأشرطة المتحركة */
+    .marquee-wrapper {
+      background: var(--primary-yellow);
+      padding: 0.65rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 1rem 0;
+      border-top: 1.5px solid #000;
+      border-bottom: 1.5px solid #000;
+    }
+
+    .marquee-wrapper.reverse-marquee {
+      background: #111;
+      color: #fff;
+      border-top: none;
+    }
+
+    .marquee-track {
+      display: inline-flex;
+      gap: 20px;
+      animation: scrollRight 22s linear infinite;
+    }
+    .reverse-marquee .marquee-track { animation: scrollLeft 22s linear infinite; }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: #fff;
+      color: #000;
+      padding: 0.25rem 0.9rem;
+      border-radius: var(--radius-pill);
+    }
+    .reverse-marquee .marquee-item { background: #222; color: #fff; border: 1px solid #333; }
+
+    @keyframes scrollRight { 0% { transform: translateX(0); } 100% { transform: translateX(50%); } }
+    @keyframes scrollLeft { 0% { transform: translateX(50%); } 100% { transform: translateX(0); } }
+
+    /* المحفظة والدفع */
+    .wallet-page-wrapper {
+      padding: 1.8rem 4%;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .payment-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 1.5rem;
+    }
+
+    .pay-method-box {
+      background: #fff;
+      border: 1.8px solid #000;
+      border-radius: 16px;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s;
+    }
+    .pay-method-box:hover { transform: translateY(-2px); }
+
+    .pay-brand-svg-box {
+      display: grid;
+      place-items: center;
+      min-height: 66px;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: #fdfdfd;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
+
+    .copy-pill-btn {
+      background: #FAF8EE;
+      border: 1px dashed #777;
+      border-radius: var(--radius-pill);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .copy-pill-btn:hover { background: var(--primary-yellow); border-color: #000; }
+
+    .terms-box-card {
+      background: #fff;
+      border: 1.8px solid #000;
+      border-radius: 16px;
+      padding: 1.4rem;
+      margin-top: 1.5rem;
+      line-height: 1.7;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* زر الواتساب العائم الصغير */
+    .whatsapp-pulse-btn {
+      position: fixed;
+      bottom: 18px;
+      left: 16px;
+      background: var(--whatsapp);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      z-index: 2000;
+      text-decoration: none;
+      animation: pulseGrow 2s infinite;
+    }
+
+    @keyframes pulseGrow {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+      70% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 1.2rem;
+    }
+
+    .review-item {
+      background: #fff;
+      border: 1.4px solid #000;
+      border-radius: 14px;
+      padding: 1.1rem;
+      text-align: right;
+      box-shadow: var(--shadow-card);
+    }
+
+    .msb-notice { position: fixed; z-index: 10000; top: 18px; right: 18px; left: 18px; max-width: 520px; margin: auto; display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border-radius: 16px; border: 1.5px solid #111; box-shadow: 0 18px 45px rgba(0,0,0,.18); font-weight: 800; line-height: 1.7; animation: noticeIn .22s ease-out; }
+    .msb-notice.success { background: #ecfdf5; color: #065f46; border-color: #10b981; }
+    .msb-notice.error { background: #fff1f2; color: #9f1239; border-color: #fb7185; }
+    .msb-notice.info { background: #eff6ff; color: #1e3a8a; border-color: #60a5fa; }
+    .msb-notice button { margin-right: auto; border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; color: inherit; }
+    @keyframes noticeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .wallet-balance-card { background: linear-gradient(135deg, #063a87, #0b5bd3); color: #fff; border-radius: 20px; padding: 1.2rem; margin: 0 0 1.4rem; box-shadow: 0 14px 30px rgba(6,58,135,.22); }
+    .wallet-balance-card h3 { font-size: 1rem; margin-bottom: .9rem; }
+    .wallet-balance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .wallet-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 13px; padding: .7rem .5rem; text-align: center; }
+    .wallet-stat strong { display: block; font-size: 1rem; color: #ffd400; }
+    .wallet-stat span { display: block; margin-top: 3px; font-size: .68rem; color: #dbeafe; }
+    .wallet-history { background: #fff; border: 1.5px solid #111; border-radius: 16px; padding: 1rem; margin: 0 0 1.3rem; }
+    .wallet-history h4 { font-size: .95rem; margin-bottom: .55rem; }
+    .wallet-history-row { display: flex; justify-content: space-between; gap: 10px; padding: .45rem 0; border-bottom: 1px solid #eee; font-size: .74rem; }
+    .wallet-history-row:last-child { border-bottom: 0; }
+    .status-pill { border-radius: 999px; padding: .15rem .5rem; font-size: .67rem; font-weight: 900; white-space: nowrap; }
+    .status-pill.pending { background: #fef3c7; color: #92400e; }
+    .status-pill.approved { background: #d1fae5; color: #065f46; }
+    .status-pill.rejected { background: #ffe4e6; color: #9f1239; }
+    .form-hint { color: #64748b; font-size: .68rem; margin-top: .25rem; display: block; }
+    .pay-brand-svg-box img { width: 54px; height: 54px; object-fit: contain; }
+    @media (max-width: 520px) { .wallet-balance-grid { grid-template-columns: 1fr; } .wallet-stat { display: flex; align-items: center; justify-content: space-between; text-align: right; } }
+    /* Footer */
+    footer {
+      background: var(--dark-footer);
+      color: #fff;
+      padding: 2.8rem 4% 1.8rem;
+      border-radius: 25px 25px 0 0;
+      margin-top: 3rem;
+      text-align: right;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 25px;
+      margin-bottom: 1.8rem;
+    }
+
+    .footer-grid h4 { font-size: 0.95rem; font-weight: 900; margin-bottom: 0.8rem; }
+    .footer-grid ul { list-style: none; }
+    .footer-grid ul li { margin-bottom: 5px; }
+    .footer-grid ul li a { color: #888; text-decoration: none; font-size: 0.82rem; }
+    .footer-grid ul li a:hover { color: var(--primary-yellow); }
+
+    @media (max-width: 850px) {
+      .hero-container, .footer-grid { grid-template-columns: 1fr; }
+      .hero-heading { font-size: 1.95rem; }
+      .top-header { padding: 0.6rem 3%; }
+    }
+
+    /* لوحة الطلبات الاحترافية: كروت مرنة للموبايل والكمبيوتر */
+    .orders-toolbar{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;justify-content:space-between;margin:1rem 0}
+    .orders-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .order-card{background:#fff;border:1px solid #e8e5d8;border-radius:18px;padding:1rem;box-shadow:0 10px 28px rgba(20,20,20,.08);transition:transform .18s ease,box-shadow .18s ease;min-width:0}
+    .order-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(20,20,20,.12)}
+    .order-card-top,.order-card-meta,.order-card-stats{display:flex;gap:.55rem;align-items:center;justify-content:space-between}
+    .order-card-top{margin-bottom:.8rem}.order-code{font-family:ui-monospace,monospace;color:#b42318;font-size:.72rem;font-weight:900;background:#fff1f0;padding:.28rem .45rem;border-radius:7px}
+    .order-card h3{font-size:.9rem;line-height:1.55;margin:.35rem 0 .55rem;color:#151515}.order-card-meta{font-size:.72rem;color:#71717a;margin-bottom:.65rem;align-items:flex-start}.order-card-meta a{color:#075bd6;word-break:break-all;text-decoration:none}.order-card-meta a:hover{text-decoration:underline}
+    .order-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin:.75rem 0}.order-stat{background:#f8f8f5;border:1px solid #ecebe4;border-radius:9px;text-align:center;padding:.45rem .25rem}.order-stat small{display:block;color:#71717a;font-size:.62rem;margin-bottom:.2rem}.order-stat strong{font-size:.78rem;color:#18181b}.order-progress-label{display:flex;justify-content:space-between;font-size:.65rem;color:#71717a;margin-top:.6rem}.order-progress{height:6px;background:#ececec;border-radius:99px;overflow:hidden}.order-progress>span{display:block;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:inherit}
+    .orders-empty{background:#fff;border:1px dashed #d4d4d8;border-radius:16px;padding:2.3rem 1rem;text-align:center;color:#71717a}
+    @media(max-width:760px){.orders-grid{grid-template-columns:1fr}.order-card{padding:.85rem}.order-card h3{font-size:.82rem}.orders-toolbar{align-items:stretch}.orders-toolbar .services-filter-pills{width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start!important;padding-bottom:.25rem}.orders-toolbar .filter-pill-btn{white-space:nowrap;font-size:.68rem;padding:.45rem .65rem}}
+
+    .picker-search-wrap{padding:.65rem;position:sticky;top:0;background:#fff;z-index:2}.picker-search-wrap input{width:100%;padding:.65rem;border:1px solid #d4d4d8;border-radius:10px;font-family:inherit}.picker-platform-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.45rem .65rem;border-bottom:1px solid #eee}.picker-platform-tabs button{white-space:nowrap;border:1px solid #e5e7eb;background:#fafafa;border-radius:999px;padding:.35rem .55rem;font-family:inherit;font-size:.7rem;font-weight:800}.picker-platform-tabs button:active{background:#ffdd00}.custom-comments-active #quickQty{background:#f0fdf4}.faq-grid{display:grid;gap:.65rem}.faq-grid details{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.75rem}.faq-grid summary{cursor:pointer;font-weight:900}.faq-grid p{color:var(--text-muted);font-size:.82rem;line-height:1.8;margin:.5rem 0 0}.support-chat{background:#f8fafc;border-radius:12px;padding:.75rem;margin-top:1rem}
+.service-terms-copy{width:100%;line-height:1.75;color:#475569;font-weight:700;font-size:.72rem;background:#fff;padding:.6rem;border-radius:8px;margin-top:.35rem}
+
+    .pre-order-notice{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(0,1.8fr);gap:1rem;align-items:stretch;background:#fff;border:1.5px solid #111;border-radius:20px;padding:1rem;margin:1rem 0 1.4rem;box-shadow:0 12px 30px rgba(30,64,175,.12);overflow:hidden}
+    .pre-order-logo-frame{position:relative;display:grid;place-items:center;min-height:190px;aspect-ratio:4/3;background:#fff;border:1px solid #dbeafe;border-radius:16px;overflow:hidden;isolation:isolate}
+    .pre-order-logo-frame:before{content:"";position:absolute;inset:12%;border-radius:24px;background:linear-gradient(135deg,#eff6ff,#fffbea);box-shadow:inset 0 0 0 1px #fef08a;z-index:-1}
+    .msb-logo-core{display:grid;place-items:center;width:116px;height:116px;border-radius:30px;background:linear-gradient(145deg,#0b5bd3 0%,#2563eb 62%,#facc15 63%,#fde047 100%);color:#fff;box-shadow:0 15px 30px rgba(37,99,235,.32),0 0 0 7px rgba(250,204,21,.2);transform:rotate(-4deg);animation:msbLogoFloat 2.8s ease-in-out infinite}
+    .msb-logo-core strong{font-size:2rem;letter-spacing:.08em;line-height:1}.msb-logo-core span{font-size:.62rem;letter-spacing:.32em;font-weight:900;margin-left:.3em}
+    .msb-orbit{position:absolute;border:2px solid rgba(37,99,235,.22);border-radius:50%;width:82%;height:48%;transform:rotate(-24deg);animation:msbOrbit 5s linear infinite}.orbit-two{width:58%;height:78%;border-color:rgba(250,204,21,.48);transform:rotate(34deg);animation-direction:reverse}.msb-logo-spark{position:absolute;right:14%;top:16%;color:#facc15;font-size:1.65rem;animation:msbSpark 1.8s ease-in-out infinite}
+    .pre-order-copy{background:linear-gradient(135deg,#f8fbff,#fffdf0);border:1px solid #dbeafe;border-radius:16px;padding:1rem}.pre-order-copy h3{margin:0 0 .65rem;color:#0b3b91;font-size:1.05rem}.pre-order-copy p{margin:.42rem 0;color:#334155;font-size:.76rem;line-height:1.75;font-weight:700}.pre-order-copy p:last-child{color:#7c2d12;background:#fff7ed;border-radius:10px;padding:.45rem .6rem}
+    @keyframes msbLogoFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(3deg)}}@keyframes msbOrbit{to{transform:rotate(336deg)}}@keyframes msbSpark{0%,100%{opacity:.45;transform:scale(.86) rotate(0)}50%{opacity:1;transform:scale(1.18) rotate(18deg)}}
+    @media(max-width:700px){.pre-order-notice{grid-template-columns:1fr;padding:.75rem}.pre-order-logo-frame{min-height:0;width:100%;max-width:100%;aspect-ratio:4/3}.pre-order-copy{padding:.8rem}.pre-order-copy p{font-size:.72rem}}
+    @media(prefers-reduced-motion:reduce){.msb-logo-core,.msb-orbit,.msb-logo-spark{animation:none}}
+.bottom-promo-wrap{width:100%;box-sizing:border-box;padding:0 4% 1.8rem;display:flex;justify-content:center;overflow:hidden}.bottom-promo-wrap .hero-animated-character-box{width:min(100%,620px);margin:0 auto}
+@media (max-width:540px){.bottom-promo-wrap .hero-animated-character-box{flex-direction:column;align-items:stretch;text-align:center}.bottom-promo-wrap .girl-floating-avatar{margin:0 auto}.bottom-promo-wrap .character-speech-bubble{width:100%;box-sizing:border-box}}
+</style>
+</head>
+<body>
+
+  <!-- جزيئات تفاعل خفيفة -->
+
+  <!-- الشريط العلوي -->
+  <header class="top-header">
+    <div class="header-right-side">
+      <button class="menu-toggle-btn" onclick="toggleSidebar()" title="فتح القائمة">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="brand-wrap" onclick="navigateTo('home')">
+        <div class="brand-bulb"><i class="fa-solid fa-lightbulb"></i></div>
+        <div>
+          <div class="brand-title">MSB MEDIA</div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="header-left-side">
+      <button class="btn-top btn-wallet-top" onclick="navigateTo('wallet')">
+        <i class="fa-solid fa-money-bill-transfer"></i> إضافة الأموال
+      </button>
+      <button class="btn-top btn-auth-top" id="headerAuthBtn" onclick="openAuthModal()">
+        <i class="fa-solid fa-user"></i> حسابي
+      </button>
+      <button class="btn-top header-logout-icon" id="headerLogoutBtn" onclick="logoutCustomer()" title="تسجيل الخروج" aria-label="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </header>
+
+  <!-- شريط الأذكار الأخضر الصغير الأنيق -->
+  <div class="islamic-ticker-bar">
+    <i class="fa-solid fa-star-and-crescent" style="color: #FFDD00; font-size: 0.8rem;"></i>
+    <span class="islamic-phrase-text fade-in" id="islamicText">بسم الله الرحمن الرحيم</span>
+    <i class="fa-solid fa-star-and-crescent" style="color: #FFDD00; font-size: 0.8rem;"></i>
+  </div>
+
+  <!-- نافذة تسجيل الدخول/الاشتراك -->
+  <div class="auth-modal-overlay" id="authGateModal">
+    <div class="auth-card-box">
+      <button class="auth-close-btn" onclick="closeAuthModal()">✕</button>
+
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <div class="brand-bulb" style="margin: 0 auto 6px;"><i class="fa-solid fa-lightbulb"></i></div>
+        <h2 style="font-weight: 900; font-size: 1.2rem;">MSB Media Access 🚀</h2>
+        <p style="color: var(--text-muted); font-size: 0.78rem;">سجل الدخول أو اشترك في ثواني</p>
+      </div>
+
+      <div class="auth-tab-buttons">
+        <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+        <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">إنشاء حساب</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleUserLogin(event)">
+        <div class="form-group">
+          <label>البريد الإلكتروني أو رقم الهاتف</label>
+          <input type="text" id="loginEmail" class="form-control" placeholder="yourname@gmail.com أو 01092794169" required>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit-main" style="margin-top: 8px;">
+          <i class="fa-solid fa-right-to-bracket"></i> دخول إلى المنصة
+        </button>
+      </form>
+
+      <form id="registerForm" onsubmit="handleUserRegister(event)" style="display: none;">
+        <div class="form-group">
+          <label>الاسم بالكامل</label>
+          <input type="text" id="regName" class="form-control" placeholder="اسمك الكريم" required>
+        </div>
+        <div class="form-group">
+          <label>رقم الموبايل / واتساب</label>
+          <input type="tel" id="regPhone" class="form-control" placeholder="مثال: 01092794169" pattern="^(01[0125])[0-9]{8}$" title="اكتب رقم موبايل مصري صحيح من 11 رقم" required>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="yourname@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit-main" style="margin-top: 8px;">
+          <i class="fa-solid fa-user-plus"></i> تفعيل الحساب فوراً
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- القائمة الجانبية (Right Drawer) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar-drawer" id="sidebarDrawer">
+    <div>
+      <div class="sidebar-top">
+        <div style="font-weight: 900; font-size: 1.05rem;">القائمة ⚡</div>
+        <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer;" onclick="toggleSidebar()">✕</button>
+      </div>
+      <ul class="sidebar-links">
+        <li><a href="javascript:void(0)" onclick="navigateTo('home')" id="nav-home" class="active-link"><i class="fa-solid fa-cart-shopping"></i> طلب جديد</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('wallet')" id="nav-wallet"><i class="fa-solid fa-money-bill-transfer"></i> إضافة الأموال</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('orders')" id="nav-orders"><i class="fa-solid fa-boxes-stacked"></i> الطلبات</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('services')" id="nav-services"><i class="fa-solid fa-list-check"></i> الخدمات</a></li>
+        <li id="logoutNavItem" style="display:none"><a href="javascript:void(0)" onclick="logoutCustomer()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
+        <li><a href="javascript:void(0)" onclick="navigateTo('support')" id="nav-support"><i class="fa-solid fa-headset"></i> الدعم</a></li>
+      </ul>
+    </div>
+    <div style="border-top: 1.2px solid var(--border-light); padding-top: 1rem; text-align: center;">
+      <a href="https://wa.me/201092794169" target="_blank" class="sidebar-whatsapp-action">
+        <i class="fa-brands fa-whatsapp" style="font-size: 1.15rem;"></i> تواصل مع الدعم الفني
+      </a>
+    </div>
+  </aside>
+
+  <!-- ==================== الصفحة 1: الرئيسية ==================== -->
+  <div class="account-welcome-panel" id="accountWelcomePanel" style="display:none;">
+    <div class="account-welcome-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+    <div><span class="account-welcome-kicker">لوحة حسابك في MSBMEDIA</span><h2>أهلاً بك يا <strong id="welcomeUserName"></strong> 👋</h2><p>رصيدك وطلباتك وكل خدماتك قدامك في مكان واحد.</p></div>
+    <button onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i> شوف محفظتك</button>
+  </div>
+  <div id="page-home" class="app-page active-page">
+    <section class="hero-container">
+      <div>
+        <span class="hero-badge-pill">🔥 أقوى سيرفر تزويد وتفاعل في مصر</span>
+        <h1 class="hero-heading">زوّد متابعينك ومبيعاتك <span>في ثواني معدودة!</span> 🚀</h1>
+        <p class="hero-desc">كل اللي تحتاجه لصفحتك أو متجرك في مكان واحد! متابعين حقيقيين، لايكات، وتعليقات مصرية مخصصة بتكسر التردد وتضاعف مبيعاتك فورياً وبأمان 100% بدون باسوردات! 💯✨</p>
+
+          <div class="platform-filter-rail" aria-label="فلترة خدمات المنصات">
+            <button type="button" class="platform-filter-chip active" data-platform="all" onclick="setPickerPlatform('all');focusSmmSearch(this)"><i class="fa-solid fa-layer-group"></i><span>الكل</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="facebook" onclick="setPickerPlatform('facebook');focusSmmSearch(this)"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="tiktok" onclick="setPickerPlatform('tiktok');focusSmmSearch(this)"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="instagram" onclick="setPickerPlatform('instagram');focusSmmSearch(this)"><i class="fa-brands fa-instagram"></i><span>Instagram</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="youtube" onclick="setPickerPlatform('youtube');focusSmmSearch(this)"><i class="fa-brands fa-youtube"></i><span>YouTube</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="snapchat" onclick="setPickerPlatform('snapchat');focusSmmSearch(this)"><i class="fa-brands fa-snapchat"></i><span>Snapchat</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="linkedin" onclick="setPickerPlatform('linkedin');focusSmmSearch(this)"><i class="fa-brands fa-linkedin-in"></i><span>LinkedIn</span></button>
+          </div>
+      </div>
+
+      <div class="hero-card-box">
+        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.2rem;">🛒 تنفيذ طلب جديد</h3>
+        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem;">اختار الخدمة، وهتشوف الحد الأدنى والسعر ومدة التنفيذ قبل التأكيد:</p>
+
+        <form onsubmit="handleQuickOrder(event)">
+          <div class="form-group">
+            <label>الخدمة المطلوبة 👇</label>
+            <div class="custom-service-picker-wrapper">
+              <div class="custom-picker-selected" id="pickerTrigger" onclick="togglePickerDropdown()">
+                <div id="pickerSelectedText">
+                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 100% 🇪🇬 (280 EGP/1,000)
+                </div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+              </div>
+
+              <div class="custom-picker-dropdown" id="pickerDropdownMenu">
+                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button><button type="button" onclick="setPickerPlatform('snapchat')"><i class="fa-brands fa-snapchat"></i> سناب شات</button><button type="button" onclick="setPickerPlatform('linkedin')"><i class="fa-brands fa-linkedin"></i> لينكدإن</button><button type="button" onclick="setPickerPlatform('google')"><i class="fa-brands fa-google"></i> Google AI</button></div><div id="pickerServiceOptions">
+                <div class="picker-category-title">👥 زيادة المتابعين (الحد الأدنى: 1,000)</div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
+                  <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين</div>
+                  <span class="picker-price-tag">280 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 102)">
+                  <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</div>
+                  <span class="picker-price-tag">67 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-tiktok', '#000', 201)">
+                  <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> متابعين تيك توك مصريين</div>
+                  <span class="picker-price-tag">280 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين تيك توك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 'fa-brands fa-tiktok', '#000', 202)">
+                  <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> متابعين تيك توك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</div>
+                  <span class="picker-price-tag">67 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام مصريين 100% 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 301)">
+                  <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> متابعين إنستجرام مصريين</div>
+                  <span class="picker-price-tag">280 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 302)">
+                  <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</div>
+                  <span class="picker-price-tag">67 EGP / 1,000</span>
+                </div>
+
+                <div class="picker-category-title">💬 التعليقات المخصصة (الحد الأدنى: 20 كومنت)</div>
+                <div class="picker-option" onclick="chooseServiceOption('تعليقات فيسبوك مخصصة ✍️', 1.30, 20, 20, 'fa-brands fa-facebook', '#1877F2', 106)">
+                  <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> كومنت فيسبوك مخصص</div>
+                  <span class="picker-price-tag">1300 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('تعليقات تيكتوك مخصصة مصريين 100% ✍️', 1.40, 10, 10, 'fa-brands fa-tiktok', '#000', 207)">
+                  <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> كومنت تيك توك مخصص</div>
+                  <span class="picker-price-tag">1300 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('كومنتات إنستجرام مخصصة ✍️', 1.30, 20, 20, 'fa-brands fa-instagram', '#E1306C', 307)">
+                  <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> كومنت إنستجرام مخصص</div>
+                  <span class="picker-price-tag">1300 EGP / 1,000</span>
+                </div>
+
+                <div class="picker-category-title">❤️ الإعجابات والتفاعلات (الحد الأدنى: 1,000 لايك)</div>
+                <div class="picker-option" onclick="chooseServiceOption('لايكات فيسبوك مصريين ❤️', 0.80, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 103)">
+                  <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> لايكات فيسبوك</div>
+                  <span class="picker-price-tag">80 EGP / 100</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('لايكات تيك توك فوري ❤️', 0.80, 1000, 1000, 'fa-brands fa-tiktok', '#000', 203)">
+                  <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> لايكات تيك توك</div>
+                  <span class="picker-price-tag">80 EGP / 100</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('لايكات إنستجرام فورية ❤️', 0.80, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 303)">
+                  <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> لايكات إنستجرام</div>
+                  <span class="picker-price-tag">80 EGP / 100</span>
+                </div>
+
+                <div class="picker-category-title">👁️ المشاهدات (الحد الأدنى: 1,000 مشاهدة)</div>
+                <div class="picker-option" onclick="chooseServiceOption('مشاهدات فيديو فيسبوك 👁️', 0.06, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 109)">
+                  <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> مشاهدات فيسبوك</div>
+                  <span class="picker-price-tag">60 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('مشاهدات تيك توك فائقة السرعة 👁️', 0.06, 1000, 1000, 'fa-brands fa-tiktok', '#000', 205)">
+                  <div class="picker-option-left"><i class="fa-brands fa-tiktok" style="color: #000;"></i> مشاهدات تيك توك</div>
+                  <span class="picker-price-tag">60 EGP / 1,000</span>
+                </div>
+                <div class="picker-option" onclick="chooseServiceOption('مشاهدات ريلز إنستجرام 👁️', 0.06, 1000, 1000, 'fa-brands fa-instagram', '#E1306C', 306)">
+                  <div class="picker-option-left"><i class="fa-brands fa-instagram" style="color: #E1306C;"></i> مشاهدات ريلز إنستجرام</div>
+                  <span class="picker-price-tag">60 EGP / 1,000</span>
+                </div>
+
+                <div class="picker-category-title">▶️ مشتركون يوتيوب (الحد الأدنى: 1,000)</div>
+                <div class="picker-option" onclick="chooseServiceOption('مشتركون يوتيوب تفعيل القنوات ▶️', 0.25, 1000, 1000, 'fa-brands fa-youtube', '#FF0000', 401)">
+                  <div class="picker-option-left"><i class="fa-brands fa-youtube" style="color: #FF0000;"></i> مشتركون يوتيوب</div>
+                  <span class="picker-price-tag">250 EGP / 1,000</span>
+                </div>
+                <div class="picker-category-title">🤖 اشتراك أدوات الذكاء الاصطناعي</div>
+                <div class="picker-option" onclick="chooseServiceOption('اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥', 250, 1, 1, 'fa-brands fa-google', '#4285F4', 501, 1, 'google')">
+                  <div class="picker-option-left"><i class="fa-brands fa-google" style="color:#4285F4"></i> اشتراك AI — Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥</div>
+                  <span class="picker-price-tag">250 EGP / 18 شهر</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="serviceDetailsPanel" style="display:flex;flex-wrap:wrap;gap:8px;background:#f7faff;border:1px solid var(--border-light);border-radius:10px;padding:10px;margin:.65rem 0;font-size:.72rem;font-weight:800;color:var(--text-muted);"><span>🔥 الريفيل: 30 يوم</span><span>🚀 التعبئة: 24–48 ساعة</span><span>🛡️ ضمان حسب الخدمة</span></div>
+          <div class="form-group">
+            <label id="quickLinkLabel">رابط الحساب أو الصفحة 🔗</label>
+            <input type="url" id="quickLink" class="form-control" placeholder="https://..." required>
+            <small id="quickLinkHint" class="form-hint">للمتابعين استخدم رابط الصفحة أو الحساب العام.</small>
+            <div id="customCommentsWrap" style="display:none;margin-top:.7rem"><label>التعليقات — كل سطر تعليق واحد ✍️</label><textarea id="customComments" class="form-control" rows="6" placeholder="السطر 1 = تعليق 1
+مثال: بسم الله الرحمن الرحيم
+السطر 2 = تعليق 2"></textarea><small class="form-hint">كل سطر كامل يُحسب تعليقًا واحدًا. مثال: «بسم الله الرحمن الرحيم» = تعليق واحد، وليس كل كلمة منفردة.</small></div>
+          </div>
+
+          <div class="form-group" id="quickQtyGroup">
+            <label id="qtyLabelText">الكمية المطلوبة (من 100 إلى 500,000) 🔢</label>
+            <input type="number" id="quickQty" class="form-control" value="100" min="100" max="500000" step="10" oninput="calculateDynamicPrice()">
+          </div>
+
+          <div class="price-strip">
+            <span>التكلفة الإجمالية:</span>
+            <span id="quickTotalDisplay" style="font-size: 1.2rem; font-weight: 900;">28 EGP</span>
+          </div>
+
+          <button type="submit" class="btn-submit-main">
+            <i class="fa-solid fa-bolt"></i> تأكيد الطلب
+          </button>
+        </form>
+      </div>
+
+      <section class="pre-order-notice" aria-labelledby="preOrderNoticeTitle">
+        <div class="pre-order-logo-frame" aria-label="شعار MSBMEDIA متحرك">
+          <div class="msb-orbit orbit-one"></div><div class="msb-orbit orbit-two"></div>
+          <div class="msb-logo-core"><strong>MSB</strong><span>MEDIA</span></div>
+          <div class="msb-logo-spark">✦</div>
+        </div>
+        <div class="pre-order-copy">
+          <h3 id="preOrderNoticeTitle">📖 اقرأ قبل الطلب</h3>
+          <p>🔓 جميع الحسابات يجب أن تكون عامة قبل الطلب، وليست خاصة.</p>
+          <p>🚫 يرجى عدم وضع أكثر من طلب لنفس الرابط بنفس الوقت إلا بعد اكتمال الطلب الأول.</p>
+          <p>📝 لا يمكننا إلغاء أو تعديل أي طلب بعد وضعه نهائياً إلا إذا وجد فيه مشاكل، لذلك يرجى التأكد من الطلبات قبل وضعها.</p>
+          <p>🔒 إذا تم تحويل الحساب إلى برايفت أو تم حذف المنشور أو المقطع بعد وضع الطلب سيتم اعتبار الطلب مكتمل ولا يمكننا إلغاؤه نهائياً.</p>
+          <p>✅ عندما تقوم بوضع طلب جديد فأنت توافق على شروط وأحكام الموقع.</p>
+          <p>💳 عندما تقوم بشحن الرصيد لا يمكننا بأي حال من الأحوال إعادة إرسال الرصيد مجدداً إلى حساباتك، لذلك تأكد من الرصيد الذي تحتاجه قبل الشحن بالموقع.</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================================================
+         مربع وقائمة الخدمات المضغوطة المريحة (SMM Compact View)
+         ============================================================ -->
+    <section class="services-table-section">
+      <div class="services-table-header">
+        <span class="hero-badge-pill">قائمة الخدمات المعتمدة</span>
+        <h2 style="font-size: 1.45rem; font-weight: 900; margin-top: 4px;">الأسعار الرسمية والحد الأدنى لكل خدمة</h2>
+      </div>
+      <div class="services-filter-pills">
+        <button class="filter-pill-btn active" onclick="filterSmmTable('all', this)">كل الخدمات</button>
+        <button class="filter-pill-btn" onclick="filterSmmTable('facebook', this)">فيسبوك</button>
+        <button class="filter-pill-btn" onclick="filterSmmTable('tiktok', this)">تيك توك</button>
+        <button class="filter-pill-btn" onclick="filterSmmTable('instagram', this)">إنستجرام</button>
+        <button class="filter-pill-btn" onclick="filterSmmTable('youtube', this)">يوتيوب</button><button class="filter-pill-btn" onclick="filterSmmTable('google', this)">Google AI</button>
+      </div>
+
+      <div class="smm-table-touch-container">
+        <table class="smm-standard-table" id="smmTable">
+          <thead>
+            <tr>
+              <th>الكود</th>
+              <th>الخدمة والتفاصيل</th>
+              <th>السعر</th>
+              <th>الكمية</th>
+              <th>الحد الأدنى</th>
+              <th>طلب</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-platform="facebook">
+              <td class="smm-id-cell">0101</td>
+              <td class="smm-name-cell">
+                <strong>متابعين فيسبوك مصريين 100% 🇪🇬</strong>
+                <small>صفحات وبروفايل [Egypt Targeted]</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 EGP</td>
+              <td class="smm-badge-cell"><span>30 يوم</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 101)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="facebook">
+              <td class="smm-id-cell">0102</td>
+              <td class="smm-name-cell">
+                <strong>متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</strong>
+                <small>سيرفر عالمي بدون نقصان [Non-Drop]</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">90 EGP</td>
+              <td class="smm-badge-cell"><span>ثابت</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 102)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="facebook">
+              <td class="smm-id-cell">0106</td>
+              <td class="smm-name-cell">
+                <strong>تعليقات فيسبوك مخصصة ✍️</strong>
+                <small>نصوص تختارها بنفسك [Custom]</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">20</td>
+              <td class="smm-price-cell">1300 ج/1,000</td>
+              <td class="smm-badge-cell"><span>مخصص</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('تعليقات فيسبوك مخصصة ✍️', 1.30, 20, 20, 106); updateServiceDetails(106)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="facebook">
+              <td class="smm-id-cell">0103</td>
+              <td class="smm-name-cell">
+                <strong>لايكات بوستات فيسبوك ❤️</strong>
+                <small>حسابات مصرية نشطة [Egypt Profiles]</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">80 ج/100</td>
+              <td class="smm-badge-cell"><span>نشط</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('لايكات فيسبوك مصريين ❤️', 0.80, 1000, 1000, 103)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="facebook">
+              <td class="smm-id-cell">0109</td>
+              <td class="smm-name-cell">
+                <strong>مشاهدات فيديو وريلز فيسبوك 👁️</strong>
+                <small>سرعة قصوى ونسبة بقاء عالية</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">60 EGP</td>
+              <td class="smm-badge-cell"><span>فوري</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('مشاهدات فيديو فيسبوك 👁️', 0.06, 1000, 1000, 109)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="tiktok">
+              <td class="smm-id-cell">0201</td>
+              <td class="smm-name-cell">
+                <strong>متابعين تيك توك مصريين 100% 🇪🇬</strong>
+                <small>حسابات حقيقية عربية ومصرية</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 EGP</td>
+              <td class="smm-badge-cell"><span>نشط</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 201)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="tiktok">
+              <td class="smm-id-cell">0202</td>
+              <td class="smm-name-cell">
+                <strong>متابعين تيك توك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</strong>
+                <small>مظهر حقيقي فوري وسريع</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">90 EGP</td>
+              <td class="smm-badge-cell"><span>فوري</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين تيك توك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 202)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="tiktok">
+              <td class="smm-id-cell">0207</td>
+              <td class="smm-name-cell">
+                <strong>تعليقات تيكتوك مخصصة مصريين 100% ✍️</strong>
+                <small>عربي مخصص لرفع الإكسبلور</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">10</td>
+              <td class="smm-price-cell">1400 ج/1,000</td>
+              <td class="smm-badge-cell"><span>مخصص</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('تعليقات تيكتوك مخصصة مصريين 100% ✍️', 1.40, 10, 10, 207); updateServiceDetails(207)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="tiktok">
+              <td class="smm-id-cell">0203</td>
+              <td class="smm-name-cell">
+                <strong>لايكات تيك توك فوري ❤️</strong>
+                <small>بدء تلقائي خلال دقائق معدودة</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">80 ج/100</td>
+              <td class="smm-badge-cell"><span>فوري</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('لايكات تيك توك فوري ❤️', 0.80, 1000, 1000, 203)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="tiktok">
+              <td class="smm-id-cell">0205</td>
+              <td class="smm-name-cell">
+                <strong>مشاهدات تيك توك فائقة 👁️</strong>
+                <small>سرعة البرق خلال ثوانٍ معدودة</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">60 EGP</td>
+              <td class="smm-badge-cell"><span>سريع</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('مشاهدات تيك توك فائقة السرعة 👁️', 0.06, 1000, 1000, 205)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="instagram">
+              <td class="smm-id-cell">0301</td>
+              <td class="smm-name-cell">
+                <strong>متابعين إنستجرام مصريين 100% 🇪🇬</strong>
+                <small>بروفايلات حقيقية ومظهر ممتاز</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">100</td>
+              <td class="smm-price-cell">280 EGP</td>
+              <td class="smm-badge-cell"><span>حقيقي</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام مصريين 100% 🇪🇬', 0.28, 1000, 1000, 301)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="instagram">
+              <td class="smm-id-cell">0302</td>
+              <td class="smm-name-cell">
+                <strong>متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]</strong>
+                <small>ضمان تعويض النقص لمدة 30 يوم</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">90 EGP</td>
+              <td class="smm-badge-cell"><span>30 يوم</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]', 0.067, 1000, 1000, 302)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="instagram">
+              <td class="smm-id-cell">0307</td>
+              <td class="smm-name-cell">
+                <strong>تعليقات إنستجرام مخصصة ✍️</strong>
+                <small>مخصص لزيادة مبيعات المتاجر</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">20</td>
+              <td class="smm-price-cell">1400 ج/1,000</td>
+              <td class="smm-badge-cell"><span>مخصص</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('كومنتات إنستجرام مخصصة ✍️', 1.30, 20, 20, 307); updateServiceDetails(307)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="instagram">
+              <td class="smm-id-cell">0303</td>
+              <td class="smm-name-cell">
+                <strong>لايكات إنستجرام فورية ❤️</strong>
+                <small>جودة عالية وسرعة استجابة فائقة</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">80 ج/100</td>
+              <td class="smm-badge-cell"><span>فوري</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('لايكات إنستجرام فورية ❤️', 0.80, 1000, 1000, 303)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="instagram">
+              <td class="smm-id-cell">0306</td>
+              <td class="smm-name-cell">
+                <strong>مشاهدات ريلز إنستجرام 👁️</strong>
+                <small>رفع ريتش الفيديو للإكسبلور فورياً</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">60 EGP</td>
+              <td class="smm-badge-cell"><span>إكسبلور</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('مشاهدات ريلز إنستجرام 👁️', 0.06, 1000, 1000, 306)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="youtube">
+              <td class="smm-id-cell">0401</td>
+              <td class="smm-name-cell">
+                <strong>مشتركون يوتيوب تفعيل الأرباح ▶️</strong>
+                <small>تخطي شروط التفعيل بأمان تام للقناة</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">250 EGP</td>
+              <td class="smm-badge-cell"><span>مضمون</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('مشتركون يوتيوب تفعيل القنوات ▶️', 0.25, 1000, 1000, 401)">اطلب</button></td>
+            </tr>
+
+            <tr data-platform="youtube">
+              <td class="smm-id-cell">0403</td>
+              <td class="smm-name-cell">
+                <strong>مشاهدات يوتيوب رفع الريتش 👁️</strong>
+                <small>نسبة بقاء عالية واقتراح الفيديو</small>
+              </td>
+              <td style="font-weight: 800; color: #047857; white-space: nowrap;">1,000</td>
+              <td class="smm-price-cell">60 EGP</td>
+              <td class="smm-badge-cell"><span>ثابت</span></td>
+              <td><button class="btn-smm-order-row" onclick="pickFromTableRow('مشاهدات يوتيوب لرفع الريتش 👁️', 0.06, 1000, 1000, 403)">اطلب</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- شريطان متحركان متعاكسان -->
+    <div class="marquee-wrapper">
+      <div class="marquee-track">
+        <div class="marquee-item"><i class="fa-brands fa-tiktok"></i> تيك توك مصريين 100% (280ج) وبجودة عالية (67ج)</div>
+        <div class="marquee-item"><i class="fa-brands fa-facebook"></i> فيسبوك صفحات وبروفايل</div>
+        <div class="marquee-item"><i class="fa-brands fa-instagram"></i> إنستجرام حقيقي ومضمون</div>
+        <div class="marquee-item"><i class="fa-brands fa-youtube"></i> مشتركون يوتيوب (250ج للـ 1000)</div>
+        <div class="marquee-item"><i class="fa-solid fa-pen-nib"></i> تفاعلات Like وLove وHaha من 100</div>
+        <div class="marquee-item"><i class="fa-solid fa-eye"></i> المشاهدات 1000 بـ 30ج</div>
+      </div>
+    </div>
+
+    <div class="marquee-wrapper reverse-marquee">
+      <div class="marquee-track">
+        <div class="marquee-item"><i class="fa-solid fa-shield-halved"></i> ضمان تعويض النقص التام</div>
+        <div class="marquee-item"><i class="fa-solid fa-bolt"></i> بدء فوري وسرعة قصوى</div>
+        <div class="marquee-item"><i class="fa-solid fa-lock"></i> بدون الحاجة لكلمات مرور</div>
+        <div class="marquee-item"><i class="fa-solid fa-headset"></i> دعم فني ومتابعة 24/7</div>
+        <div class="marquee-item"><i class="fa-solid fa-fire"></i> ربط مباشر بالسيرفرات الأصلية</div>
+      </div>
+    </div>
+
+    <!-- آراء العملاء -->
+    <section style="padding: 1.8rem 4%;">
+      <div style="text-align: center;">
+        <span class="hero-badge-pill">⭐ آراء وتجارب حقيقية</span>
+        <h2 style="font-size: 1.45rem; font-weight: 900;">عملائنا في مصر بيقولوا إيه؟</h2>
+      </div>
+
+      <div class="reviews-grid" id="reviewsContainer">
+        <div class="review-item">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.4rem;">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-yellow); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">م</div>
+            <div>
+              <h4 style="font-weight: 900; font-size: 0.88rem;">مريم مصطفى</h4>
+              <span style="font-size: 0.7rem; color: #10B981;">★ Trustpilot (5/5) — متجر أزياء</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">بصراحة فرقت جداً معايا.. طلبت 5000 متابع مصري لصفحة الملابس، وصلوا في نفس اليوم والريتش رفع جداً والزباين بقت تثق تطلب أونلاين.</p>
+        </div>
+
+        <div class="review-item">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.4rem;">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-yellow); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">إ</div>
+            <div>
+              <h4 style="font-weight: 900; font-size: 0.88rem;">إسلام القاضي</h4>
+              <span style="font-size: 0.7rem; color: #10B981;">★ Trustpilot (5/5) — صانع محتوى</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">شغل نظيف جداً من أ/ محمد سيد. الكومنتات المكتوبة بخط اليد حقيقية ومقنعة لأي حد يدخل الفيديو، والتحويل بفودافون كاش سهل ومباشر.</p>
+        </div>
+
+        <div class="review-item">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.4rem;">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-yellow); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">س</div>
+            <div>
+              <h4 style="font-weight: 900; font-size: 0.88rem;">سارة خليل</h4>
+              <span style="font-size: 0.7rem; color: #10B981;">★ Trustpilot (5/5) — متجر ميكب</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">السرعة ممتازة واللايكات بتنزل على طول. مبسوطة جداً من الالتزام وسرعة الرد على الواتساب أول بأول.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom-promo-wrap" aria-label="تجربة نمو وتفاعل MSB">
+      <div class="hero-animated-character-box">
+        <div class="girl-floating-avatar" title="MSB Media — نمو وتفاعل">
+          <span class="hero-avatar-mark">MSB</span>
+          <span class="hero-avatar-spark">✦</span>
+        </div>
+        <div class="character-speech-bubble">
+          <div style="font-weight: 900; font-size: 0.88rem; color: #000; margin-bottom: 2px;">
+            "المتابعين والريتش وصلوا في دقيقة! 🔥😍"
+          </div>
+          <div style="font-size: 0.74rem; color: #666;">
+            تفاعل مصري حقيقي فوري بضمان كامل 💯
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- ==================== الصفحة 2: المحفظة والدفع الآلي ==================== -->
+  <div id="page-wallet" class="app-page">
+    <div class="wallet-page-wrapper">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="hero-badge-pill">💳 الحسابات والتحويل الفوري</span>
+        <h1 style="font-size: 1.8rem; font-weight: 900;">المحفظة وتأكيد الدفع التلقائي</h1>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">سدد قيمة طلبك كاش ليتم بدء وتشغيل الأوردر فورياً عبر السيرفر</p>
+      </div>
+
+      <!-- كروت وسائل الدفع الثلاث الرسمية بالأيقونات الأصلية المعتمدة -->
+      <div class="payment-cards-grid">
+        <!-- فودافون كاش -->
+        <div class="pay-method-box">
+          <div class="pay-brand-svg-box"><img src="https://cdn.simpleicons.org/vodafone/E60000" alt="شعار فودافون كاش" loading="lazy" width="60" height="60"></div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #E60000;">فودافون كاش</h3>
+          <p style="font-size: 0.74rem; color: var(--text-muted);">تحويل كاش مباشر عبر محفظتك</p>
+          <div style="font-size: 1.05rem; font-weight: 900; margin: 6px 0; color: #E60000;">01092794169</div>
+          <button class="copy-pill-btn" onclick="copyText('01092794169')">
+            <i class="fa-regular fa-copy"></i> نسخ الرقم
+          </button>
+        </div>
+
+        <!-- اتصالات كاش -->
+        <div class="pay-method-box">
+          <div class="pay-brand-svg-box"><div aria-label="شعار e& اتصالات كاش" role="img" style="width:60px;height:60px;border-radius:16px;background:#e30613;color:#fff;display:grid;place-items:center;font:bold 27px Arial;letter-spacing:-2px">e&amp;</div></div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #71A400;">اتصالات كاش</h3>
+          <p style="font-size: 0.74rem; color: var(--text-muted);">تحويل كاش فوري من أي محفظة</p>
+          <div style="font-size: 1.05rem; font-weight: 900; margin: 6px 0; color: #71A400;">01105697412</div>
+          <button class="copy-pill-btn" onclick="copyText('01105697412')">
+            <i class="fa-regular fa-copy"></i> نسخ الرقم
+          </button>
+        </div>
+
+        <!-- باينانس -->
+        <div class="pay-method-box">
+          <div class="pay-brand-svg-box"><img src="https://cdn.simpleicons.org/binance/F0B90B" alt="شعار Binance Pay" loading="lazy" width="60" height="60"></div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #000;">باينانس (Binance)</h3>
+          <p style="font-size: 0.74rem; color: var(--text-muted);">معرف باينانس المباشر (Pay ID)</p>
+          <div style="font-size: 1.05rem; font-weight: 900; margin: 6px 0; color: #000;">454798991</div>
+          <button class="copy-pill-btn" onclick="copyText('454798991')">
+            <i class="fa-regular fa-copy"></i> نسخ الـ ID
+          </button>
+        </div>
+        <!-- إنستاباي -->
+        <div class="pay-method-box">
+          <div class="pay-brand-svg-box"><div aria-label="شعار InstaPay" role="img" style="width:60px;height:60px;border-radius:16px;background:#5b2aa8;color:#fff;display:grid;place-items:center;font:bold 18px Arial">IP</div></div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #5b2aa8;">إنستاباي</h3>
+          <p style="font-size: 0.74rem; color: var(--text-muted);">تحويل فوري من تطبيق InstaPay</p>
+          <div style="font-size: .92rem; font-weight: 900; margin: 6px 0; color: #5b2aa8; direction:ltr">01092794169<br>msbmedia181999@instapay</div>
+          <button class="copy-pill-btn" onclick="copyText('msbmedia181999@instapay')"><i class="fa-regular fa-copy"></i> نسخ اسم المستخدم</button>
+        </div>
+      </div>
+
+      <div class="wallet-balance-card" id="walletBalanceCard" aria-live="polite">
+        <h3>محفظتك في MSB Media 💳</h3>
+        <div class="wallet-balance-grid">
+          <div class="wallet-stat"><strong id="walletTotalBalance">0.00 EGP</strong><span>الرصيد الحالي</span></div>
+          <div class="wallet-stat"><strong id="walletUsedBalance">0.00 EGP</strong><span>الرصيد المستخدم</span></div>
+          <div class="wallet-stat"><strong id="walletAvailableBalance">0.00 EGP</strong><span>الرصيد المتاح</span></div>
+        </div>
+      </div>
+      <div class="wallet-history" id="walletHistory" style="display:none"><h4>آخر حركة في محفظتك</h4><div id="walletHistoryRows"></div></div>
+
+      <!-- صندوق حالة العملية المعلقة -->
+      <div class="pending-payment-status-box" id="pendingPaymentNotice">
+        <div style="font-size: 1.4rem; color: #D97706; margin-bottom: 4px;"><i class="fa-solid fa-hourglass-half fa-spin"></i></div>
+        <h4 style="font-size: 1.05rem; font-weight: 900; color: #92400E; margin-bottom: 2px;">طلبك قيد المراجعة وإضافة الرصيد</h4>
+        <p style="font-size: 0.8rem; color: #B45309; line-height: 1.5;">
+          تم إرسال تفاصيل التحويل لإدارة المنصة بنجاح عبر البريد الإلكتروني. لا يمكن تقديم عملية دفع جديدة حتى يتم التحقق من طلبك الحالي ونزول الرصيد تلقائياً.
+        </p>
+        <div style="margin-top: 8px;">
+          <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled" style="padding: 0.45rem 1.1rem; font-size: 0.8rem;">
+            <i class="fa-brands fa-whatsapp"></i> متابعة حالة الإيداع عبر واتساب
+          </a>
+        </div>
+      </div>
+
+      <!-- نموذج إرفاق الإيصال مع رسوم 5% -->
+      <div id="paymentFormWrapper" style="background: #fff; border: 1.8px solid #000; border-radius: var(--radius-xl); padding: 1.5rem 1.2rem; box-shadow: var(--shadow-card);">
+        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.3rem; text-align: right;">تأكيد الدفع وإرفاق الإيصال 📑</h3>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem; text-align: right;">سجل بياناتك وسيصل إشعار فوري لإدارة المنصة لبدء تنفيذ الأوردر:</p>
+
+        <form id="paymentDepositForm" onsubmit="handlePaymentVerification(event)">
+          <div class="form-group">
+            <label>الاسم بالكامل</label>
+            <input type="text" id="clientFullName" class="form-control" placeholder="مثال: محمد سيد أو اسم متجرك" required>
+          </div>
+
+          <div class="form-group">
+            <label>رقم هاتفك (للتواصل وتأكيد الحساب)</label>
+            <input type="tel" id="clientPhone" class="form-control" placeholder="مثال: 01092794169" pattern="^(01[0125])[0-9]{8}$" title="اكتب رقم موبايل مصري صحيح من 11 رقم" required>
+          </div>
+
+          <div class="form-group">
+            <label>وسيلة الدفع التي تم التحويل من خلالها</label>
+            <select id="paidVia" class="form-control">
+              <option value="فودافون كاش">فودافون كاش (01092794169)</option>
+              <option value="اتصالات كاش">اتصالات كاش (01105697412)</option>
+              <option value="باينانس">باينانس (Binance Pay ID: 454798991)</option>
+              <option value="إنستاباي">إنستاباي (01092794169 / msbmedia181999@instapay)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="paymentIdentifierGroup">
+            <label id="paymentIdentifierLabel">بيان التحويل المطلوب</label>
+            <input type="text" id="paymentIdentifier" class="form-control" placeholder="رقم الهاتف أو اسم المستخدم" required>
+            <small id="paymentIdentifierHint" class="form-hint">اكتب رقم الهاتف الذي حوّلت منه.</small>
+          </div>
+
+          <div class="form-group" id="binanceUsdGroup" style="display:none">
+            <label>المبلغ بالدولار <span class="currency-marker">$ USD</span> 💱</label>
+            <div class="currency-input-wrap"><span>$</span><input type="number" id="binanceUsdAmount" class="form-control" min="0.01" step="0.01" placeholder="اكتب المبلغ بالدولار مثل 1" oninput="recalcBinanceAmount()"></div>
+            <small class="form-hint" id="binanceRateHint">جاري جلب السعر اللحظي من المصدر…</small>
+          </div>
+
+          <div class="form-group">
+            <label>المبلغ المطلوب شحنه <span class="currency-marker">EGP</span> — الحد الأدنى 100 جنيه</label>
+            <div class="currency-input-wrap"><span>EGP</span><input type="number" id="paidBaseAmount" class="form-control" placeholder="اكتب المبلغ بالجنيه مثل 100" value="100" min="100" oninput="recalcFromEgp()"></div>
+            <small class="form-hint">تقدر تكتب بالدولار أو بالجنيه؛ القيمة المقابلة تظهر في الخانة الأخرى.</small>
+          </div>
+
+          <!-- تفصيل رسوم تعبئة الرصيد 5% -->
+          <div style="background: #FAF8EE; border: 1px dashed #D4D4D8; border-radius: 10px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+              <span style="color: var(--text-muted);">المبلغ المطلوب:</span>
+              <strong id="displayBaseAmount">100.00 EGP</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+              <span style="color: var(--text-muted);">رسوم تعبئة الرصيد (5%):</span>
+              <strong id="displayFeeAmount" style="color: #B45309;">5.00 EGP</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #E4E4E7; padding-top: 4px; font-size: 0.88rem;">
+              <span style="font-weight: 900;">الإجمالي المطلوب تحويله:</span>
+              <strong id="displayTotalWithFee" style="color: #047857; font-weight: 900;">105.00 EGP</strong>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>صورة إيصال التحويل (Screenshot)</label><small class="form-hint">ارفع صورة واضحة بصيغة JPG أو PNG أو WEBP، أقل من 5 ميجابايت.</small>
+            <input type="file" id="receiptImg" class="form-control" accept="image/jpeg,image/png,image/webp" required>
+          </div>
+
+          <button type="submit" id="btnSubmitPayment" class="btn-submit-main" style="margin-top: 8px;">
+            <i class="fa-solid fa-lock"></i> تأكيد السداد وإرسال إشعار الإيداع
+          </button>
+        </form>
+
+        <div class="compact-alert-band">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>يرجى تحويل الإجمالي شاملاً رسوم التعبئة 5% وإرفاق لقطة شاشة واضحة برقم العملية لضمان سرعة إضافة الرصيد.</span>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">هل تواجه أي استفسار في عملية الشحن أو التحويل؟</p>
+        <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled">
+          <i class="fa-brands fa-whatsapp" style="font-size: 1.15rem;"></i> تواصل مع الدعم الفني عبر واتساب
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== الصفحة 3: الطلبات ==================== -->
+  <div id="page-orders" class="app-page">
+    <div style="padding:1.8rem 4%;max-width:1180px;margin:0 auto;text-align:right;">
+      <div style="text-align:center;margin-bottom:1.2rem;"><span class="hero-badge-pill">📦 متابعة حسابك</span><h1 style="font-size:1.8rem;font-weight:900;">طلباتك في MSB Media</h1><p style="color:var(--text-muted);font-size:.82rem;">كل طلب في بطاقة واضحة، والرابط والكمية والتكلفة والحالة قدامك.</p></div>
+      <div class="orders-toolbar"><div class="services-filter-pills" id="ordersFilterPills" style="justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;"><button class="filter-pill-btn active" onclick="filterOrdersDashboard('all', this)">الكل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('pending', this)">⏳ قيد الانتظار</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('processing', this)">⚙️ قيد المعالجة</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('in_progress', this)">🔄 قيد التنفيذ</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('partial', this)">◐ جزئي</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('completed', this)">✅ مكتمل</button><button class="filter-pill-btn" onclick="filterOrdersDashboard('rejected', this)">❌ ملغى</button></div></div>
+      <div id="customerOrdersGrid" class="orders-grid"><div class="orders-empty">سجّل الدخول لعرض طلباتك.</div></div>
+    </div>
+  </div>
+
+  <!-- ==================== الصفحة 4: دليل الخدمات والشروط ==================== -->
+  <div id="page-services" class="app-page">
+    <div style="padding: 1.8rem 4%; max-width: 800px; margin: 0 auto; text-align: right;">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="hero-badge-pill">📋 دليل الخدمات والشروط</span>
+        <h1 style="font-size: 1.8rem; font-weight: 900;">كيفية استخدام منصة MSB Media</h1>
+        <p style="color: var(--text-muted); font-size: 0.82rem;">خطوات وشروط العمل لضمان تشغيل أوردرك بأمان وسرعة</p>
+      </div>
+
+      <div class="terms-box-card">
+        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.6rem;"><i class="fa-solid fa-list-check" style="color: var(--primary-yellow);"></i> خطوات وطريقة الاستخدام:</h3>
+        <ol style="padding-right: 1.2rem; color: var(--text-muted); font-size: 0.85rem;">
+          <li>قم بتسجيل الدخول أو إنشاء حساب جديد في المنصة أولاً لربط عملياتك.</li>
+          <li>اختر الخدمة والمنصة المطلوبة من القائمة وضع رابط المنشور أو الحساب العام (Public).</li>
+          <li>حدد الكمية مع مراعاة الحدود الدنيا (المتابعين 1000، اللايكات 1000، المشاهدات 1000، الكومنتات 30).</li>
+          <li>انتقل لصفحة المحفظة وسدد القيمة مضافاً إليها رسوم التعبئة (5%) عبر وسيلة الدفع المناسبة.</li>
+          <li>أرفق إيصال السداد، وبمجرد الموافقة ينزل الرصيد ويبدأ تنفيذ الأوردر فوراً.</li>
+        </ol>
+
+        <div class="faq-grid" style="margin-top:1.2rem">
+          <h3>💳 الدفع والإيداع</h3>
+          <details><summary>إيه الحد الأدنى للإيداع؟</summary><p>الحد الأدنى 100 جنيه، ورسوم التعبئة 5% بتظهر قبل التحويل.</p></details>
+          <details><summary>الإيصال بيروح فين؟</summary><p>بيتخزن بأمان وبيوصل للإدارة مع تفاصيل العملية في رسالة البريد.</p></details>
+          <details><summary>رصيدي بينزل إمتى؟</summary><p>بعد مراجعة الإيصال والموافقة اليدوية.</p></details>
+          <details><summary>ينفع أعمل أكتر من إيداع؟</summary><p>أيوه، كل إيداع بيتسجل كعملية مستقلة بحالته.</p></details>
+          <details><summary>الرسوم بتتخصم من الرصيد؟</summary><p>لا، الرسوم بتتحسب على المبلغ المطلوب إضافته وبتظهر كإجمالي تحويل.</p></details>
+          <h3>🛒 الطلبات</h3>
+          <details><summary>أتابع طلبي إزاي؟</summary><p>من خانة الطلبات، هتشوف الرابط والكمية والتكلفة والحالة.</p></details>
+          <details><summary>يعني إيه قيد الانتظار؟</summary><p>الطلب اتسجل ولسه في انتظار مراجعة الإدارة.</p></details>
+          <details><summary>يعني إيه قيد المعالجة؟</summary><p>الطلب دخل مرحلة التجهيز اليدوي.</p></details>
+          <details><summary>يعني إيه قيد التنفيذ؟</summary><p>بدأنا تنفيذ الطلب على الرابط المرسل.</p></details>
+          <details><summary>يعني إيه جزئي؟</summary><p>تم تنفيذ جزء من الكمية، والإدارة تتابع الباقي حسب الخدمة.</p></details>
+          <details><summary>إمتى الطلب يبقى مكتمل؟</summary><p>بعد تنفيذ الكمية المطلوبة وتحديث الحالة من الإدارة.</p></details>
+          <details><summary>هل أقدر أغير الرابط بعد الإرسال؟</summary><p>لا، راجع الرابط قبل التأكيد لأنه بيتسجل مع الطلب.</p></details>
+          <h3>👤 الحساب</h3>
+          <details><summary>هل لازم أسجل حساب؟</summary><p>أيوه، عشان كل الإيداعات والطلبات تفضل مرتبطة بحسابك.</p></details>
+          <details><summary>هل بياناتي محفوظة؟</summary><p>بيانات الحساب والعمليات بتتخزن في قاعدة البيانات، وكلمة السر لا تُرسل بالبريد.</p></details>
+          <details><summary>إزاي أسجل خروج؟</summary><p>افتح القائمة واضغط تسجيل الخروج.</p></details>
+          <details><summary>رقم الهاتف لازم يكون إيه؟</summary><p>رقم موبايل مصري صحيح من 11 رقم.</p></details>
+          <details><summary>ينفع أستخدم حسابين؟</summary><p>الأفضل حساب واحد عشان مايحصلش تداخل في البيانات.</p></details>
+          <details><summary>أعمل إيه لو نسيت كلمة السر؟</summary><p>استخدم الدعم مؤقتًا لاستعادة الوصول، وسيتم إضافة الاستعادة الآمنة في مرحلة الحساب القادمة.</p></details>
+          <h3>🎧 الدعم والشروط</h3>
+          <details><summary>أبعت مشكلة للدعم إزاي؟</summary><p>من صفحة الدعم اكتب عنوان المشكلة والتفاصيل ورقم الطلب إن وجد.</p></details>
+          <details><summary>هل أبعت كلمة السر للدعم؟</summary><p>لا، ممنوع إرسال كلمة السر أو بيانات البطاقة.</p></details>
+          <details><summary>رابط المتابعين يكون إيه؟</summary><p>رابط الصفحة أو الحساب العام القابل للفتح.</p></details>
+          <details><summary>رابط اللايكات والمشاهدات يكون إيه؟</summary><p>رابط المنشور أو الفيديو، مش رابط الصفحة الرئيسية.</p></details>
+          <details><summary>خدمة التعليقات بتتحسب إزاي؟</summary><p>كل سطر تعليق = تعليق واحد، والكمية والتكلفة بيتحسبوا تلقائيًا.</p></details>
+          <details><summary>هل التعليقات عليها ضمان؟</summary><p>لا، خدمة التعليقات المخصصة بدون ضمان وبدون إعادة تعبئة.</p></details>
+          <details><summary>إيه أهم سبب لرفض الطلب؟</summary><p>رابط غير مناسب للمنصة أو حساب خاص أو كمية خارج الحد المسموح.</p></details>
+          <details><summary>هل أقدر أطلب نفس الخدمة مرة تانية؟</summary><p>أيوه، طالما رصيدك كافي والرابط والكمية صحيحين.</p></details>
+          <details><summary>فين أتواصل لو في مشكلة عاجلة؟</summary><p>من صفحة الدعم أو واتساب المنصة مع رقم الطلب.</p></details>
+        </div>
+
+        <div style="text-align: center; margin-top: 1.2rem;">
+          <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled">
+            <i class="fa-brands fa-whatsapp"></i> للاستفسارات تواصل مع الدعم الفني
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== الصفحة 4: سياسة الاسترجاع والضمان ==================== -->
+  <div id="page-refund" class="app-page">
+    <div style="padding: 1.8rem 4%; max-width: 800px; margin: 0 auto; text-align: right;">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="hero-badge-pill">🛡️ الأمان والشفافية</span>
+        <h1 style="font-size: 1.8rem; font-weight: 900;">الأسئلة الشائعة</h1>
+        <p style="color: var(--text-muted); font-size: 0.82rem;">إجابات مختصرة على أهم أسئلة الدفع والطلبات والحساب والدعم</p>
+      </div>
+
+      <div style="background: #fff; border: 1.8px solid #000; border-radius: 16px; padding: 1.4rem; line-height: 1.7; box-shadow: var(--shadow-card);">
+        <h3 style="font-size: 1.05rem; font-weight: 900; margin-bottom: 0.5rem;">1. سياسة التعويض المجاني (Refill):</h3>
+        <p style="color: var(--text-muted); font-size: 0.84rem; margin-bottom: 1rem;">
+          جميع الخدمات الموضحة بالجدول والتي تحمل شارة الضمان تضمن لك تعويضاً مجانياً لأي نقص قد يطرأ على العدد خلال 30 يوماً من تاريخ الطلب. يتم تقديم طلب التعويض فورياً بمجرد إرسال رابط الحساب لفريق الدعم عبر الواتساب.
+        </p>
+
+        <h3 style="font-size: 1.05rem; font-weight: 900; margin-bottom: 0.5rem;">2. شروط استرجاع الأموال:</h3>
+        <p style="color: var(--text-muted); font-size: 0.84rem; margin-bottom: 1rem;">
+          يتم رد المبلغ كاملاً لنفس وسيلة الدفع (فودافون كاش، اتصالات كاش، أو باينانس) في حالة تعذر السيرفر عن بدء تنفيذ الطلب خلال 24 ساعة من تأكيد التحويل المالي بسبب خطأ فني أو صيانة في الخوادم.
+        </p>
+
+        <h3 style="font-size: 1.05rem; font-weight: 900; margin-bottom: 0.5rem;">3. مسؤولية الحسابات العامة (Public):</h3>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">
+          العميل مسؤول مسؤولية كاملة عن التأكد من أن حسابه أو المنشور عام (Public) وليس خاصاً (Private) قبل وأثناء تنفيذ الأوردر لضمان عدم توقف النظام التلقائي.
+        </p>
+
+        <div style="text-align: center; margin-top: 1.2rem;">
+          <a href="https://wa.me/201092794169" target="_blank" class="btn-whatsapp-styled">
+            <i class="fa-brands fa-whatsapp"></i> طلب تعويض أو استفسار عبر واتساب
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== الصفحة 5: خدمة العملاء ==================== -->
+  <div id="page-support" class="app-page">
+    <div style="padding:1.8rem 4%;max-width:780px;margin:0 auto;text-align:right">
+      <div style="text-align:center;margin-bottom:1.2rem"><span class="hero-badge-pill">💬 مركز الدعم والتذاكر</span><h1 style="font-size:1.8rem;font-weight:900">اكتب مشكلتك بالتفصيل</h1><p style="color:var(--text-muted);font-size:.84rem">هنسجل التذكرة ونبعتلك الرد داخل حسابك بعد مراجعتها.</p></div>
+      <div class="terms-box-card">
+        <form id="supportTicketForm" onsubmit="submitSupportTicket(event)">
+          <div class="form-group"><label>عنوان المشكلة</label><input id="supportSubject" class="form-control" maxlength="180" placeholder="مثال: الإيداع لسه ما اتراجعش" required></div>
+          <div class="form-group"><label>المشكلة بالتفصيل</label><textarea id="supportMessage" class="form-control" rows="7" minlength="10" maxlength="5000" placeholder="اكتب رقم الطلب أو الإيداع، وإيه اللي حصل بالظبط..." required></textarea><small class="form-hint">ممنوع تبعت كلمة السر أو بيانات البطاقة. اكتب رقم الطلب فقط لو محتاج متابعة.</small></div>
+          <button class="btn-submit-main" type="submit"><i class="fa-solid fa-paper-plane"></i> إرسال التذكرة</button>
+        </form>
+        <div id="supportTicketStatus" style="margin-top:1rem"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- مساعد الطلبات المقيد: لا يقدم دردشة أو معلومات عامة -->
+
+  <!-- زر الواتساب العائم -->
+  <a href="https://wa.me/201092794169" target="_blank" class="whatsapp-pulse-btn" title="تواصل واتساب مباشرة">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <!-- شريط التنقل السفلي الخاص بمنصة SMM -->
+  <nav class="smm-bottom-nav" aria-label="التنقل الرئيسي">
+    <button type="button" onclick="navigateTo('home',{scrollToTable:true})"><i class="fa-solid fa-list-check"></i><span>الخدمات</span></button>
+    <button type="button" onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i><span>إضافة أموال</span></button>
+    <button type="button" class="smm-new-order-nav" onclick="navigateTo('home',{scroll:false})"><i class="fa-solid fa-plus"></i><span>طلب جديد</span></button>
+    <button type="button" onclick="navigateTo('orders')"><i class="fa-solid fa-boxes-stacked"></i><span>الطلبات</span></button>
+    <button type="button" onclick="navigateTo('support')"><i class="fa-solid fa-headset"></i><span>الدعم</span></button>
+  </nav>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.6rem;">
+          <div style="width: 28px; height: 28px; background: var(--primary-yellow); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #000;"><i class="fa-solid fa-lightbulb"></i></div>
+          <h3 style="color: #fff; font-size: 1.15rem;">MSB MEDIA</h3>
+        </div>
+        <p style="color: #888; font-size: 0.78rem; line-height: 1.6;">
+          منصتك المعتمدة لخدمات التسويق الإلكتروني وتزويد التفاعل في مصر والعالم العربي بإشراف: Mohamed Sayed.
+        </p>
+      </div>
+
+      <div>
+        <h4>أقسام المنصة</h4>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="navigateTo('home')">طلب فوري</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('wallet')">إضافة الأموال</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('orders')">الطلبات</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('services')">الخدمات</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('support')">الدعم</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>السياسات والشروط</h4>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="navigateTo('refund')">سياسة الاسترجاع والتعويض</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('support')">أمان وسرية الحسابات</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid #222; padding-top: 1rem; text-align: center; color: #666; font-size: 0.75rem;">
+      جميع الحقوق محفوظة © 2026 MSB Media
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'https://tfyypramrzruteuucwfm.supabase.co/functions/v1/msb-data-api';
+    const CUSTOMER_TOKEN_KEY = 'msb-customer-token';
+    const CUSTOMER_PROFILE_KEY = 'msb-client';
+    const LEGACY_CUSTOMER_PROFILE_KEY = 'msb_current_user';
+    function readCustomerProfile() {
+      try {
+        const sharedProfile = JSON.parse(localStorage.getItem(CUSTOMER_PROFILE_KEY) || 'null');
+        if (sharedProfile && typeof sharedProfile === 'object') {
+          localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY);
+          return sharedProfile;
+        }
+        const legacyProfile = JSON.parse(localStorage.getItem(LEGACY_CUSTOMER_PROFILE_KEY) || 'null');
+        if (legacyProfile && typeof legacyProfile === 'object') {
+          localStorage.setItem(CUSTOMER_PROFILE_KEY, JSON.stringify(legacyProfile));
+          localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY);
+          return legacyProfile;
+        }
+      } catch (_) {}
+      return null;
+    }
+    function saveCustomerProfile(profile) {
+      localStorage.setItem(CUSTOMER_PROFILE_KEY, JSON.stringify(profile));
+      localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY);
+    }
+    let customerToken = localStorage.getItem(CUSTOMER_TOKEN_KEY) || '';
+    let currentUser = readCustomerProfile();
+    let selectedRate = 0.28;
+    let selectedMinQty = 100;
+    let selectedMaxQty = 500000;
+    let selectedPlatform = "facebook";
+    let selectedServiceName = "متابعين فيسبوك مصريين 100% 🇪🇬 🔥";
+    let selectedServiceId = 101;
+    let currentOrdersFilter = "all";
+    let pickerPlatformFilter = "all";
+    let pickerSearchQuery = "";
+    const PAGE_KEY = "msb-growth-page";
+
+    const islamicPhrases = [
+      "بسم الله الرحمن الرحيم",
+      "اللهم صلِّ وسلّم وبارك على سيدنا محمد",
+      "سبحان الله وبحمده، سبحان الله العظيم",
+      "لا إله إلا الله وحده لا شريك له",
+      "لا حول ولا قوة إلا بالله العلي العظيم",
+      "أستغفر الله العظيم وأتوب إليه",
+      "لا إله إلا أنت سبحانك إني كنت من الظالمين",
+      "الحمد لله رب العالمين حمداً كثيراً طيباً مباركاً فيه",
+      "حسبي الله ونعم الوكيل",
+      "يا حي يا قيوم برحمتك أستغيث",
+      "اللهم إني أسألك من فضلك ورحمتك فإنه لا يملكها إلا أنت",
+      "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+      "اللهم بارك لنا في أرزاقنا وأعمالنا",
+      "توكلت على الله ولا حول ولا قوة إلا بالله",
+      "ربِّ اغفر لي ولوالدي وللمؤمنين والمؤمنات"
+    ];
+
+    let currentPhraseIndex = 0;
+
+    function cycleIslamicTicker() {
+      const el = document.getElementById('islamicText');
+      if (!el) return;
+
+      el.classList.remove('fade-in');
+      el.classList.add('fade-out');
+
+      setTimeout(() => {
+        currentPhraseIndex = (currentPhraseIndex + 1) % islamicPhrases.length;
+        el.innerText = islamicPhrases[currentPhraseIndex];
+        el.classList.remove('fade-out');
+        el.classList.add('fade-in');
+      }, 600);
+    }
+
+    setInterval(cycleIslamicTicker, 3200);
+
+    function updateAuthStateUI() {
+      const header = document.getElementById('headerAuthBtn');
+      const welcome = document.getElementById('accountWelcomePanel');
+      const welcomeName = document.getElementById('welcomeUserName');
+      const headerLogout = document.getElementById('headerLogoutBtn');
+      if (currentUser) {
+        if (headerLogout) headerLogout.classList.add('visible');
+        const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'block';
+        const firstName = String(currentUser.name || 'عميلنا').trim().split(/\s+/)[0] || 'عميلنا';
+        header.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> ';
+        const nameNode = document.createElement('span'); nameNode.textContent = firstName; header.appendChild(nameNode);
+        if (welcome && welcomeName) { welcome.style.display = 'flex'; welcomeName.textContent = currentUser.name || 'عميلنا'; }
+      } else {
+        if (headerLogout) headerLogout.classList.remove('visible');
+        const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'none';
+        header.innerHTML = '<i class="fa-solid fa-user"></i> حسابي';
+        if (welcome) welcome.style.display = 'none';
+      }
+      checkPendingPaymentState();
+    }
+
+    window.addEventListener('storage', event => {
+      if (![CUSTOMER_TOKEN_KEY, CUSTOMER_PROFILE_KEY, LEGACY_CUSTOMER_PROFILE_KEY].includes(event.key)) return;
+      customerToken = localStorage.getItem(CUSTOMER_TOKEN_KEY) || '';
+      currentUser = readCustomerProfile();
+      updateAuthStateUI();
+      if (currentUser && customerToken) loadWalletSummary();
+    });
+
+    function togglePickerDropdown() {
+      document.getElementById('pickerDropdownMenu').classList.toggle('open');
+    }
+
+    function chooseServiceOption(name, rate, defaultQty, minQty, iconClass, iconColor, serviceId) {
+      selectedServiceName = name;
+      selectedRate = rate;
+      selectedMinQty = minQty;
+      selectedMaxQty = arguments.length > 7 && Number(arguments[7]) ? Number(arguments[7]) : (minQty === 100 ? 500000 : 1000000);
+      selectedPlatform = arguments.length > 8 ? arguments[8] : selectedPlatform;
+      selectedServiceId = serviceId;
+
+      document.getElementById('pickerSelectedText').innerHTML = `<i class="${iconClass}" style="color: ${iconColor};"></i> ${name} <small style="font-weight:900;color:#087548;">(${String(serviceId).padStart(4,'0')})</small>`;
+      document.getElementById('pickerDropdownMenu').classList.remove('open');
+
+      const qtyInput = document.getElementById('quickQty');
+      qtyInput.min = minQty;
+      qtyInput.max = selectedMaxQty;
+      if (parseFloat(qtyInput.value) < minQty) qtyInput.value = minQty;
+      if (parseFloat(qtyInput.value) > selectedMaxQty) qtyInput.value = selectedMaxQty;
+      document.getElementById('qtyLabelText').innerText = `الكمية المطلوبة (من ${minQty.toLocaleString()} إلى ${selectedMaxQty.toLocaleString()}) 🔢`;
+
+      calculateDynamicPrice();
+    }
+
+    function serviceMaxForId(serviceId, fallbackMin) { const item = SERVICE_CATALOG[Number(serviceId)]; return item ? Number(item[3]) : (fallbackMin === 100 ? 500000 : 1000000); }
+
+    function pickFromTableRow(name, rate, defaultQty, minQty, serviceId) {
+      selectedServiceName = name;
+      selectedRate = rate;
+      selectedMinQty = minQty;
+      selectedMaxQty = serviceMaxForId(serviceId, minQty);
+      selectedServiceId = serviceId;
+
+      document.getElementById('pickerSelectedText').innerText = `${name} (${String(serviceId).padStart(4,'0')})`;
+      const qtyInput = document.getElementById('quickQty');
+      qtyInput.min = minQty;
+      qtyInput.max = selectedMaxQty;
+      qtyInput.value = minQty;
+      document.getElementById('qtyLabelText').innerText = `الكمية المطلوبة (من ${minQty.toLocaleString()} إلى ${selectedMaxQty.toLocaleString()}) 🔢`;
+
+      calculateDynamicPrice();
+      window.scrollTo({ top: document.querySelector('.hero-card-box').offsetTop - 60, behavior: 'smooth' });
+      document.getElementById('quickLink').focus();
+    }
+
+    let currentServicePlatformFilter = 'all';
+    let serviceSearchQuery = '';
+    function applyServiceCatalogFilters(){
+      document.querySelectorAll('#smmTable tbody tr').forEach(row => {
+        const platformOk = currentServicePlatformFilter === 'all' || row.getAttribute('data-platform') === currentServicePlatformFilter;
+        const searchOk = !serviceSearchQuery || row.textContent.toLowerCase().includes(serviceSearchQuery);
+        row.style.display = platformOk && searchOk ? '' : 'none';
+      });
+    }
+    function searchServiceCatalog(value){ serviceSearchQuery = String(value || '').trim().toLowerCase(); applyServiceCatalogFilters(); }
+    function filterSmmTable(platform, btn) {
+      currentServicePlatformFilter = platform;
+      document.querySelectorAll('.services-table-section .filter-pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyServiceCatalogFilters();
+    }
+
+    function calculateDynamicPrice() {
+      const qtyInput = document.getElementById('quickQty');
+      let qty = [501,502].includes(Number(selectedServiceId)) ? 1 : (parseFloat(qtyInput.value) || 0);
+      if ([106,207,307].includes(Number(selectedServiceId))) { const comments=(document.getElementById('customComments')?.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); qty=comments.length; qtyInput.value=qty; }
+      const total = Math.round(qty * selectedRate * 100) / 100;
+      document.getElementById('quickTotalDisplay').innerText = `${total.toFixed(2)} EGP`;
+    }
+
+    document.addEventListener('input', e => { if (e.target && e.target.id === 'customComments') calculateDynamicPrice(); });
+    document.addEventListener('change', e => { if (e.target && e.target.id === 'paidVia') updatePaymentMethodFields(); });
+
+    let currentUsdRate = 0;
+    let lastCurrencyEdit = "egp";
+    function updatePaymentMethodFields(){const method=document.getElementById('paidVia')?.value;const label=document.getElementById('paymentIdentifierLabel'),input=document.getElementById('paymentIdentifier'),hint=document.getElementById('paymentIdentifierHint'),usd=document.getElementById('binanceUsdGroup');if(!label||!input)return;const isBinance=method==='باينانس';usd.style.display=isBinance?'block':'none';if(isBinance){label.textContent='Binance Pay ID / معرف التحويل';input.placeholder='454798991';hint.textContent='اكتب Binance Pay ID فقط، وليس رقم الهاتف.';}else if(method==='إنستاباي'){label.textContent='رقم الهاتف أو اسم مستخدم InstaPay';input.placeholder='01092794169 أو msbmedia181999@instapay';hint.textContent='اكتب الرقم أو اسم المستخدم الذي حوّلت منه.';}else{label.textContent='رقم الهاتف الذي تم التحويل منه';input.placeholder='01092794169';hint.textContent='اكتب رقم الهاتف المستخدم في التحويل.';}recalcBinanceAmount();}
+    async function loadUsdRate(){try{const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=EGP');const d=await r.json();const rate=Number(d?.rates?.EGP);if(rate>0)currentUsdRate=rate;}catch(_){currentUsdRate=0;}const hint=document.getElementById('binanceRateHint');if(hint)hint.textContent=currentUsdRate>0?`سعر لحظي تقريبي: 1 USD ≈ ${currentUsdRate.toFixed(2)} EGP — راجع قيمة التحويل قبل الإرسال.`:'تعذر جلب السعر اللحظي الآن؛ اكتب قيمة EGP يدويًا بدون تخمين.';if(currentUsdRate>0)recalcBinanceAmount();}
+    function recalcBinanceAmount(){if(document.getElementById('paidVia')?.value!=='باينانس')return;lastCurrencyEdit='usd';const usd=Number(document.getElementById('binanceUsdAmount')?.value||0),base=document.getElementById('paidBaseAmount');if(currentUsdRate>0&&usd>0&&base)base.value=(usd*currentUsdRate).toFixed(2);recalcFee();}
+    function recalcFromEgp(){lastCurrencyEdit='egp';const base=Number(document.getElementById('paidBaseAmount')?.value||0),usd=document.getElementById('binanceUsdAmount');if(document.getElementById('paidVia')?.value==='باينانس'&&currentUsdRate>0&&base>0&&usd)usd.value=(base/currentUsdRate).toFixed(2);recalcFee();}
+    function recalcFee() {
+      const baseInput = document.getElementById('paidBaseAmount');
+      const base = parseFloat(baseInput.value) || 0;
+      const fee = Math.round(base * 0.05 * 100) / 100;
+      const totalWithFee = Math.round((base + fee) * 100) / 100;
+
+      document.getElementById('displayBaseAmount').innerText = base.toFixed(2) + " EGP";
+      document.getElementById('displayFeeAmount').innerText = fee.toFixed(2) + " EGP";
+      document.getElementById('displayTotalWithFee').innerText = totalWithFee.toFixed(2) + " EGP";
+    }
+
+    function showNotice(message, type = "info") {
+      document.querySelectorAll('.msb-notice').forEach(el => el.remove());
+      const box = document.createElement('div'); box.className = `msb-notice ${type}`;
+      box.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '⚠️' : '💡'}</span><span>${message}</span><button aria-label="إغلاق" onclick="this.parentElement.remove()">×</button>`;
+      document.body.appendChild(box); setTimeout(() => box.remove(), 6500);
+    }
+
+    function checkPendingPaymentState() {
+      if (!currentUser) return;
+      const pendingKey = 'msb_pending_pay_' + currentUser.email;
+      const hasPending = localStorage.getItem(pendingKey);
+
+      const noticeBox = document.getElementById('pendingPaymentNotice');
+      const formWrapper = document.getElementById('paymentFormWrapper');
+
+      if (hasPending) {
+        noticeBox.classList.add('active');
+        formWrapper.style.opacity = '0.45';
+        formWrapper.style.pointerEvents = 'none';
+      } else {
+        noticeBox.classList.remove('active');
+        formWrapper.style.opacity = '1';
+        formWrapper.style.pointerEvents = 'auto';
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('authGateModal').style.display = 'flex';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authGateModal').style.display = 'none';
+    }
+
+    function switchAuthTab(type) {
+      if (type === 'login') {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('tabLoginBtn').classList.add('active');
+        document.getElementById('tabRegisterBtn').classList.remove('active');
+      } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('tabLoginBtn').classList.remove('active');
+        document.getElementById('tabRegisterBtn').classList.add('active');
+      }
+    }
+
+    async function apiJson(payload) {
+      const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(customerToken ? { 'x-msb-customer-token': customerToken } : {}) }, body: JSON.stringify(payload) });
+      const result = await response.json().catch(() => ({ ok: false, message: 'تعذر قراءة رد الخادم.' }));
+      if (!response.ok || !result.ok) throw new Error(result.message || 'تعذر تنفيذ العملية.');
+      return result;
+    }
+
+    async function loadWalletSummary() {
+      if (!customerToken) return null;
+      try {
+        const result = await apiJson({ action: 'wallet_summary' });
+        const deposits = result.deposits || [], orders = result.orders || [];
+        window.latestOrders = orders;
+        renderOrdersDashboard(orders);
+        const used = orders.filter(o => o.status !== 'rejected').reduce((sum, o) => sum + Number(o.amount || 0), 0);
+        const current = Number(result.balance || 0);
+        const total = current + used;
+        const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = `${value.toFixed(2)} EGP`; };
+        set('walletTotalBalance', total); set('walletUsedBalance', used); set('walletAvailableBalance', current);
+        const history = document.getElementById('walletHistory'), rows = document.getElementById('walletHistoryRows');
+        if (history && rows && (deposits.length || orders.length)) {
+          history.style.display = 'block';
+          const items = [...deposits.slice(0, 3).map(d => ({ label: `شحن ${Number(d.amount).toFixed(2)} EGP`, date: d.created_at, status: d.status })), ...orders.slice(0, 3).map(o => ({ label: `${o.service_name} — ${Number(o.amount).toFixed(2)} EGP`, date: o.created_at, status: o.status === 'rejected' ? 'rejected' : 'approved' }))].slice(0, 5);
+          rows.innerHTML = items.map(item => `<div class="wallet-history-row"><span>${item.label}<small style="display:block;color:#94a3b8">${new Date(item.date).toLocaleDateString('ar-EG')}</small></span><span class="status-pill ${item.status}">${item.status === 'approved' ? 'تمت' : item.status === 'rejected' ? 'مرفوض' : 'قيد المراجعة'}</span></div>`).join('');
+        }
+        const pending = deposits.some(d => d.status === 'pending');
+        const notice = document.getElementById('pendingPaymentNotice'), formWrapper = document.getElementById('paymentFormWrapper');
+        if (notice) notice.classList.toggle('active', pending);
+        if (formWrapper && pending) { formWrapper.style.opacity = '0.55'; formWrapper.style.pointerEvents = 'none'; }
+        return result;
+      } catch (error) { console.warn(error); return null; }
+    }
+
+    async function handleUserLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPassword').value;
+      const phone = email;
+      try {
+        const result = await apiJson({ action: 'sign_in', phone, password: pass });
+        customerToken = result.token; currentUser = { name: result.customer.full_name, phone: result.customer.phone, email };
+        localStorage.setItem(CUSTOMER_TOKEN_KEY, customerToken); saveCustomerProfile(currentUser);
+        updateAuthStateUI(); closeAuthModal(); showNotice(`أهلاً بك يا ${currentUser.name} 👋 تم تسجيل الدخول بنجاح.`, "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
+    }
+
+    async function handleUserRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('regPassword').value;
+      if (name.length < 2 || phone.length < 6 || !email.includes('@') || pass.length < 6) { showNotice("راجع البيانات: الاسم، رقم الهاتف، البريد، والباسورد 📋", "error"); return; }
+      try {
+        const result = await apiJson({ action: 'register', fullName: name, phone, email, password: pass });
+        customerToken = result.token; currentUser = { name: result.customer.full_name, phone: result.customer.phone, email };
+        localStorage.setItem(CUSTOMER_TOKEN_KEY, customerToken); saveCustomerProfile(currentUser);
+        updateAuthStateUI(); closeAuthModal(); showNotice(`تم إنشاء حسابك يا ${name} ✅ تقدر تبدأ دلوقتي.`, "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
+    }
+
+    function logoutCustomer(){ localStorage.removeItem(CUSTOMER_TOKEN_KEY); localStorage.removeItem(CUSTOMER_PROFILE_KEY); localStorage.removeItem(LEGACY_CUSTOMER_PROFILE_KEY); customerToken=''; currentUser=null; updateAuthStateUI(); navigateTo('home'); showNotice('تم تسجيل الخروج بأمان 👋','success'); }
+
+    async function submitSupportTicket(e){ e.preventDefault(); if(!currentUser||!customerToken){openAuthModal();return;} const subject=document.getElementById('supportSubject').value.trim(), message=document.getElementById('supportMessage').value.trim(); try{const result=await apiJson({action:'support',fullName:currentUser.name,phone:currentUser.phone,email:currentUser.email,subject,message}); document.getElementById('supportTicketStatus').innerHTML='<div class="compact-alert-band">✅ '+escapeHtmlClient(result.message||'تم إرسال التذكرة.')+'</div>'; e.target.reset();}catch(err){showNotice(err.message||'تعذر إرسال التذكرة','error');}}
+
+    function renderPage(pageId, options = {}) {
+      if (!currentUser && pageId !== 'home') { showNotice("سجّل دخولك الأول عشان نفتحلك الخدمة 🔐", "info"); openAuthModal(); return false; }
+      localStorage.setItem(PAGE_KEY, pageId);
+      document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active-page'));
+      document.querySelectorAll('.sidebar-links a').forEach(link => link.classList.remove('active-link'));
+      const target=document.getElementById('page-'+pageId);
+      if(!target) return false;
+      target.classList.add('active-page');
+      const activeNav=document.getElementById('nav-'+pageId); if(activeNav) activeNav.classList.add('active-link');
+      if(options.scrollToTable){setTimeout(()=>document.getElementById('smmTable')?.scrollIntoView({behavior:'auto',block:'start'}),0);} else if(options.scroll !== false) window.scrollTo({top:0,behavior:options.instant?'auto':'smooth'});
+      closeSidebar();
+      return true;
+    }
+    function navigateTo(pageId, options = {}) {
+      if (!renderPage(pageId, options)) return;
+      if (!options.fromHistory && !options.replace) history.pushState({ pageId }, '', location.pathname + location.search);
+      else if (options.replace) history.replaceState({ pageId }, '', location.pathname + location.search);
+    }
+    window.addEventListener('popstate', event => {
+      const pageId = event.state?.pageId || localStorage.getItem(PAGE_KEY) || 'home';
+      renderPage(pageId, {fromHistory:true, instant:true});
+    });
+
+    function toggleSidebar() {
+      const drawer = document.getElementById('sidebarDrawer');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (drawer.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        drawer.classList.add('open');
+        overlay.style.display = 'block';
+      }
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebarDrawer').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
+    }
+
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt).then(() => showNotice("اتنسخ بنجاح ✅", "success"));
+    }
+
+    async function handleQuickOrder(e) {
+      e.preventDefault();
+      if (!currentUser || !customerToken) { showNotice("سجّل دخولك الأول عشان تكمل 🔐", "info"); openAuthModal(); return; }
+      const qty = [501,502].includes(Number(selectedServiceId)) ? 1 : (parseInt(document.getElementById('quickQty').value, 10) || 0);
+      if (!Number.isInteger(qty) || qty < selectedMinQty || qty > selectedMaxQty) { showNotice(`الكمية لازم تكون من ${selectedMinQty.toLocaleString()} إلى ${selectedMaxQty.toLocaleString()} 🔢`, "error"); return; }
+      const rawTarget = document.getElementById('quickLink').value.trim();
+      if (!isClientPlatformUrl(rawTarget, selectedPlatform)) { showNotice(selectedPlatform==='phone'?'اكتب رقم واتساب صحيح 📱':selectedPlatform==='google'?'اكتب Gmail صحيح ينتهي بـ @gmail.com فقط 📧':`الرابط لازم يكون رابط ${selectedPlatform} صحيح ومناسب للخدمة المختارة 🔗`, "error"); return; }
+      const summary = await loadWalletSummary();
+      const total = Math.round(qty * selectedRate * 100) / 100;
+      if (!summary || Number(summary.balance) < total) { navigateTo('wallet'); document.getElementById('paidBaseAmount').value = Math.max(100, Math.ceil(total)); recalcFee(); showNotice(`رصيدك مش كافي. اشحن ${total.toFixed(2)} EGP أو أكثر 💳`, "info"); return; }
+      try {
+        const result = await apiJson({ action: 'social_growth_order', serviceId: selectedServiceId, quantity: qty, targetUrl: document.getElementById('quickLink').value.trim(), customComments: [106,207,307].includes(Number(selectedServiceId)) ? (document.getElementById('customComments')?.value || '') : '' });
+        showNotice(`${result.message} ✅`, "success"); await loadWalletSummary();
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); }
+    }
+
+    async function handlePaymentVerification(e) {
+      e.preventDefault();
+      if (!currentUser || !customerToken) { openAuthModal(); return; }
+      const file = document.getElementById('receiptImg').files[0];
+      if (!file) { showNotice("ارفع صورة الإيصال الواضحة 📸", "error"); return; }
+      const btn = document.getElementById('btnSubmitPayment'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ حفظ الإيصال بأمان...';
+      const methodMap = { 'فودافون كاش': 'vodafone_cash', 'اتصالات كاش': 'etisalat_cash', 'باينانس': 'binance_pay', 'إنستاباي': 'instapay' };
+      const body = new FormData(); body.append('action', 'wallet_deposit'); body.append('customerName', document.getElementById('clientFullName').value.trim()); body.append('phone', document.getElementById('clientPhone').value.trim()); body.append('binancePhone', document.getElementById('paymentIdentifier').value.trim()); body.append('paymentIdentifier', document.getElementById('paymentIdentifier').value.trim()); body.append('method', methodMap[document.getElementById('paidVia').value] || 'vodafone_cash'); body.append('depositAmount', document.getElementById('paidBaseAmount').value); body.append('serviceId', ''); body.append('requestedQuantity', ''); body.append('targetUrl', ''); body.append('file', file);
+      try {
+        const response = await fetch(API_URL, { method: 'POST', headers: { 'x-msb-customer-token': customerToken }, body });
+        const result = await response.json(); if (!response.ok || !result.ok) throw new Error(result.message || 'تعذر حفظ الإيصال.');
+        checkPendingPaymentState(); btn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> شكراً 🙏 جاري انتظار رصيدك'; showNotice("شكراً 🙏 تم استلام الإيصال. جاري انتظار مراجعة الدفع وإضافة رصيدك.", "success");
+      } catch (error) { showNotice(error.message || "حصلت مشكلة بسيطة، جرّب تاني 🙏", "error"); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-lock"></i> تأكيد السداد وإرسال إشعار الإيداع'; }
+    }
+
+    async function handleApprovalFromEmail() {
+      const params = new URLSearchParams(location.search);
+      const approveWallet = params.get('approve'), rejectWallet = params.get('reject');
+      const approveOrder = params.get('approve_order'), processOrder = params.get('process_order'), partialOrder = params.get('partial_order'), rejectOrder = params.get('reject_order'), completeOrder = params.get('complete_order');
+      const token = approveWallet || rejectWallet || approveOrder || processOrder || partialOrder || rejectOrder || completeOrder; if (!token) return;
+      const action = approveWallet ? 'approve_wallet_deposit' : rejectWallet ? 'reject_wallet_deposit' : approveOrder ? 'approve_order' : processOrder ? 'process_order' : partialOrder ? 'partial_order' : rejectOrder ? 'reject_order' : 'complete_order';
+      try { const result = await apiJson({ action, token }); showNotice(result.message, result.ok ? 'success' : 'error'); } catch (error) { showNotice(error.message || "تعذر تنفيذ القرار.", "error"); }
+    }
+
+    document.addEventListener('click', function(e) {
+      const pickerWrapper = document.querySelector('.custom-service-picker-wrapper');
+      if (pickerWrapper && !pickerWrapper.contains(e.target)) {
+        document.getElementById('pickerDropdownMenu').classList.remove('open');
+      }
+    });
+
+    const SERVICE_CATALOG = {
+      101:["متابعين فيسبوك مصريين 🇪🇬 🔥",.28,100,500000,"facebook","30 يوم ضمان ♻️ إعادة تعبئة","24–48 ساعة"],102:["متابعين فيسبوك أجانب 🌍 ⚠️",.067,1000,500000,"facebook","بدون ضمان ⚠️","24–72 ساعة"],103:["Facebook Like 👍",.75,100,5000,"facebook","30 يوم ضمان ♻️","24–48 ساعة"],104:["Facebook Love ♥️",.90,100,5000,"facebook","30 يوم ضمان ♻️","24–48 ساعة"],105:["Facebook Haha 😂",.30,100,5000,"facebook","بدون ضمان ⚠️","24–72 ساعة"],106:["تعليقات فيسبوك مخصصة ✍️",1.30,20,500000,"facebook","بدون ضمان ⚠️","24–72 ساعة"],109:["مشاهدات فيديو فيسبوك 👁️ 🔥",.03,1000,1000000,"facebook","بدون ضمان ⚠️","24–48 ساعة"],
+      201:["متابعين تيك توك مصريين 🇪🇬 🔥",.28,100,500000,"tiktok","30 يوم ضمان ♻️ إعادة تعبئة","24–48 ساعة"],202:["متابعين تيك توك أجانب 🌍 ⚠️",.067,1000,500000,"tiktok","بدون ضمان ⚠️","24–72 ساعة"],203:["TikTok Like 👍",.75,100,5000,"tiktok","30 يوم ضمان ♻️","24–48 ساعة"],204:["TikTok Love ♥️",.90,100,5000,"tiktok","30 يوم ضمان ♻️","24–48 ساعة"],205:["TikTok Haha 😂",.30,100,5000,"tiktok","بدون ضمان ⚠️","24–72 ساعة"],207:["تعليقات تيكتوك مخصصة مصريين 100% ✍️",1.40,10,500000,"tiktok","بدون ضمان ⚠️","24–72 ساعة"],206:["مشاهدات تيك توك 👁️ 🚀",.03,1000,1000000,"tiktok","بدون ضمان ⚠️","24–48 ساعة"],
+      301:["متابعين إنستجرام مصريين 🇪🇬 🔥",.28,100,500000,"instagram","30 يوم ضمان ♻️ إعادة تعبئة","24–48 ساعة"],302:["متابعين إنستجرام أجانب 🌍 ⚠️",.067,1000,500000,"instagram","بدون ضمان ⚠️","24–72 ساعة"],303:["Instagram Like 👍",.75,100,5000,"instagram","30 يوم ضمان ♻️","24–48 ساعة"],304:["Instagram Love ♥️",.90,100,5000,"instagram","30 يوم ضمان ♻️","24–48 ساعة"],305:["Instagram Haha 😂",.30,100,5000,"instagram","بدون ضمان ⚠️","24–72 ساعة"],307:["كومنتات إنستجرام مخصصة ✍️",1.30,20,500000,"instagram","بدون ضمان ⚠️","24–72 ساعة"],306:["مشاهدات ريلز إنستجرام 👁️ 🔥",.03,1000,1000000,"instagram","بدون ضمان ⚠️","24–48 ساعة"],
+      401:["مشتركون يوتيوب ▶️ 🔥",.25,100,500000,"youtube","30 يوم ضمان ♻️","24–72 ساعة"],402:["YouTube Like 👍",.75,100,5000,"youtube","30 يوم ضمان ♻️","24–48 ساعة"],403:["مشاهدات يوتيوب 👁️ 🚀",.03,1000,1000000,"youtube","بدون ضمان ⚠️","24–48 ساعة"],
+      501:["اشتراك Gemini PRO / Veo 3 / Google Flow / Nano Banana 🔥",250,1,100,"phone","بدون إلغاء — مدة شهر","0–24 ساعة"],502:["اشتراك Cup Cut Pro 🔥",250,1,100,"phone","بدون إلغاء — مدة شهر","0–24 ساعة"],601:["متابعين فيسبوك الإمارات 🇦🇪",.95,1000,500000,"facebook","30 يوم ضمان ♻️ إعادة تعبئة","24–72 ساعة"],602:["متابعين إنستجرام الإمارات 🇦🇪",.97,1000,500000,"instagram","30 يوم ضمان ♻️ إعادة تعبئة","24–72 ساعة"],603:["مشاهدات فيسبوك الإمارات 🇦🇪",.13,1000,1000000,"facebook","بدون ضمان ⚠️","24–72 ساعة"],604:["مشاهدات إنستجرام الإمارات 🇦🇪",.14,1000,1000000,"instagram","بدون ضمان ⚠️","24–72 ساعة"],605:["لايكات + لاف ♥️👍 فيسبوك الإمارات 🇦🇪",3.5,100,500000,"facebook","30 يوم ضمان ♻️ إعادة تعبئة","24–72 ساعة"],606:["لايكات + لاف ♥️👍 إنستجرام الإمارات 🇦🇪",3.8,100,500000,"instagram","30 يوم ضمان ♻️ إعادة تعبئة","24–72 ساعة"],701:["مونتاج بالذكاء الاصطناعي 📽️",200,1,100,"phone","تعديل واحد فقط — حتى 30 ثانية","24–72 ساعة"],801:["متابعين LinkedIn حسابات حقيقية 100% 💼",.55,1000,500000,"linkedin","حسب الخدمة ⚠️","24–72 ساعة"]};
+    const PLATFORM_DOMAINS={facebook:["facebook.com","fb.com"],instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"],linkedin:["linkedin.com"],phone:[],google:[]};
+    function isClientPlatformUrl(value, platform){if(platform==='phone') return /^\+?[0-9 ()-]{8,20}$/.test(String(value||'').trim());if(platform==='google') return /^[A-Z0-9._%+-]+@gmail\.com$/i.test(String(value||'').trim());try{const u=new URL(value);const h=u.hostname.toLowerCase().replace(/^www\./,'');return ["http:","https:"].includes(u.protocol)&&u.pathname.length>1&&PLATFORM_DOMAINS[platform]?.some(d=>h===d||h.endsWith('.'+d));}catch(_){return false;}}
+    const SERVICE_TERMS={default:`⏱️ التنفيذ حسب ضغط الخدمة<br>🔗 استخدم الرابط العام الصحيح الخاص بالمنصة.<br>⚠️ راجع الرابط والكمية قبل الإرسال.`,egypt:`♻️ ضمان 30 يوم وإعادة تعبئة<br>🔗 رابط الصفحة أو الحساب العام فقط.<br>⚠️ تأكد من صحة الرابط قبل الإرسال.`,foreign:`⚠️ بدون ضمان أو إعادة تعبئة<br>🔗 رابط عام قابل للفتح فقط.`,phone:`📱 اكتب رقم الواتساب الصحيح داخل خانة البيانات.<br>🧾 الاشتراك يتم بحساب من خلالنا.<br>🕛 مدة الاشتراك: شهر واحد.<br>🚫 بدون إلغاء بعد التنفيذ.`,edit:`📱 اكتب رقم الواتساب للتواصل.<br>🎬 تكلفة الفيديو 200 EGP حتى 30 ثانية.<br>✏️ تعديل واحد فقط مجانًا، وأي تعديل إضافي له تكلفة مختلفة.`};
+    function updateServiceDetails(id){const item=SERVICE_CATALOG[id];if(!item)return;const [name,rate,min,max,platform,guarantee,delivery]=item;selectedPlatform=platform;selectedMaxQty=max;const numericId=Number(id);const isPhone=platform==='phone';const isAi=numericId===501;const isEdit=numericId===701;const terms=isEdit?SERVICE_TERMS.edit:isPhone?SERVICE_TERMS.phone:/أجانب/.test(name)?SERVICE_TERMS.foreign:/مصريين|الإمارات/.test(name)?SERVICE_TERMS.egypt:SERVICE_TERMS.default;const panel=document.getElementById('serviceDetailsPanel');if(panel)panel.innerHTML=`<span>🔢 كود الخدمة: ${String(id).padStart(4,'0')}</span><div class="service-terms-copy">${terms}</div>`;const label=document.getElementById('quickLinkLabel'),hint=document.getElementById('quickLinkHint'),wrap=document.getElementById('customCommentsWrap'),qty=document.getElementById('quickQty'),qtyGroup=document.getElementById('quickQtyGroup'),input=document.getElementById('quickLink');if(isPhone){label.textContent='رقم واتساب العميل 📱';hint.textContent='اكتب رقم واتساب صحيح للتواصل وتفعيل الاشتراك أو تنفيذ المونتاج.';input.type='tel';input.placeholder='01092794169';input.removeAttribute('pattern');input.setAttribute('inputmode','tel');wrap.style.display='none';qty.readOnly=false;qty.min=min;qty.max=max;document.getElementById('qtyLabelText').textContent=`عدد الاشتراكات (من ${min} إلى ${max}) 🔢`;}else{input.type='url';input.placeholder='https://...';input.removeAttribute('pattern');input.removeAttribute('inputmode');const follower=/متابعين|مشتركون/.test(name);label.textContent=follower?'رابط الصفحة أو الحساب العام 🔗':'رابط المنشور أو الفيديو 🔗';hint.textContent=follower?'للمتابعين استخدم رابط الصفحة أو الحساب العام.':'استخدم رابط المنشور أو الفيديو العام الصحيح.';const isCustom=[106,207,307].includes(numericId);wrap.style.display=isCustom?'block':'none';qty.readOnly=isCustom;document.getElementById('qtyLabelText').textContent=`الكمية المطلوبة (من ${min.toLocaleString()} إلى ${max.toLocaleString()}) 🔢`;}if(qtyGroup)qtyGroup.style.display='block';qty.value=Math.max(min,Math.min(Number(qty.value)||min,max));calculateDynamicPrice();}
+    function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':platform==='google'?'fa-brands fa-google':platform==='linkedin'?'fa-brands fa-linkedin':'fa-solid fa-mobile-screen-button';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':platform==='google'?'#4285F4':platform==='linkedin'?'#0A66C2':'#ef233c';const isUnit100=/Like|Love|Haha|لاف/.test(name);const label=platform==='phone'?`${rate} EGP / اشتراك`:isUnit100?`${(rate*100).toFixed(0)} EGP / 100`:`${(rate*1000).toFixed(0)} EGP / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
+    function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
+    function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
+    function filterPickerServices(value){const raw=String(value||'').trim().toLowerCase();const aliases=raw==='مت'?'متابعين':raw==='تع'?'تعليقات':raw==='كو'?'كومنت':raw==='لا'?'لايكات':raw==='مش'?'مشاهدات':raw;pickerSearchQuery=aliases;applyPickerFilters();}
+    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();document.querySelectorAll('.platform-filter-chip').forEach(b=>b.classList.toggle('active',b.dataset.platform===platform));const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
+    function focusSmmSearch(){const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
+    function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isUnit100=/Like|Love|Haha|لاف/.test(name);const price=platform==='phone'?`${rate} EGP / اشتراك`:isUnit100?`${(rate*100).toFixed(0)} EGP / 100`:`${(rate*1000).toFixed(0)} EGP / 1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 ${delivery} · 🛡️ ${guarantee}</small></td><td class="smm-price-cell"><span class="price-amount">${price}</span></td><td class="smm-quantity-cell"><span>حسب طلبك</span></td><td class="smm-min-cell"><strong>${min.toLocaleString('ar-EG')}</strong><small>حد أدنى</small></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
+    function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
+    function renderOrdersDashboard(orders){
+      const grid=document.getElementById('customerOrdersGrid'); if(!grid)return;
+      const normalized=orders.map(o=>({...o,uiStatus:o.status==='manual_review'?'pending':o.status})).filter(o=>currentOrdersFilter==='all'||o.uiStatus===currentOrdersFilter);
+      const label={pending:'⏳ قيد الانتظار',in_progress:'🔄 قيد التنفيذ',processing:'⚙️ قيد المعالجة',partial:'◐ جزئي',completed:'✅ مكتمل',rejected:'❌ ملغي'};
+      const progress={pending:15,in_progress:45,processing:65,partial:82,completed:100,rejected:0};
+      if(!normalized.length){grid.innerHTML='<div class="orders-empty">مفيش طلبات في الحالة دي.</div>';return;}
+      grid.innerHTML=normalized.map(o=>{const status=o.uiStatus||'pending';const pct=progress[status]??15;return `<article class="order-card"><div class="order-card-top"><span class="order-code">#${String(o.id).slice(-8)}</span><span class="status-pill ${status==='rejected'?'rejected':status==='completed'?'approved':'pending'}">${label[status]||'قيد الانتظار'}</span></div><h3>${escapeHtmlClient(o.service_name||'خدمة نمو سوشيال')}</h3><div class="order-card-meta"><span>📅 ${new Date(o.created_at).toLocaleString('ar-EG')}</span><a href="${escapeAttrClient(o.target_url)}" target="_blank" rel="noopener">🔗 ${escapeHtmlClient(o.target_url)}</a></div><div class="order-card-stats"><div class="order-stat"><small>الكمية</small><strong>${Number(o.quantity).toLocaleString('ar-EG')}</strong></div><div class="order-stat"><small>التكلفة</small><strong>${Number(o.amount).toFixed(2)} EGP</strong></div><div class="order-stat"><small>الحالة</small><strong>${label[status]||'قيد الانتظار'}</strong></div></div><div class="order-progress-label"><span>نسبة التنفيذ</span><b>${pct}%</b></div><div class="order-progress"><span style="width:${pct}%"></span></div></article>`;}).join('');
+    }
+    function escapeHtmlClient(value){return String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+    function escapeAttrClient(value){return escapeHtmlClient(value);}
+
+    window.onload = function() {
+      renderServiceCatalog();
+      renderServiceCatalogTable();
+      updateServiceDetails(selectedServiceId);
+      updateAuthStateUI();
+      calculateDynamicPrice();
+      const savedPage=localStorage.getItem(PAGE_KEY); const initialPage=(savedPage && currentUser) ? savedPage : 'home'; history.replaceState({pageId:initialPage}, '', location.pathname + location.search); renderPage(initialPage, {fromHistory:true, instant:true});
+      recalcFee(); updatePaymentMethodFields(); loadUsdRate();
+      loadWalletSummary();
+      handleApprovalFromEmail();
+    };
+  </script>
+</body>
 </html>

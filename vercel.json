@@ -3,29 +3,27 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm build:vercel",
   "outputDirectory": "dist/public",
-  "rewrites": [
+  "rewrites": [],
+  "redirects": [
     {
       "source": "/smm",
-      "destination": "/social-growth-media.html"
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/social-growth",
-      "destination": "/social-growth-media.html"
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/social-growth/",
-      "destination": "/social-growth-media.html"
+      "destination": "/",
+      "permanent": true
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/smm",
-      "permanent": false
+      "source": "/social-growth-media.html",
+      "destination": "/",
+      "permanent": true
     }
   ]
 }

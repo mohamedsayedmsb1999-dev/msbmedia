@@ -1051,6 +1051,7 @@
       <button class="btn-top btn-auth-top" id="headerAuthBtn" onclick="openAuthModal()">
         <i class="fa-solid fa-user"></i> حسابي
       </button>
+      <button class="btn-top header-logout-icon" id="headerLogoutBtn" onclick="logoutCustomer()" title="تسجيل الخروج" aria-label="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket"></i></button>
     </div>
   </header>
 
@@ -1152,11 +1153,14 @@
         <h1 class="hero-heading">زوّد متابعينك ومبيعاتك <span>في ثواني معدودة!</span> 🚀</h1>
         <p class="hero-desc">كل اللي تحتاجه لصفحتك أو متجرك في مكان واحد! متابعين حقيقيين، لايكات، وتعليقات مصرية مخصصة بتكسر التردد وتضاعف مبيعاتك فورياً وبأمان 100% بدون باسوردات! 💯✨</p>
 
-          <div class="hero-platform-strip" aria-label="منصات التواصل الاجتماعي">
-            <div class="hero-platform-link"><i class="fa-brands fa-facebook-f" style="color:#1877F2"></i><span>Facebook</span></div>
-            <div class="hero-platform-link"><i class="fa-brands fa-tiktok" style="color:#111"></i><span>TikTok</span></div>
-            <div class="hero-platform-link"><i class="fa-brands fa-instagram" style="color:#d6249f"></i><span>Instagram</span></div>
-            <div class="hero-platform-link"><i class="fa-brands fa-youtube" style="color:#ff0000"></i><span>YouTube</span></div>
+          <div class="platform-filter-rail" aria-label="فلترة خدمات المنصات">
+            <button type="button" class="platform-filter-chip active" data-platform="all" onclick="setPickerPlatform('all');focusSmmSearch(this)"><i class="fa-solid fa-layer-group"></i><span>الكل</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="facebook" onclick="setPickerPlatform('facebook');focusSmmSearch(this)"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="tiktok" onclick="setPickerPlatform('tiktok');focusSmmSearch(this)"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="instagram" onclick="setPickerPlatform('instagram');focusSmmSearch(this)"><i class="fa-brands fa-instagram"></i><span>Instagram</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="youtube" onclick="setPickerPlatform('youtube');focusSmmSearch(this)"><i class="fa-brands fa-youtube"></i><span>YouTube</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="snapchat" onclick="setPickerPlatform('snapchat');focusSmmSearch(this)"><i class="fa-brands fa-snapchat"></i><span>Snapchat</span></button>
+            <button type="button" class="platform-filter-chip" data-platform="linkedin" onclick="setPickerPlatform('linkedin');focusSmmSearch(this)"><i class="fa-brands fa-linkedin-in"></i><span>LinkedIn</span></button>
           </div>
       </div>
 
@@ -1176,7 +1180,7 @@
               </div>
 
               <div class="custom-picker-dropdown" id="pickerDropdownMenu">
-                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button><button type="button" onclick="setPickerPlatform('google')"><i class="fa-brands fa-google"></i> Google AI</button></div><div id="pickerServiceOptions">
+                <div class="picker-search-wrap" onclick="event.stopPropagation()"><input id="pickerServiceSearch" type="search" placeholder="🔎 ابحث باسم الخدمة أو الكود" oninput="filterPickerServices(this.value)"></div><div class="picker-platform-tabs"><button type="button" onclick="setPickerPlatform('all')">كل الخدمات</button><button type="button" onclick="setPickerPlatform('facebook')"><i class="fa-brands fa-facebook"></i> فيسبوك</button><button type="button" onclick="setPickerPlatform('tiktok')"><i class="fa-brands fa-tiktok"></i> تيك توك</button><button type="button" onclick="setPickerPlatform('instagram')"><i class="fa-brands fa-instagram"></i> إنستجرام</button><button type="button" onclick="setPickerPlatform('youtube')"><i class="fa-brands fa-youtube"></i> يوتيوب</button><button type="button" onclick="setPickerPlatform('snapchat')"><i class="fa-brands fa-snapchat"></i> سناب شات</button><button type="button" onclick="setPickerPlatform('linkedin')"><i class="fa-brands fa-linkedin"></i> لينكدإن</button><button type="button" onclick="setPickerPlatform('google')"><i class="fa-brands fa-google"></i> Google AI</button></div><div id="pickerServiceOptions">
                 <div class="picker-category-title">👥 زيادة المتابعين (الحد الأدنى: 1,000)</div>
                 <div class="picker-option" onclick="chooseServiceOption('متابعين فيسبوك مصريين 100% 🇪🇬', 0.28, 1000, 1000, 'fa-brands fa-facebook', '#1877F2', 101)">
                   <div class="picker-option-left"><i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين</div>
@@ -2037,13 +2041,16 @@
       const header = document.getElementById('headerAuthBtn');
       const welcome = document.getElementById('accountWelcomePanel');
       const welcomeName = document.getElementById('welcomeUserName');
+      const headerLogout = document.getElementById('headerLogoutBtn');
       if (currentUser) {
+        if (headerLogout) headerLogout.classList.add('visible');
         const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'block';
         const firstName = String(currentUser.name || 'عميلنا').trim().split(/\s+/)[0] || 'عميلنا';
         header.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> ';
         const nameNode = document.createElement('span'); nameNode.textContent = firstName; header.appendChild(nameNode);
         if (welcome && welcomeName) { welcome.style.display = 'flex'; welcomeName.textContent = currentUser.name || 'عميلنا'; }
       } else {
+        if (headerLogout) headerLogout.classList.remove('visible');
         const logoutItem = document.getElementById('logoutNavItem'); if (logoutItem) logoutItem.style.display = 'none';
         header.innerHTML = '<i class="fa-solid fa-user"></i> حسابي';
         if (welcome) welcome.style.display = 'none';
@@ -2366,8 +2373,9 @@
     function serviceOptionHtml(id,item){const [name,rate,min,max,platform,guarantee,delivery]=item;const icon=platform==='facebook'?'fa-brands fa-facebook':platform==='instagram'?'fa-brands fa-instagram':platform==='tiktok'?'fa-brands fa-tiktok':platform==='google'?'fa-brands fa-google':platform==='linkedin'?'fa-brands fa-linkedin':'fa-solid fa-mobile-screen-button';const color=platform==='facebook'?'#1877F2':platform==='instagram'?'#E1306C':platform==='youtube'?'#FF0000':platform==='google'?'#4285F4':platform==='linkedin'?'#0A66C2':'#ef233c';const isUnit100=/Like|Love|Haha|لاف/.test(name);const label=platform==='phone'?`${rate} EGP / اشتراك`:isUnit100?`${(rate*100).toFixed(0)} EGP / 100`:`${(rate*1000).toFixed(0)} EGP / 1,000`;return `<div class="picker-option" data-service-id="${id}" data-service-platform="${platform}" onclick="chooseServiceOption('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, '${icon}', '${color}', ${id}, ${max}, '${platform}'); updateServiceDetails(${id})"><div class="picker-option-left"><i class="${icon}" style="color:${color}"></i> ${name} <small style="color:#087548;font-weight:900;">(${String(id).padStart(4,'0')})</small></div><span class="picker-price-tag">${label}</span></div>`;}
     function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
     function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
-    function filterPickerServices(value){pickerSearchQuery=String(value||'').trim().toLowerCase();applyPickerFilters();}
-    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();}
+    function filterPickerServices(value){const raw=String(value||'').trim().toLowerCase();const aliases=raw==='مت'?'متابعين':raw==='تع'?'تعليقات':raw==='كو'?'كومنت':raw==='لا'?'لايكات':raw==='مش'?'مشاهدات':raw;pickerSearchQuery=aliases;applyPickerFilters();}
+    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();document.querySelectorAll('.platform-filter-chip').forEach(b=>b.classList.toggle('active',b.dataset.platform===platform));const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
+    function focusSmmSearch(){const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
     function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isUnit100=/Like|Love|Haha|لاف/.test(name);const price=platform==='phone'?`${rate} EGP / اشتراك`:isUnit100?`${(rate*100).toFixed(0)} EGP / 100`:`${(rate*1000).toFixed(0)} EGP / 1,000`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 ${delivery} · 🛡️ ${guarantee}</small></td><td class="smm-price-cell"><span class="price-amount">${price}</span></td><td class="smm-quantity-cell"><span>حسب طلبك</span></td><td class="smm-min-cell"><strong>${min.toLocaleString('ar-EG')}</strong><small>حد أدنى</small></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
     function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
     function renderOrdersDashboard(orders){
