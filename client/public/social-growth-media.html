@@ -1177,6 +1177,10 @@
           </div>
       </div>
 
+    <div class="smm-service-search-shell">
+      <label for="globalServiceSearch">ابحث عن الخدمة أو كود الخدمة 🔎</label>
+      <input id="globalServiceSearch" class="smm-service-search-input" type="search" inputmode="search" autocomplete="off" placeholder="مثال: متابعين، تعليقات، فيسبوك، 0101، 0901" oninput="filterPickerServices(this.value)">
+    </div>
     <div class="hero-workspace">
       <div class="hero-card-box">
         <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.2rem;">🛒 تنفيذ طلب جديد</h3>
@@ -2389,8 +2393,8 @@
     function renderServiceCatalog(){const menu=document.getElementById('pickerServiceOptions')||document.getElementById('pickerDropdownMenu');if(menu)menu.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>serviceOptionHtml(id,item)).join('');applyPickerFilters();}
     function applyPickerFilters(){const q=pickerSearchQuery.toLowerCase();document.querySelectorAll('#pickerServiceOptions .picker-option').forEach(el=>{const okPlatform=pickerPlatformFilter==='all'||el.dataset.servicePlatform===pickerPlatformFilter;const okQuery=!q||el.textContent.toLowerCase().includes(q);el.style.display=okPlatform&&okQuery?'':'none';});}
     function filterPickerServices(value){const raw=String(value||'').trim().toLowerCase();const aliases=raw==='مت'?'متابعين':raw==='تع'?'تعليقات':raw==='كو'?'كومنت':raw==='لا'?'لايكات':raw==='مش'?'مشاهدات':raw;pickerSearchQuery=aliases;applyPickerFilters();}
-    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();document.querySelectorAll('.platform-filter-chip').forEach(b=>b.classList.toggle('active',b.dataset.platform===platform));const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
-    function focusSmmSearch(){const input=document.getElementById('pickerServiceSearch');if(input&&window.innerWidth>=861)input.focus();}
+    function setPickerPlatform(platform){pickerPlatformFilter=platform;applyPickerFilters();document.querySelectorAll('.platform-filter-chip').forEach(b=>b.classList.toggle('active',b.dataset.platform===platform));const input=document.getElementById('globalServiceSearch');if(input)input.focus();}
+    function focusSmmSearch(){const input=document.getElementById('globalServiceSearch');if(input)input.focus();}
     function renderServiceCatalogTable(){const body=document.querySelector('#smmTable tbody');if(!body)return;body.innerHTML=Object.entries(SERVICE_CATALOG).map(([id,item])=>{const [name,rate,min,max,platform,guarantee,delivery]=item;const code=String(id).padStart(4,'0');const isUnit100=/Like|Love|Haha|لاف/.test(name);const unitQuantity=platform==='phone'?1:isUnit100?100:1000;const price=platform==='phone'?`${rate} EGP`:isUnit100?`${(rate*100).toFixed(0)} EGP`:`${(rate*1000).toFixed(0)} EGP`;return `<tr data-platform="${platform}"><td class="smm-id-cell">${code}</td><td class="smm-name-cell"><strong>${name}</strong><small>🔥 ${delivery} · 🛡️ ${guarantee}</small></td><td class="smm-price-cell"><span class="price-amount">${price}</span></td><td class="smm-quantity-cell"><strong>${unitQuantity.toLocaleString('ar-EG')}</strong><small>لكل طلب</small></td><td class="smm-min-cell"><strong>${min.toLocaleString('ar-EG')}</strong><small>حد أدنى</small></td><td><button class="btn-smm-order-row" onclick="pickFromTableRow('${name.replace(/'/g,"\\'")}', ${rate}, ${min}, ${min}, ${id}); updateServiceDetails(${id})">اطلب 🔥</button></td></tr>`;}).join('');}
     function filterOrdersDashboard(filter, button){currentOrdersFilter=filter;document.querySelectorAll('#ordersFilterPills .filter-pill-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');renderOrdersDashboard(window.latestOrders||[]);}
     function renderOrdersDashboard(orders){
