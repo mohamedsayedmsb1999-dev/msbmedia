@@ -1159,6 +1159,12 @@
     <div><span class="account-welcome-kicker">لوحة حسابك في MSBMEDIA</span><h2>أهلاً بك يا <strong id="welcomeUserName"></strong> 👋</h2><p>رصيدك وطلباتك وكل خدماتك قدامك في مكان واحد.</p></div>
     <button onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i> شوف محفظتك</button>
   </div>
+
+  <section class="desktop-wallet-summary" id="desktopWalletSummary" aria-label="ملخص محفظة المستخدم">
+    <article class="desktop-wallet-card"><i class="fa-solid fa-wallet"></i><div><small>الرصيد المتاح</small><strong id="desktopWalletAvailable">0.00 EGP</strong></div></article>
+    <article class="desktop-wallet-card"><i class="fa-solid fa-chart-line"></i><div><small>إجمالي المستخدم</small><strong id="desktopWalletUsed">0.00 EGP</strong></div></article>
+    <article class="desktop-wallet-card"><i class="fa-solid fa-coins"></i><div><small>إجمالي الرصيد</small><strong id="desktopWalletTotal">0.00 EGP</strong></div></article>
+  </section>
   <div id="page-home" class="app-page active-page">
     <section class="hero-container">
       <div>
@@ -2242,7 +2248,7 @@
         const current = Number(result.balance || 0);
         const total = current + used;
         const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = `${value.toFixed(2)} EGP`; };
-        set('walletTotalBalance', total); set('walletUsedBalance', used); set('walletAvailableBalance', current);
+        set('walletTotalBalance', total); set('walletUsedBalance', used); set('walletAvailableBalance', current); set('desktopWalletTotal', total); set('desktopWalletUsed', used); set('desktopWalletAvailable', current);
         const history = document.getElementById('walletHistory'), rows = document.getElementById('walletHistoryRows');
         if (history && rows && (deposits.length || orders.length)) {
           history.style.display = 'block';
