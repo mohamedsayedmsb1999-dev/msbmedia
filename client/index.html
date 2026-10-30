@@ -1198,7 +1198,7 @@
             <div class="custom-service-picker-wrapper">
               <div class="custom-picker-selected" id="pickerTrigger" onclick="togglePickerDropdown()">
                 <div id="pickerSelectedText">
-                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 100% 🇪🇬 (280 EGP/1,000)
+                  <i class="fa-brands fa-facebook" style="color: #1877F2;"></i> متابعين فيسبوك مصريين 100% 🇪🇬 <small>(0101)</small>
                 </div>
                 <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
               </div>
@@ -1302,9 +1302,10 @@
             <input type="number" id="quickQty" class="form-control" value="100" min="100" max="500000" step="10" oninput="calculateDynamicPrice()">
           </div>
 
-          <div class="price-strip">
-            <span>التكلفة الإجمالية:</span>
-            <span id="quickTotalDisplay" style="font-size: 1.2rem; font-weight: 900;">28 EGP</span>
+          <div class="quick-order-metrics" aria-label="ملخص السعر والكمية">
+            <div class="quick-order-metric"><small>سعر الخدمة</small><strong id="quickUnitPriceDisplay">280 EGP</strong></div>
+            <div class="quick-order-metric"><small>الكمية</small><strong id="quickQtyDisplay">100</strong></div>
+            <div class="quick-order-metric total"><small>الإجمالي</small><strong id="quickTotalDisplay">28.00 EGP</strong></div>
           </div>
 
           <button type="submit" class="btn-submit-main">
@@ -2159,7 +2160,14 @@
       let qty = [501,502].includes(Number(selectedServiceId)) ? 1 : (parseFloat(qtyInput.value) || 0);
       if ([106,207,307].includes(Number(selectedServiceId))) { const comments=(document.getElementById('customComments')?.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); qty=comments.length; qtyInput.value=qty; }
       const total = Math.round(qty * selectedRate * 100) / 100;
-      document.getElementById('quickTotalDisplay').innerText = `${total.toFixed(2)} EGP`;
+      const isUnit100 = /Like|Love|Haha|لاف/.test(selectedServiceName);
+      const unitQuantity = selectedPlatform === 'phone' ? 1 : isUnit100 ? 100 : 1000;
+      const unitPrice = selectedPlatform === 'phone' ? selectedRate : selectedRate * unitQuantity;
+      const money = value => `${Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} EGP`;
+      const unitEl=document.getElementById('quickUnitPriceDisplay'), qtyEl=document.getElementById('quickQtyDisplay'), totalEl=document.getElementById('quickTotalDisplay');
+      if(unitEl) unitEl.textContent=money(unitPrice);
+      if(qtyEl) qtyEl.textContent=Number(qty).toLocaleString('en-US');
+      if(totalEl) totalEl.textContent=money(total);
     }
 
     document.addEventListener('input', e => { if (e.target && e.target.id === 'customComments') calculateDynamicPrice(); });
