@@ -201,6 +201,22 @@ async function handleJson(request: Request) {
     return json({ ok: true, customer: { id: customer.id, full_name: customer.full_name, phone: customer.phone, email: customer.email }, token });
   }
 
+  if (action === "reset_password") {
+    const phone = text(input.phone, 32);
+    const email = text(input.email, 320).toLowerCase();
+    const newPassword = text(input.newPassword, 128);
+    if (!/^01[0125][0-9]{8}$/.test(phone) || !email.includes("@") || newPassword.length < 6) return json({ ok: false, message: "تحقق من رقم الهاتف والجيميل وكلمة المرور الجديدة." }, 400);
+    const { data: customer } = await admin.from("customer_profiles").select("id, full_name, phone, email").eq("phone", phone).ilike("email", email).maybeSingle();
+    if (!customer) return json({ ok: false, message: "رقم الهاتف والجيميل غير متطابقين مع حساب مسجل." }, 404);
+    const passwordSalt = randomSalt();
+    const passwordHash = await sha256(`${passwordSalt}:${newPassword}`);
+    const { error: updateError } = await admin.from("customer_profiles").update({ password_hash: passwordHash, password_salt: passwordSalt }).eq("id", customer.id);
+    if (updateError) throw updateError;
+    await notifyOwner("تم تغيير كلمة مرور عميل", [["الاسم", customer.full_name], ["الهاتف", customer.phone], ["البريد", customer.email || email], ["ملاحظة", "تم التغيير بعد مطابقة رقم الهاتف والجيميل."]]);
+    const token = await createSession(customer.id);
+    return json({ ok: true, customer, token, message: "تم تغيير كلمة المرور وتسجيل الدخول بنجاح." });
+  }
+
   if (action === "wallet_summary") {
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
