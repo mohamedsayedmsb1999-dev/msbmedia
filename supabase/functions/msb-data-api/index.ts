@@ -169,20 +169,23 @@ async function handleJson(request: Request) {
 
   if (action === "register") {
     const fullName = text(input.fullName, 100);
+    const username = text(input.username, 40).toLowerCase();
     const phone = text(input.phone, 32);
     const email = text(input.email, 320).toLowerCase();
     const password = text(input.password, 128);
-    if (fullName.length < 2 || !/^01[0125][0-9]{8}$/.test(phone) || (email && !email.includes("@")) || password.length < 6) return json({ ok: false, message: "تحقق من الاسم ورقم الهاتف والبريد وكلمة المرور." }, 400);
+    if (fullName.length < 2 || !/^[a-z]{4,20}$/.test(username) || !/^01[0125][0-9]{8}$/.test(phone) || (email && !email.includes("@")) || password.length < 6) return json({ ok: false, message: "تحقق من الاسم ورقم الهاتف والبريد وكلمة المرور." }, 400);
     const { data: existing } = await admin.from("customer_profiles").select("id").eq("phone", phone).maybeSingle();
+    const { data: existingUsername } = await admin.from("customer_profiles").select("id").eq("username", username).maybeSingle();
+    if (existingUsername) return json({ ok: false, message: "اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر." }, 409);
     if (existing) return json({ ok: false, message: "هذا الرقم مسجل بالفعل. استخدم تسجيل الدخول." }, 409);
     const { data: existingEmail } = email ? await admin.from("customer_profiles").select("id").ilike("email", email).maybeSingle() : { data: null };
     if (existingEmail) return json({ ok: false, message: "هذا البريد مسجل بالفعل. استخدم تسجيل الدخول." }, 409);
     const passwordSalt = randomSalt();
     const passwordHash = await sha256(`${passwordSalt}:${password}`);
-    const { data: customer, error } = await admin.from("customer_profiles").insert({ full_name: fullName, phone, email: email || null, password_hash: passwordHash, password_salt: passwordSalt }).select("id, full_name, phone, email").single();
+    const { data: customer, error } = await admin.from("customer_profiles").insert({ full_name: fullName, username, phone, email: email || null, password_hash: passwordHash, password_salt: passwordSalt }).select("id, full_name, username, phone, email").single();
     if (error) throw error;
     const token = await createSession(customer.id);
-    await notifyOwner("تسجيل عميل جديد", [["الاسم", customer.full_name], ["الهاتف", customer.phone], ["البريد", customer.email || "غير مضاف"], ["تاريخ التسجيل", new Date().toLocaleString("ar-EG")], ["ملاحظة الأمان", "كلمة المرور لا تُرسل بالبريد ولا يمكن استرجاعها كنص واضح."]]);
+    await notifyOwner("تسجيل عميل جديد", [["الاسم", customer.full_name], ["اسم المستخدم", customer.username], ["الهاتف", customer.phone], ["البريد", customer.email || "غير مضاف"], ["تاريخ التسجيل", new Date().toLocaleString("ar-EG")], ["ملاحظة الأمان", "كلمة المرور لا تُرسل بالبريد ولا يمكن استرجاعها كنص واضح."]]);
     return json({ ok: true, customer, token });
   }
 
@@ -190,14 +193,14 @@ async function handleJson(request: Request) {
     const phone = text(input.phone, 32);
     const email = text(input.email, 320).toLowerCase();
     const password = text(input.password, 128);
-    const { data: byPhone } = await admin.from("customer_profiles").select("id, full_name, phone, email, password_hash, password_salt").eq("phone", phone).maybeSingle();
-    const { data: byEmail } = byPhone ? { data: null } : await admin.from("customer_profiles").select("id, full_name, phone, email, password_hash, password_salt").ilike("email", email || phone).maybeSingle();
+    const { data: byPhone } = await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").eq("phone", phone).maybeSingle();
+    const { data: byEmail } = byPhone ? { data: null } : await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").ilike("email", email || phone).maybeSingle();
     const customer = byPhone ?? byEmail;
     if (!customer?.password_hash || !customer.password_salt) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
     const passwordHash = await sha256(`${customer.password_salt}:${password}`);
     if (passwordHash !== customer.password_hash) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
     const token = await createSession(customer.id);
-    return json({ ok: true, customer: { id: customer.id, full_name: customer.full_name, phone: customer.phone, email: customer.email }, token });
+    return json({ ok: true, customer: { id: customer.id, full_name: customer.full_name, username: customer.username, phone: customer.phone, email: customer.email }, token });
   }
 
   if (action === "reset_password") {
@@ -205,7 +208,7 @@ async function handleJson(request: Request) {
     const email = text(input.email, 320).toLowerCase();
     const newPassword = text(input.newPassword, 128);
     if (!/^01[0125][0-9]{8}$/.test(phone) || !email.includes("@") || newPassword.length < 6) return json({ ok: false, message: "تحقق من رقم الهاتف والجيميل وكلمة المرور الجديدة." }, 400);
-    const { data: customer } = await admin.from("customer_profiles").select("id, full_name, phone, email").eq("phone", phone).ilike("email", email).maybeSingle();
+    const { data: customer } = await admin.from("customer_profiles").select("id, full_name, username, phone, email").eq("phone", phone).ilike("email", email).maybeSingle();
     if (!customer) return json({ ok: false, message: "رقم الهاتف والجيميل غير متطابقين مع حساب مسجل." }, 404);
     const passwordSalt = randomSalt();
     const passwordHash = await sha256(`${passwordSalt}:${newPassword}`);

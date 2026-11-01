@@ -58,6 +58,14 @@
       background: linear-gradient(to bottom, #ce1126 33.3%, #ffffff 33.3%, #ffffff 66.6%, #000000 66.6%);
       position: relative;
     }
+
+    .smm-service-list{display:grid;gap:6px;max-height:270px;overflow:auto;padding:6px;background:#090d16;border:1px solid #273244;border-radius:14px;scrollbar-width:thin}
+    .smm-service-option{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border:1px solid #253044;border-radius:10px;background:#111827;color:#e5e7eb;text-align:right;font-size:11px;cursor:pointer;transition:background .16s,border-color .16s}
+    .smm-service-option:hover,.smm-service-option.active{background:#1d2a3d;border-color:#eab308}
+    .smm-service-option .code{color:#facc15;font-family:monospace;font-weight:900}
+    .smm-service-option .meta{color:#9ca3af;font-size:10px;white-space:nowrap}
+    @media (min-width:1024px){#section-new-order{max-width:1180px;margin-inline:auto}.smm-service-list{max-height:330px}.smm-workspace{align-items:stretch}.smm-workspace>form{order:2}.smm-workspace>.smm-terms{order:1}}
+    @media (max-width:1023px){.smm-workspace>form,.smm-workspace>.smm-terms{order:initial}.smm-service-list{max-height:230px}}
   </style>
 </head>
 <body class="pb-24 select-none">
@@ -100,8 +108,8 @@
           <input type="text" id="regFullName" required placeholder="مثال: أحمد محمود" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">اسم مستخدم اختياري (إنجليزي بدون مسافات)</label>
-          <input type="text" id="regUsername" pattern="^[a-zA-Z0-9_]{4,20}$" placeholder="مثال: ahmed_2026" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
+          <label class="block text-gray-400 mb-1">اسم المستخدم (إجباري — حروف إنجليزية صغيرة فقط بدون أرقام أو فواصل)</label>
+          <input type="text" id="regUsername" required pattern="^[a-z]{4,20}$" minlength="4" maxlength="20" oninput="this.value=this.value.toLowerCase().replace(/[^a-z]/g,'')" placeholder="مثال: ahmed فقط حروف إنجليزية صغيرة" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
           <span class="text-[9px] text-gray-500">حروف وأرقام إنجليزية فقط بدون مسافات (4-20 حرف)</span>
         </div>
         <div>
@@ -284,7 +292,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+      <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
 
         <!-- فورم طلب فوري (يمين) -->
         <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-span-7 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3">
@@ -314,6 +322,7 @@
             <label class="block text-[11px] font-bold text-gray-300 mb-1">الخدمة</label>
             <select id="mainServicesDropdown" onchange="renderServiceInputFields()" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
           </div>
+          <div id="serviceOptionsList" class="smm-service-list" aria-label="قائمة الخدمات"></div>
 
           <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير سيرفرات SMM -->
           <div class="bg-[#0b0f19] border border-gray-800 p-3 rounded-xl text-[11px] space-y-1.5 text-gray-300">
@@ -357,7 +366,7 @@
         </form>
 
         <!-- مربع الشروط الأساسية (يسار بالكمبيوتر وتحت بالموبايل) -->
-        <div class="lg:col-span-5 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
+        <div class="smm-terms lg:col-span-5 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <div class="bg-[#0b0f19] border border-gray-800/80 rounded-xl p-3 text-center mb-3">
               <div class="font-black text-lg text-yellow-400">MSB <span class="text-blue-500">MEDIA</span></div>
@@ -793,7 +802,7 @@
         }
     }
 
-    async function processRegister(e){e.preventDefault();const fullName=document.getElementById('regFullName').value.trim(),username=document.getElementById('regUsername').value.trim(),phone=normalizedEgyptPhone(document.getElementById('regPhone').value),email=document.getElementById('regEmail').value.trim().toLowerCase(),password=document.getElementById('regPassword').value;try{const r=await apiJson({action:'register',fullName,phone,email,password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:username||r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم إنشاء الحساب وحفظه بأمان ✅');}catch(err){showToast(err.message);}}
+    async function processRegister(e){e.preventDefault();const fullName=document.getElementById('regFullName').value.trim(),username=document.getElementById('regUsername').value.trim(),phone=normalizedEgyptPhone(document.getElementById('regPhone').value),email=document.getElementById('regEmail').value.trim().toLowerCase(),password=document.getElementById('regPassword').value;try{if(!/^[a-z]{4,20}$/.test(username)){showToast('اكتب اسم المستخدم بحروف إنجليزية صغيرة فقط، من 4 إلى 20 حرفًا، بدون أرقام أو فواصل.');return;}const r=await apiJson({action:'register',fullName,username,phone,email,password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.username||username,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم إنشاء الحساب وحفظه بأمان ✅');}catch(err){showToast(err.message);}}
     async function processLogin(e){e.preventDefault();const identifier=document.getElementById('loginIdentifier').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await apiJson({action:'sign_in',phone:normalizedEgyptPhone(identifier),email:identifier.toLowerCase(),password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم تسجيل الدخول بنجاح ✅');}catch(err){showToast(err.message);}}
     function handleGoogleSignIn(){showToast('التسجيل بجوجل غير متاح حاليًا. استخدم التسجيل العادي أو استعادة كلمة المرور.','info');}
     // إرسال كود التحقق في استعادة كلمة المرور
@@ -880,43 +889,38 @@
       updateServicesBySelectedCat();
     }
 
+    function renderServiceListPreview(items){const box=document.getElementById('serviceOptionsList');if(!box)return;box.innerHTML=items.map(s=>`<button type="button" class="smm-service-option" onclick="selectServiceCard('${s.code}')"><span><span class="code">${s.code}</span> ${s.name}</span><span class="meta">${s.price.toFixed(2)} EGP / ${s.unit===1?'اشتراك':s.unit.toLocaleString('en-US')}</span></button>`).join('')||'<div class="text-center text-gray-500 text-xs p-3">لا توجد خدمة مطابقة</div>';}
+    function selectServiceCard(code){const el=document.getElementById('mainServicesDropdown');if(!el)return;el.value=code;renderServiceInputFields();document.querySelectorAll('.smm-service-option').forEach(x=>x.classList.remove('active'));event?.currentTarget?.classList.add('active');}
+
     function updateServicesBySelectedCat() {
       const cat = document.getElementById('mainCatSelect').value;
       const dropdown = document.getElementById('mainServicesDropdown');
       dropdown.innerHTML = '';
-
       const filtered = (cat === 'all') ? servicesList : servicesList.filter(s => s.cat === cat);
+      renderServiceListPreview(filtered);
       filtered.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
         opt.textContent = `(${s.code}) ${s.name} — ${s.price.toFixed(2)} EGP / ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
-
       renderServiceInputFields();
     }
-
     function searchServicesLive() {
       const q = document.getElementById('orderSearchInput').value.toLowerCase().trim();
       const dropdown = document.getElementById('mainServicesDropdown');
       dropdown.innerHTML = '';
-
       const matched = servicesList.filter(s => s.name.toLowerCase().includes(q) || s.code.includes(q) || s.price.toString().includes(q));
-      if (matched.length === 0) {
-        dropdown.innerHTML = '<option value="">لا توجد خدمة تطابق بحثك</option>';
-        return;
-      }
-
+      if (matched.length === 0) { dropdown.innerHTML = '<option value="">لا توجد خدمة تطابق بحثك</option>'; renderServiceListPreview([]); return; }
+      renderServiceListPreview(matched);
       matched.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
         opt.textContent = `(${s.code}) ${s.name} — ${s.price.toFixed(2)} EGP / ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
-
       renderServiceInputFields();
     }
-
     function renderServiceInputFields() {
       const code = document.getElementById('mainServicesDropdown').value;
       const service = servicesList.find(s => s.code === code) || servicesList[0];
