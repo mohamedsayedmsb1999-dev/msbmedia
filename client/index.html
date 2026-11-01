@@ -59,11 +59,6 @@
       position: relative;
     }
 
-    .smm-service-list{display:grid;gap:6px;max-height:270px;overflow:auto;padding:6px;background:#090d16;border:1px solid #273244;border-radius:14px;scrollbar-width:thin}
-    .smm-service-option{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border:1px solid #253044;border-radius:10px;background:#111827;color:#e5e7eb;text-align:right;font-size:11px;cursor:pointer;transition:background .16s,border-color .16s}
-    .smm-service-option:hover,.smm-service-option.active{background:#1d2a3d;border-color:#eab308}
-    .smm-service-option .code{color:#facc15;font-family:monospace;font-weight:900}
-    .smm-service-option .meta{color:#9ca3af;font-size:10px;white-space:nowrap}
     @media (min-width:1024px){#section-new-order{max-width:1180px;margin-inline:auto}.smm-service-list{max-height:330px}.smm-workspace{align-items:stretch}.smm-workspace>form{order:2}.smm-workspace>.smm-terms{order:1}}
     @media (max-width:1023px){.smm-workspace>form,.smm-workspace>.smm-terms{order:initial}.smm-service-list{max-height:230px}}
   </style>
@@ -305,7 +300,7 @@
 
           <div>
             <label class="block text-[11px] font-bold text-gray-300 mb-1">الفئة</label>
-            <select id="mainCatSelect" onchange="updateServicesBySelectedCat()" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-yellow-400">
+            <select id="mainCatSelect" onchange="updateServicesBySelectedCat()" class="w-full min-h-12 bg-[#0b0f19] border border-gray-700 rounded-xl py-3 px-3 text-xs text-white focus:outline-none focus:border-yellow-400">
               <option value="all">عرض الكل (الخدمات المعتمدة)</option>
               <option value="facebook">فيسبوك (Facebook)</option>
               <option value="tiktok">تيك توك (TikTok)</option>
@@ -320,9 +315,8 @@
 
           <div>
             <label class="block text-[11px] font-bold text-gray-300 mb-1">الخدمة</label>
-            <select id="mainServicesDropdown" onchange="renderServiceInputFields()" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
+            <select id="mainServicesDropdown" onchange="renderServiceInputFields()" class="w-full min-h-12 bg-[#0b0f19] border border-gray-700 rounded-xl py-3 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
           </div>
-          <div id="serviceOptionsList" class="smm-service-list" aria-label="قائمة الخدمات"></div>
 
           <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير سيرفرات SMM -->
           <div class="bg-[#0b0f19] border border-gray-800 p-3 rounded-xl text-[11px] space-y-1.5 text-gray-300">
@@ -889,19 +883,16 @@
       updateServicesBySelectedCat();
     }
 
-    function renderServiceListPreview(items){const box=document.getElementById('serviceOptionsList');if(!box)return;box.innerHTML=items.map(s=>`<button type="button" class="smm-service-option" onclick="selectServiceCard('${s.code}')"><span><span class="code">${s.code}</span> ${s.name}</span><span class="meta">${s.price.toFixed(2)} EGP / ${s.unit===1?'اشتراك':s.unit.toLocaleString('en-US')}</span></button>`).join('')||'<div class="text-center text-gray-500 text-xs p-3">لا توجد خدمة مطابقة</div>';}
-    function selectServiceCard(code){const el=document.getElementById('mainServicesDropdown');if(!el)return;el.value=code;renderServiceInputFields();document.querySelectorAll('.smm-service-option').forEach(x=>x.classList.remove('active'));event?.currentTarget?.classList.add('active');}
 
     function updateServicesBySelectedCat() {
       const cat = document.getElementById('mainCatSelect').value;
       const dropdown = document.getElementById('mainServicesDropdown');
       dropdown.innerHTML = '';
       const filtered = (cat === 'all') ? servicesList : servicesList.filter(s => s.cat === cat);
-      renderServiceListPreview(filtered);
       filtered.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
-        opt.textContent = `(${s.code}) ${s.name} — ${s.price.toFixed(2)} EGP / ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
+        opt.textContent = `(${s.code}) ${s.name} | السعر: ${s.price.toFixed(2)} EGP | الوحدة: ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
       renderServiceInputFields();
@@ -911,12 +902,11 @@
       const dropdown = document.getElementById('mainServicesDropdown');
       dropdown.innerHTML = '';
       const matched = servicesList.filter(s => s.name.toLowerCase().includes(q) || s.code.includes(q) || s.price.toString().includes(q));
-      if (matched.length === 0) { dropdown.innerHTML = '<option value="">لا توجد خدمة تطابق بحثك</option>'; renderServiceListPreview([]); return; }
-      renderServiceListPreview(matched);
+      if (matched.length === 0) { dropdown.innerHTML = '<option value="">لا توجد خدمة تطابق بحثك</option>'; return; }
       matched.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
-        opt.textContent = `(${s.code}) ${s.name} — ${s.price.toFixed(2)} EGP / ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
+        opt.textContent = `(${s.code}) ${s.name} | السعر: ${s.price.toFixed(2)} EGP | الوحدة: ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
       renderServiceInputFields();
