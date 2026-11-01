@@ -314,9 +314,14 @@ async function handleJson(request: Request) {
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا لإرسال طلب مرتبط بحسابك." }, 401);
     const requestType = text(input.requestType, 40);
     const orderId = text(input.orderId, 40);
-    if (!["تعويض", "اكتمال وهمى", "تسريع", "إلغاء"].includes(requestType) || !/^[A-Za-z0-9-]{4,40}$/.test(orderId)) return json({ ok: false, message: "اكتب رقم الطلب واختر نوع طلب صحيح." }, 400);
+    if (!["تعويض", "اكتمال وهمى", "تسريع", "إلغاء", "متابعة الطلب"].includes(requestType) || !/^[A-Za-z0-9-]{4,40}$/.test(orderId)) return json({ ok: false, message: "اكتب رقم الطلب واختر نوع طلب صحيح." }, 400);
+    const { data: ownedOrders, error: ownedOrdersError } = await admin.from("social_growth_orders").select("id, status").eq("customer_profile_id", customerId).limit(100);
+    if (ownedOrdersError) throw ownedOrdersError;
+    const ownedOrder = (ownedOrders ?? []).find((item) => item.id === orderId || item.id.endsWith(orderId));
+    if (!ownedOrder) return json({ ok: false, message: "رقم الطلب غير موجود داخل حسابك. استخدم رقمًا من صفحة الطلبات." }, 404);
+    if (ownedOrder.status === "rejected") return json({ ok: false, message: "لا يمكن إرسال طلب متابعة لطلب ملغى." }, 400);
     const { data: customer } = await admin.from("customer_profiles").select("full_name, phone, email").eq("id", customerId).maybeSingle();
-    const { error } = await admin.from("order_assistance_requests").insert({ customer_profile_id: customerId, order_id_text: orderId, request_type: requestType });
+    const { error } = await admin.from("order_assistance_requests").insert({ customer_profile_id: customerId, order_id_text: ownedOrder.id, request_type: requestType });
     if (error) throw error;
     await notifyOwner(`طلب متابعة من MSB AI — ${requestType}`, [["الاسم", customer?.full_name || "غير معروف"], ["الهاتف", customer?.phone || "غير معروف"], ["البريد", customer?.email || "غير مضاف"], ["رقم الطلب", orderId], ["نوع الطلب", requestType]]);
     return json({ ok: true, message: "تم استلام طلبك بنجاح ✅ يرجى الانتظار سيستغرق الأمر من 24 ساعة إلى 72 ساعة لتنفيذ طلبك." });
@@ -398,6 +403,7 @@ async function handleReceipt(request: Request) {
   const method = text(form.get("method"), 32);
   const binancePhone = text(form.get("binancePhone"), 64);
   const paymentIdentifier = text(form.get("paymentIdentifier"), 64);
+  const binanceUsdAmount = Number(form.get("binanceUsdAmount"));
   const action = text(form.get("action"), 40);
   const depositAmount = Number(form.get("depositAmount"));
   const serviceId = Number(form.get("serviceId"));
@@ -406,6 +412,7 @@ async function handleReceipt(request: Request) {
   const { data: customerProfile } = await admin.from("customer_profiles").select("email").eq("id", customerId).maybeSingle();
   if (!(file instanceof File) || customerName.length < 2 || !/^01[0125][0-9]{8}$/.test(phone) || !isSafePaymentMethod(method)) return json({ ok: false, message: "تحقق من بيانات الإيصال ثم أعد المحاولة." }, 400);
   if (["binance_pay", "instapay"].includes(method) && paymentIdentifier.length < 6) return json({ ok: false, message: method === "binance_pay" ? "اكتب Binance Pay ID لتأكيد التحويل." : "اكتب رقم الهاتف أو اسم مستخدم InstaPay." }, 400);
+  if (method === "binance_pay" && (!Number.isFinite(binanceUsdAmount) || binanceUsdAmount < 5)) return json({ ok: false, message: "الحد الأدنى لإيداع Binance هو 5 دولار غير الرسوم." }, 400);
   if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) return json({ ok: false, message: "صورة الإيصال يجب أن تكون JPG أو PNG أو WEBP وبحد أقصى 5 ميجابايت." }, 400);
   if (action === "wallet_deposit" && (!Number.isFinite(depositAmount) || depositAmount < 100 || depositAmount > 1000000)) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 100 EGP." }, 400);
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "receipt";
@@ -425,7 +432,7 @@ async function handleReceipt(request: Request) {
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const { data: signedReceipt } = await admin.storage.from("payment-receipts").createSignedUrl(storagePath, 60 * 60 * 24 * 7);
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["رسوم التعبئة (5%)", `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], ["رسوم التعبئة (5%)", `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإدارة", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, payment_identifier: paymentIdentifier || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });

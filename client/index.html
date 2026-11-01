@@ -14,11 +14,13 @@
     let currentUser = null;
     async function apiJson(payload, options={}) { const response=await fetch(API_URL,{method:'POST',headers:{...(options.form?{}:{'Content-Type':'application/json'}),...(customerToken?{'x-msb-customer-token':customerToken}:{})},body:options.form?payload:JSON.stringify(payload)}); const result=await response.json().catch(()=>({ok:false,message:'تعذر قراءة رد الخادم.'})); if(!response.ok||!result.ok) throw new Error(result.message||'تعذر تنفيذ العملية.'); return result; }
     function normalizedEgyptPhone(value){const raw=String(value||'').replace(/[^0-9+]/g,'');if(raw.startsWith('+20'))return '0'+raw.slice(3);if(raw.startsWith('20')&&raw.length===12)return '0'+raw.slice(2);return raw;}
-    function requireAuth(){if(!customerToken||!currentUser){alert('سجّل الدخول أو أنشئ حسابًا أولاً 🔐');document.getElementById('authModal')?.classList.remove('hidden');return false;}return true;}
-    function applyUserData(user){const normalized={fullName:user.fullName||user.full_name||'حساب العميل',username:user.username||user.phone||'اسم المستخدم',phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
+    function showToast(message, type='info'){document.querySelectorAll('.msb-toast').forEach(el=>el.remove());const box=document.createElement('div');box.className=`msb-toast ${type}`;box.setAttribute('role','status');box.textContent=String(message||'');document.body.appendChild(box);window.setTimeout(()=>box.remove(),6000);}
+    function requireAuth(){if(!customerToken||!currentUser){showToast('سجّل الدخول أو أنشئ حسابًا أولاً 🔐','info');document.getElementById('authModal')?.classList.remove('hidden');return false;}return true;}
+    function deriveMsbUsername(fullName, fallback=''){const clean=String(fullName||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return clean?`${clean}@msb`:String(fallback||'اسم المستخدم');}
+    function applyUserData(user){const fullName=user.fullName||user.full_name||'حساب العميل';const normalized={fullName,username:user.username&&/@msb$/i.test(user.username)?user.username.toLowerCase():deriveMsbUsername(fullName,user.username||user.phone),phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
     function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');document.getElementById('authModal')?.classList.remove('hidden');switchAuthView('login');}
-    function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="6" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',in_progress:'قيد التنفيذ 🔄',processing:'قيد المعالجة ⚙️',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'};body.innerHTML=orders.map(o=>`<tr><td class="p-2.5 font-mono text-yellow-400">#${String(o.id).slice(-8)}</td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('ar-EG')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`).join('');}
-    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});renderRealOrders(r.orders||[]);const balance=Number(r.balance||0);const orders=(r.orders||[]).filter(o=>o.status!=='rejected');const used=orders.reduce((s,o)=>s+Number(o.amount||0),0);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');const ids=[['walletBalance',balance],['walletUsed',used],['walletTotal',balance+used]];ids.forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=Number(v).toFixed(2)+' EGP';});}catch(e){console.warn(e);}}
+    function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',in_progress:'قيد التنفيذ 🔄',processing:'قيد المعالجة ⚙️',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,in_progress:35,processing:65,partial:80,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400">#${String(o.id).slice(-8)}</td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('ar-EG')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
+    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];renderRealOrders(window.latestOrders);const balance=Number(r.balance||0);const orders=(r.orders||[]).filter(o=>o.status!=='rejected');const used=orders.reduce((s,o)=>s+Number(o.amount||0),0);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');const ids=[['walletBalance',balance],['walletUsed',used],['walletTotal',balance+used]];ids.forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=Number(v).toFixed(2)+' EGP';});}catch(e){console.warn(e);}}
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -43,6 +45,15 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .active-nav { color: #eab308 !important; font-weight: 900 !important; }
     .active-platform { background-color: #eab308 !important; color: #000 !important; font-weight: 800 !important; }
+    #mainCatSelect, #mainServicesDropdown { appearance: none; -webkit-appearance: none; background-color: #0b0f19; background-image: linear-gradient(45deg, transparent 50%, #eab308 50%), linear-gradient(135deg, #eab308 50%, transparent 50%); background-position: left 16px center, left 10px center; background-size: 7px 7px, 7px 7px; background-repeat: no-repeat; border: 1px solid rgba(234,179,8,.35); box-shadow: inset 0 0 0 1px rgba(255,255,255,.02), 0 8px 24px rgba(0,0,0,.12); transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; cursor: pointer; }
+    #mainCatSelect:hover, #mainServicesDropdown:hover { border-color: rgba(234,179,8,.75); transform: translateY(-1px); }
+    #mainCatSelect:focus, #mainServicesDropdown:focus { border-color: #eab308; box-shadow: 0 0 0 3px rgba(234,179,8,.16); outline: none; }
+    #mainServicesDropdown option, #mainCatSelect option { background: #111827; color: #fff; padding: 10px; }
+    .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
+    .msb-toast.success { border-color: #10b981; background: #052e2b; }
+    .msb-toast.error { border-color: #fb7185; background: #3b0a18; }
+    .msb-toast.info { border-color: #60a5fa; background: #0c2342; }
+    @keyframes msbToastIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     .egypt-flag-icon {
       background: linear-gradient(to bottom, #ce1126 33.3%, #ffffff 33.3%, #ffffff 66.6%, #000000 66.6%);
       position: relative;
@@ -136,13 +147,6 @@
         </div>
         <button type="submit" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded-xl transition-all">حفظ وتعيين كلمة المرور والدخول 🔒</button>
       </form>
-
-      <!-- زر الدخول بجوجل -->
-      <div id="googleSignInArea" class="mt-4 pt-3 border-t border-gray-800">
-        <button onclick="handleGoogleSignIn()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
-          <i class="fa-brands fa-google text-red-500 text-sm"></i> الدخول المباشر المعتمد عبر Google
-        </button>
-      </div>
     </div>
   </div>
 
@@ -449,6 +453,7 @@
               <th class="p-2.5">اسم الخدمة</th>
               <th class="p-2.5">الكمية</th>
               <th class="p-2.5">القيمة</th>
+              <th class="p-2.5">التقدم</th>
               <th class="p-2.5 text-center">حالة الطلب</th>
             </tr>
           </thead>
@@ -524,7 +529,7 @@
             <input type="text" id="depSenderIdentifier" required placeholder="010xxxxxxx" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-white text-xs">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 mb-1">المبلغ المطلوب شحنه (EGP) - الحد الأدنى 100</label>
+            <label id="depAmountLabel" class="block text-[10px] text-gray-400 mb-1">المبلغ المطلوب شحنه (EGP) - الحد الأدنى 100</label>
             <input type="number" id="depEgpAmount" min="100" value="100" oninput="calculateDepositLive()" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-white text-xs">
           </div>
         </div>
@@ -532,7 +537,7 @@
         <!-- المربع الدولاري التلقائي (لباينانس فقط) -->
         <div id="binanceUsdBox" class="hidden bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-lg text-xs flex justify-between items-center">
           <span class="text-amber-300 font-bold">المعادل بالدولار المطلوب إرساله عبر باينانس:</span>
-          <span class="text-sm font-black text-yellow-400"><span id="binanceUsdValue">1.84</span> USDT</span>
+          <span class="text-sm font-black text-yellow-400"><span id="binanceUsdValue">5.00</span> USDT</span><span class="text-[9px] text-amber-200">الحد الأدنى 5$</span>
         </div>
 
         <div class="bg-[#111827] p-2 rounded-lg border border-gray-800 flex justify-between items-center text-[11px]">
@@ -760,7 +765,6 @@
       document.getElementById('viewLogin').classList.add('hidden');
       document.getElementById('viewRegister').classList.add('hidden');
       document.getElementById('viewForgot').classList.add('hidden');
-      document.getElementById('googleSignInArea').classList.remove('hidden');
 
       const tabLogin = document.getElementById('tabBtnLogin');
       const tabRegister = document.getElementById('tabBtnRegister');
@@ -776,87 +780,53 @@
         tabRegister.className = "flex-1 py-2 text-yellow-400 border-b-2 border-yellow-400";
       } else if (viewName === 'forgot') {
         document.getElementById('viewForgot').classList.remove('hidden');
-        document.getElementById('googleSignInArea').classList.add('hidden');
-      }
+        }
     }
 
-    async function processRegister(e){e.preventDefault();const fullName=document.getElementById('regFullName').value.trim(),username=document.getElementById('regUsername').value.trim(),phone=normalizedEgyptPhone(document.getElementById('regPhone').value),email=document.getElementById('regEmail').value.trim().toLowerCase(),password=document.getElementById('regPassword').value;try{const r=await apiJson({action:'register',fullName,phone,email,password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:username||r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();alert('تم إنشاء الحساب وحفظه بأمان ✅');}catch(err){alert(err.message);}}
-    async function processLogin(e){e.preventDefault();const identifier=document.getElementById('loginIdentifier').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await apiJson({action:'sign_in',phone:normalizedEgyptPhone(identifier),email:identifier.toLowerCase(),password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();alert('تم تسجيل الدخول بنجاح ✅');}catch(err){alert(err.message);}}
-    function handleGoogleSignIn(){alert('تسجيل Google يحتاج تفعيل OAuth رسمي في Supabase أولاً. استخدم التسجيل العادي حاليًا.');}
+    async function processRegister(e){e.preventDefault();const fullName=document.getElementById('regFullName').value.trim(),username=document.getElementById('regUsername').value.trim(),phone=normalizedEgyptPhone(document.getElementById('regPhone').value),email=document.getElementById('regEmail').value.trim().toLowerCase(),password=document.getElementById('regPassword').value;try{const r=await apiJson({action:'register',fullName,phone,email,password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:username||r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم إنشاء الحساب وحفظه بأمان ✅');}catch(err){showToast(err.message);}}
+    async function processLogin(e){e.preventDefault();const identifier=document.getElementById('loginIdentifier').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await apiJson({action:'sign_in',phone:normalizedEgyptPhone(identifier),email:identifier.toLowerCase(),password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم تسجيل الدخول بنجاح ✅');}catch(err){showToast(err.message);}}
+    function handleGoogleSignIn(){showToast('التسجيل بجوجل غير متاح حاليًا. استخدم التسجيل العادي أو استعادة كلمة المرور.','info');}
     // إرسال كود التحقق في استعادة كلمة المرور
     function sendResetVerificationCode(){}
-    async function processPasswordReset(e){e.preventDefault();const phone=normalizedEgyptPhone(document.getElementById('resetPhone').value),email=document.getElementById('resetEmail')?.value.trim().toLowerCase(),newPassword=document.getElementById('resetNewPass').value,confirmPassword=document.getElementById('resetConfirmPass').value;if(newPassword!==confirmPassword){alert('كلمتا المرور غير متطابقتين.');return;}try{const r=await apiJson({action:'reset_password',phone,email,newPassword});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');alert(r.message||'تم تغيير كلمة المرور بنجاح.');}catch(err){alert(err.message);}}
-    // 3. شات دعم الذكاء الاصطناعي MSB ai المقيد بدقة السيرفر
-    let aiStep = 'ask_username';
+    async function processPasswordReset(e){e.preventDefault();const phone=normalizedEgyptPhone(document.getElementById('resetPhone').value),email=document.getElementById('resetEmail')?.value.trim().toLowerCase(),newPassword=document.getElementById('resetNewPass').value,confirmPassword=document.getElementById('resetConfirmPass').value;if(newPassword!==confirmPassword){showToast('كلمتا المرور غير متطابقتين.');return;}try{const r=await apiJson({action:'reset_password',phone,email,newPassword});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');showToast(r.message||'تم تغيير كلمة المرور بنجاح.');}catch(err){showToast(err.message);}}
+    // 3. مساعد MSB المقيد: لا يرسل أي طلب إلا لطلب موجود داخل حساب العميل.
+    let aiStep = 'ready_for_order';
     let verifiedClientUsername = '';
+    let aiPendingAction = '';
 
     function toggleAiSupportChat() {
       document.getElementById('aiSupportWindow').classList.toggle('hidden');
-      if (aiStep === 'ask_username' && document.getElementById('aiChatBody').children.length <= 2) {
-        setTimeout(() => {
-          appendAiMessage(`خدمة دعم الذكاء الاصطناعي MSB:\nأهلاً بك عزيزي العميل!\nلتأكيد ملكية طلباتك وتنفيذها تلقائياً، يرجى كتابة اسم المستخدم (Username) الخاص بحسابك في الموقع.\n(مثال على اسم المستخدم: ahmed_2026 أو user123 وليس اسم الحساب).`, 'ai');
-        }, 400);
+      if (document.getElementById('aiChatBody').children.length <= 2) {
+        setTimeout(() => appendAiMessage('مساعد MSB نشط الآن ✅\nاختار تعويض أو تسريع، ثم اكتب رقم طلب موجود عندك في صفحة الطلبات. سيتم إرسال الطلب للإدارة على Gmail فورًا.\nللدعم العاجل: واتساب 01092794169', 'ai'), 180);
       }
     }
 
     function triggerAiAction(actionType) {
-      if (!verifiedClientUsername) {
-        appendAiMessage(`الذكاء الاصطناعي: يرجى تأكيد اسم المستخدم (Username) أولاً قبل تنفيذ أي إجراء.`, 'ai');
-        return;
-      }
-      const orderNumber = prompt(`يرجى إدخال رقم الطلب لإجراء (${actionType}):`);
-      if (!orderNumber) return;
-
-      appendAiMessage(`أنت: إجراء (${actionType}) للطلب رقم #${orderNumber}`, 'user');
-      validateAndProcessAiOrder(orderNumber, actionType);
+      if (!requireAuth()) return;
+      aiPendingAction = actionType;
+      verifiedClientUsername = currentUser.username;
+      appendAiMessage(`اكتب رقم الطلب الصحيح لتنفيذ: ${actionType}.\nيمكنك استخدام آخر 8 خانات الظاهرة في جدول طلباتك.`, 'ai');
     }
 
-    function submitAiChatMessage() {
+    async function submitAiChatMessage() {
+      if (!requireAuth()) return;
       const input = document.getElementById('aiChatInput');
       const text = input.value.trim();
       if (!text) return;
-
       appendAiMessage(`أنت: ${text}`, 'user');
       input.value = '';
-
-      if (aiStep === 'ask_username') {
-        // التحقق من اسم المستخدم
-        verifiedClientUsername = text.replace('@', '');
-        aiStep = 'ready_for_order';
-        setTimeout(() => {
-          appendAiMessage(`⏳ جاري التحقق من اسم المستخدم [${verifiedClientUsername}]...`, 'ai');
-        }, 500);
-        setTimeout(() => {
-          appendAiMessage(`✅ تم ربط حسابك بنجاح [${verifiedClientUsername}].\nيمكنك الآن إدخال رقم الطلب الصحيح أو استخدام الأزرار العلوية السريعة (تسريع / تعويض / إلغاء).`, 'ai');
-        }, 1200);
-      } else {
-        // استخراج أرقام الطلب والتحقق منها
-        const matchedNumber = text.match(/\d{5,8}/);
-        if (matchedNumber) {
-          validateAndProcessAiOrder(matchedNumber[0], 'متابعة الطلب');
-        } else {
-          setTimeout(() => {
-            appendAiMessage(`⚠️ تنبيه: لا أقبل إلا كود الطلب الصحيح فقط (مثال: رقم الطلب). يرجى كتابة رقم طلبك المكون من 6 أرقام لنقله للمراجعة.`, 'ai');
-          }, 600);
-        }
-      }
-    }
-
-    function validateAndProcessAiOrder(orderNum, actionName) {
-      appendAiMessage(`⏳ جاري فحص حالة الطلب #${orderNum} في قاعدة بيانات السيرفر...`, 'ai');
-
-      setTimeout(() => {
-        // الرد الاحترافي المطابق لسيرفر الكابوس
-        const serverResponse = `
-        ★ تم استلام طلبك (${orderNum}) لـ ${actionName} فورياً.
-        ● اسم المستخدم المرتبط: ${verifiedClientUsername}
-        ● حالة التنفيذ بالسيرفر: تم تمرير الأمر بنجاح.
-        ● إشعار الإدارة: تم إرسال تفاصيل التذكرة إلى بريد الإدارة (اسم المستخدمmsb1999@gmail.com).
-        ★ شكراً لاستخدامك سيرفر MSB Media ★
-        `;
-        appendAiMessage(serverResponse, 'ai');
-        console.log(`إرسال إشعار إلى اسم المستخدمmsb1999@gmail.com: إجراء دعم [${actionName}] للطلب #${orderNum} لحساب ${verifiedClientUsername}`);
-      }, 1400);
+      const match = text.match(/[A-Za-z0-9-]{4,40}/);
+      const orderText = match?.[0] || '';
+      const orders = Array.isArray(window.latestOrders) ? window.latestOrders : [];
+      const order = orders.find(o => String(o.id) === orderText || String(o.id).endsWith(orderText));
+      if (!order) { appendAiMessage('⚠️ رقم الطلب غير موجود داخل حسابك. افتح صفحة الطلبات واستخدم الرقم الظاهر هناك فقط.', 'ai'); return; }
+      const requestType = aiPendingAction || (text.includes('تعويض') ? 'تعويض' : text.includes('تسريع') ? 'تسريع' : 'متابعة الطلب');
+      try {
+        appendAiMessage('⏳ جاري مراجعة الطلب وإرسال طلبك للإدارة...', 'ai');
+        const result = await apiJson({action:'order_assistance', requestType, orderId:String(order.id)});
+        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${String(order.id).slice(-8)}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
+        aiPendingAction = '';
+      } catch (error) { appendAiMessage(`⚠️ ${error.message || 'تعذر إرسال الطلب الآن. حاول مرة أخرى.'}`, 'ai'); }
     }
 
     function appendAiMessage(text, sender) {
@@ -1060,10 +1030,14 @@
         label.textContent = 'Binance Pay ID (معرف الدفع الخاص بك)';
         input.placeholder = 'مثال: 454798991';
         binanceBox.classList.remove('hidden');
+        document.getElementById('depAmountLabel').textContent = 'المبلغ المطلوب شحنه (EGP) — يعادل 5$ كحد أدنى قبل الرسوم';
+        const amountInput = document.getElementById('depEgpAmount'); amountInput.min = '285'; amountInput.value = String(Math.max(285, Number(amountInput.value) || 0)); document.querySelector('label[for=depEgpAmount]')?.replaceChildren();
       } else {
         label.textContent = 'رقم الهاتف المحول منه';
         input.placeholder = '010xxxxxxx';
         binanceBox.classList.add('hidden');
+        document.getElementById('depAmountLabel').textContent = 'المبلغ المطلوب شحنه (EGP) — الحد الأدنى 100';
+        const amountInput = document.getElementById('depEgpAmount'); amountInput.min = '100'; amountInput.value = String(Math.max(100, Number(amountInput.value) || 0));
       }
       calculateDepositLive();
     }
@@ -1081,18 +1055,18 @@
         const text = await navigator.clipboard.readText();
         document.getElementById(id).value = text;
       } catch (e) {
-        alert('يرجى لصق الرابط يدوياً في الخانة.');
+        showToast('يرجى لصق الرابط يدوياً في الخانة.');
       }
     }
 
     function copyData(text) {
       navigator.clipboard.writeText(text);
-      alert('تم النسخ بنجاح: ' + text);
+      showToast('تم النسخ بنجاح: ' + text);
     }
 
-    async function executeOrder(e){e.preventDefault();if(!requireAuth())return;const code=document.getElementById('mainServicesDropdown').value,s=servicesList.find(x=>x.code===code);if(!s)return;const qty=s.type==='comment'?(document.getElementById('commentsTxt').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).length):(parseInt(document.getElementById('orderQtyInp')?.value||'0',10)||0);const target=document.getElementById('targetLinkInp')?.value.trim()||document.getElementById('targetWhatsAppInp')?.value.trim()||'';const customComments=document.getElementById('commentsTxt')?.value||'';try{const r=await apiJson({action:'social_growth_order',serviceId:parseInt(code,10),quantity:qty,targetUrl:target,customComments});if(typeof fbq==='function')fbq('track','Purchase',{content_name:s.name,content_ids:[code],value:Number(document.getElementById('finalCostLabel').textContent)||0,currency:'EGP'});alert(r.message||'تم إرسال الطلب الحقيقي ✅');await loadRealSummary();navigateSection('orders-list');}catch(err){alert(err.message);}}
-    async function handleDepositSubmit(e){e.preventDefault();if(!requireAuth())return;const file=document.getElementById('depositReceiptFile')?.files?.[0];if(!file){alert('ارفع صورة الإيصال أولاً.');return;}const methodMap={vodafone:'vodafone_cash',etisalat:'etisalat_cash',instapay:'instapay',binance:'binance_pay'};const form=new FormData();form.append('action','wallet_deposit');form.append('customerName',document.getElementById('depName').value.trim());form.append('phone',currentUser.phone);form.append('paymentIdentifier',document.getElementById('depSenderIdentifier').value.trim());form.append('method',methodMap[document.getElementById('depMethodSelect').value]||'vodafone_cash');form.append('depositAmount',document.getElementById('depEgpAmount').value);form.append('file',file);try{const r=await apiJson(form,{form:true});alert(r.message||'تم حفظ الإيداع وإرسال الإشعار للإدارة ✅');e.target.reset();await loadRealSummary();}catch(err){alert(err.message);}}
-    async function handleSupportSubmit(e){e.preventDefault();if(!requireAuth())return;const subject=document.getElementById('supportCatSelect').value,message=document.getElementById('supportMsgText').value.trim();try{const r=await apiJson({action:'support',fullName:currentUser.full_name||currentUser.fullName,phone:currentUser.phone,email:currentUser.email,subject,message});alert(r.message||'تم فتح التذكرة وإرسالها للإدارة ✅');e.target.reset();}catch(err){alert(err.message);}}
+    async function executeOrder(e){e.preventDefault();if(!requireAuth())return;const code=document.getElementById('mainServicesDropdown').value,s=servicesList.find(x=>x.code===code);if(!s)return;const qty=s.type==='comment'?(document.getElementById('commentsTxt').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).length):(parseInt(document.getElementById('orderQtyInp')?.value||'0',10)||0);const target=document.getElementById('targetLinkInp')?.value.trim()||document.getElementById('targetWhatsAppInp')?.value.trim()||'';const customComments=document.getElementById('commentsTxt')?.value||'';try{const r=await apiJson({action:'social_growth_order',serviceId:parseInt(code,10),quantity:qty,targetUrl:target,customComments});if(typeof fbq==='function')fbq('track','Purchase',{content_name:s.name,content_ids:[code],value:Number(document.getElementById('finalCostLabel').textContent)||0,currency:'EGP'});showToast(r.message||'تم إرسال الطلب الحقيقي ✅');await loadRealSummary();navigateSection('orders-list');}catch(err){showToast(err.message);}}
+    async function handleDepositSubmit(e){e.preventDefault();if(!requireAuth())return;const file=document.getElementById('depositReceiptFile')?.files?.[0];if(!file){showToast('ارفع صورة الإيصال أولاً.');return;}const methodMap={vodafone:'vodafone_cash',etisalat:'etisalat_cash',instapay:'instapay',binance:'binance_pay'};const form=new FormData();form.append('action','wallet_deposit');form.append('customerName',document.getElementById('depName').value.trim());form.append('phone',currentUser.phone);form.append('paymentIdentifier',document.getElementById('depSenderIdentifier').value.trim());form.append('method',methodMap[document.getElementById('depMethodSelect').value]||'vodafone_cash');form.append('depositAmount',document.getElementById('depEgpAmount').value);form.append('binanceUsdAmount',document.getElementById('depMethodSelect').value==='binance' ? String((parseFloat(document.getElementById('binanceUsdValue').textContent)||0)) : '');form.append('file',file);try{const r=await apiJson(form,{form:true});showToast(r.message||'تم حفظ الإيداع وإرسال الإشعار للإدارة ✅');e.target.reset();await loadRealSummary();}catch(err){showToast(err.message);}}
+    async function handleSupportSubmit(e){e.preventDefault();if(!requireAuth())return;const subject=document.getElementById('supportCatSelect').value,message=document.getElementById('supportMsgText').value.trim();try{const r=await apiJson({action:'support',fullName:currentUser.full_name||currentUser.fullName,phone:currentUser.phone,email:currentUser.email,subject,message});showToast(r.message||'تم فتح التذكرة وإرسالها للإدارة ✅');e.target.reset();}catch(err){showToast(err.message);}}
     // الشريط القرآني
     const quranVerses = [
       "سبحان الله وبحمده، سبحان الله العظيم",
