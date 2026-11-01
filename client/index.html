@@ -63,7 +63,7 @@
     @media (max-width:1023px){.smm-workspace>form,.smm-workspace>.smm-terms{order:initial}.smm-service-list{max-height:230px}}
 
     body,.selectable-text,input,textarea,select,option{user-select:text;-webkit-user-select:text}
-    @media (min-width:1024px){.smm-workspace{direction:rtl;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:stretch}.smm-workspace>#orderFormMain{grid-column:7 / 13;order:initial}.smm-workspace>.smm-terms{grid-column:1 / 7;order:initial}}
+    @media (min-width:1024px){.smm-workspace{direction:rtl;display:grid;grid-template-columns:1fr;align-items:stretch}.smm-workspace>#orderFormMain,.smm-workspace>.smm-terms{grid-column:1;order:initial;width:100%}}
   </style>
 </head>
 <body class="pb-24">
@@ -293,7 +293,7 @@
       <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
 
         <!-- فورم طلب فوري (يمين) -->
-        <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-start-7 lg:col-end-13 lg:col-span-6 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3">
+        <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-span-12 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3">
 
           <!-- مستطيل البحث الفردي والشغال بنجاح -->
           <div class="relative">
@@ -363,7 +363,7 @@
         </form>
 
         <!-- مربع الشروط الأساسية (يسار بالكمبيوتر وتحت بالموبايل) -->
-        <div class="smm-terms lg:col-start-1 lg:col-end-7 lg:col-span-6 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
+        <div class="smm-terms lg:col-span-12 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <div class="bg-[#0b0f19] border border-gray-800/80 rounded-xl p-3 text-center mb-3">
               <div class="font-black text-lg text-yellow-400">MSB <span class="text-blue-500">MEDIA</span></div>
