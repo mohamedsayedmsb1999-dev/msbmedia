@@ -563,6 +563,13 @@
         <p class="text-[10px] text-gray-400">سيصلك الرد داخل شات التذكرة وإشعار على بريدك المسجل</p>
       </div>
 
+      <div id="adminReplyPanel" class="hidden bg-blue-950/40 border border-blue-500/30 rounded-xl p-3 space-y-2 text-xs">
+        <div class="font-black text-blue-200">رد الإدارة على التذكرة ✉️</div>
+        <p class="text-[10px] text-blue-100/70">اكتب الرد وسيظهر للعميل داخل نفس شات الدعم.</p>
+        <textarea id="adminReplyText" rows="4" placeholder="اكتب ردك للعميل..." class="w-full bg-[#0b0f19] border border-blue-500/30 rounded-xl p-2 text-white text-xs"></textarea>
+        <button type="button" onclick="submitAdminReply()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl">إرسال الرد للعميل</button>
+      </div>
+
       <form onsubmit="handleSupportSubmit(event)" class="space-y-2.5 text-xs">
         <div>
           <label class="block text-[10px] text-gray-400 mb-1">نوع المشكلة</label>
@@ -590,6 +597,10 @@
           فتح تذكرة دعم جديدة 🎫
         </button>
       </form>
+      <div id="supportChatBox" class="bg-[#0b0f19] border border-gray-800 rounded-xl p-3 space-y-2 text-xs">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2"><strong class="text-yellow-400">شات التذاكر 💬</strong><button type="button" onclick="loadSupportMessages()" class="text-[10px] text-gray-400 hover:text-white">تحديث</button></div>
+        <div id="supportChatMessages" class="space-y-2 max-h-72 overflow-y-auto"><div class="text-[10px] text-gray-500 text-center">سجّل الدخول لعرض رسائلك.</div></div>
+      </div>
     </div>
 
     <!-- ==================== الفوتر وأعلام الدول ==================== -->
@@ -850,6 +861,7 @@
       });
 
       document.getElementById(`section-${sectionId}`)?.classList.remove('hidden');
+      if (sectionId === 'tickets' && customerToken) loadSupportMessages();
       const activeNavBtn = document.getElementById(`nav-${sectionId}`);
       if (activeNavBtn) {
         activeNavBtn.classList.add('active-nav');
@@ -1067,6 +1079,10 @@
     async function executeOrder(e){e.preventDefault();if(!requireAuth())return;const code=document.getElementById('mainServicesDropdown').value,s=servicesList.find(x=>x.code===code);if(!s)return;const qty=s.type==='comment'?(document.getElementById('commentsTxt').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).length):(parseInt(document.getElementById('orderQtyInp')?.value||'0',10)||0);const target=document.getElementById('targetLinkInp')?.value.trim()||document.getElementById('targetWhatsAppInp')?.value.trim()||'';const customComments=document.getElementById('commentsTxt')?.value||'';try{const r=await apiJson({action:'social_growth_order',serviceId:parseInt(code,10),quantity:qty,targetUrl:target,customComments});if(typeof fbq==='function')fbq('track','Purchase',{content_name:s.name,content_ids:[code],value:Number(document.getElementById('finalCostLabel').textContent)||0,currency:'EGP'});showToast(r.message||'تم إرسال الطلب الحقيقي ✅');await loadRealSummary();navigateSection('orders-list');}catch(err){showToast(err.message);}}
     async function handleDepositSubmit(e){e.preventDefault();if(!requireAuth())return;const file=document.getElementById('depositReceiptFile')?.files?.[0];if(!file){showToast('ارفع صورة الإيصال أولاً.');return;}const methodMap={vodafone:'vodafone_cash',etisalat:'etisalat_cash',instapay:'instapay',binance:'binance_pay'};const form=new FormData();form.append('action','wallet_deposit');form.append('customerName',document.getElementById('depName').value.trim());form.append('phone',currentUser.phone);form.append('paymentIdentifier',document.getElementById('depSenderIdentifier').value.trim());form.append('method',methodMap[document.getElementById('depMethodSelect').value]||'vodafone_cash');form.append('depositAmount',document.getElementById('depEgpAmount').value);form.append('binanceUsdAmount',document.getElementById('depMethodSelect').value==='binance' ? String((parseFloat(document.getElementById('binanceUsdValue').textContent)||0)) : '');form.append('file',file);try{const r=await apiJson(form,{form:true});showToast(r.message||'تم حفظ الإيداع وإرسال الإشعار للإدارة ✅');e.target.reset();await loadRealSummary();}catch(err){showToast(err.message);}}
     async function handleSupportSubmit(e){e.preventDefault();if(!requireAuth())return;const subject=document.getElementById('supportCatSelect').value,message=document.getElementById('supportMsgText').value.trim();try{const r=await apiJson({action:'support',fullName:currentUser.full_name||currentUser.fullName,phone:currentUser.phone,email:currentUser.email,subject,message});showToast(r.message||'تم فتح التذكرة وإرسالها للإدارة ✅');e.target.reset();}catch(err){showToast(err.message);}}
+    function renderSupportMessages(messages=[]){const box=document.getElementById('supportChatMessages');if(!box)return;if(!messages.length){box.innerHTML='<div class="text-[10px] text-gray-500 text-center">لا توجد رسائل دعم حتى الآن.</div>';return;}box.innerHTML=messages.map(m=>`<div class="flex ${m.sender==='customer'?'justify-start':'justify-end'}"><div class="max-w-[88%] rounded-xl px-3 py-2 ${m.sender==='customer'?'bg-gray-800 text-gray-200':'bg-blue-700/40 border border-blue-500/30 text-blue-100'}"><div class="text-[9px] opacity-70 mb-1">${m.sender==='customer'?'أنت':'دعم MSB'}</div><div class="whitespace-pre-line">${String(m.message||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</div><div class="text-[8px] opacity-60 mt-1">${new Date(m.created_at).toLocaleString('ar-EG')}</div></div></div>`).join('');box.scrollTop=box.scrollHeight;}
+    async function loadSupportMessages(){if(!requireAuth())return;try{const r=await apiJson({action:'support_messages'});renderSupportMessages(r.messages||[]);}catch(err){showToast(err.message||'تعذر تحميل شات الدعم','error');}}
+    async function submitAdminReply(){const token=new URLSearchParams(location.search).get('support_reply'),message=document.getElementById('adminReplyText')?.value.trim();if(!token||!message){showToast('اكتب الرد أولًا.','error');return;}try{const r=await apiJson({action:'support_reply',token,message});showToast(r.message||'تم إرسال الرد ✅','success');document.getElementById('adminReplyText').value='';}catch(err){showToast(err.message||'تعذر إرسال الرد.','error');}}
+
     // الشريط القرآني
     const quranVerses = [
       "سبحان الله وبحمده، سبحان الله العظيم",
@@ -1093,7 +1109,7 @@
     }, 7000);
 
     // التحقق من الحساب المسجل مسبقاً عند الفتح
-    window.onload = async () => { const savedUser=localStorage.getItem('msb_current_user'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);document.getElementById('authModal').classList.add('hidden');} updateServicesBySelectedCat();populateServicesTables();await loadRealSummary(); };
+    window.onload = async () => { const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);document.getElementById('authModal').classList.add('hidden');} updateServicesBySelectedCat();populateServicesTables();if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');navigateSection('tickets');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();} };
   </script>
 
 </body>

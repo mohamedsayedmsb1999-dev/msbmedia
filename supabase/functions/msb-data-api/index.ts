@@ -336,10 +336,37 @@ async function handleJson(request: Request) {
     if (fullName.length < 2 || !/^01[0125][0-9]{8}$/.test(phone) || subject.length < 3 || message.length < 10) return json({ ok: false, message: "تحقق من بيانات طلب الدعم ثم أعد المحاولة." }, 400);
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أو أنشئ حسابًا جديدًا قبل إرسال طلب الدعم." }, 401);
-    const { error } = await admin.from("support_tickets").insert({ customer_profile_id: customerId, full_name: fullName, phone, email: email || null, subject, message });
+    const replySecret = randomToken();
+    const replyTokenHash = await sha256(replySecret);
+    const { data: ticket, error } = await admin.from("support_tickets").insert({ customer_profile_id: customerId, full_name: fullName, phone, email: email || null, subject, message, reply_token_hash: replyTokenHash }).select("id").single();
     if (error) throw error;
-    await notifyOwner("طلب دعم جديد", [["الاسم", fullName], ["الهاتف", phone], ["البريد", email || "غير مضاف"], ["العنوان", subject], ["التفاصيل", message]]);
-    return json({ ok: true, message: "تم حفظ طلب الدعم. سيتابع الفريق معك عبر واتساب أو البريد." });
+    const { error: messageError } = await admin.from("support_messages").insert({ ticket_id: ticket.id, customer_profile_id: customerId, sender: "customer", message });
+    if (messageError) throw messageError;
+    const replyUrl = `${PUBLIC_SITE_URL}/?support_reply=${encodeURIComponent(`${ticket.id}.${replySecret}`)}`;
+    await notifyOwner("طلب دعم جديد — افتح للرد على العميل", [["معرف التذكرة", ticket.id], ["الاسم", fullName], ["الهاتف", phone], ["البريد", email || "غير مضاف"], ["العنوان", subject], ["التفاصيل", message], ["رابط الرد من Gmail", replyUrl]]);
+    return json({ ok: true, ticketId: ticket.id, message: "تم فتح التذكرة. هتقدر تتابع الرد داخل شات الدعم." });
+  }
+
+  if (action === "support_messages") {
+    const customerId = await currentCustomer(request);
+    if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
+    const { data, error } = await admin.from("support_messages").select("id, ticket_id, sender, message, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: true }).limit(200);
+    if (error) throw error;
+    return json({ ok: true, messages: data ?? [] });
+  }
+
+  if (action === "support_reply") {
+    const token = text(input.token, 200);
+    const reply = text(input.message, 5000);
+    const [ticketId, rawSecret] = token.split(".");
+    if (!ticketId || !rawSecret || reply.length < 1) return json({ ok: false, message: "بيانات الرد غير مكتملة." }, 400);
+    const tokenHash = await sha256(rawSecret);
+    const { data: ticket, error: ticketError } = await admin.from("support_tickets").select("id, customer_profile_id, reply_token_hash").eq("id", ticketId).maybeSingle();
+    if (ticketError) throw ticketError;
+    if (!ticket || ticket.reply_token_hash !== tokenHash) return json({ ok: false, message: "رابط الرد غير صالح أو منتهي." }, 403);
+    const { error } = await admin.from("support_messages").insert({ ticket_id: ticket.id, customer_profile_id: ticket.customer_profile_id, sender: "admin", message: reply });
+    if (error) throw error;
+    return json({ ok: true, message: "تم إرسال الرد إلى شات العميل ✅" });
   }
 
   if (action === "ad_campaign_request") {
