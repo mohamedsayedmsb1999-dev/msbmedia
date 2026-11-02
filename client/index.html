@@ -20,7 +20,7 @@
     function applyUserData(user){const fullName=user.fullName||user.full_name||'حساب العميل';const normalized={fullName,username:user.username&&/@msb$/i.test(user.username)?user.username.toLowerCase():deriveMsbUsername(fullName,user.username||user.phone),phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
     function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');document.getElementById('authModal')?.classList.remove('hidden');switchAuthView('login');}
     function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${String(o.id).slice(-8)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${String(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
-    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];renderRealOrders(window.latestOrders);const balance=Number(r.balance||0);const orders=(r.orders||[]).filter(o=>o.status!=='rejected');const used=orders.reduce((s,o)=>s+Number(o.amount||0),0);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');const ids=[['walletBalance',balance],['walletUsed',used],['walletTotal',balance+used]];ids.forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=Number(v).toFixed(2)+' EGP';});}catch(e){console.warn(e);}}
+    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];renderRealOrders(window.latestOrders);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -239,7 +239,7 @@
       <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-[10px] text-gray-400 mb-0.5">إجمالي الطلبات</div>
-          <div class="text-sm font-black text-white" id="ordersCounter">216,137</div>
+          <div class="text-sm font-black text-white" id="ordersCounter">0</div>
           <span class="text-[9px] text-gray-500 block mt-1">طلب معتمد</span>
         </div>
         <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm border border-amber-500/20">
@@ -250,7 +250,7 @@
       <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-[10px] text-gray-400 mb-0.5">إجمالي الإنفاق</div>
-          <div class="text-xs font-bold text-white">800.00 <span class="text-[10px] text-gray-400">EGP</span></div>
+          <div class="text-xs font-bold text-white"><span id="walletSpentLabel">0.00</span> <span class="text-[10px] text-gray-400">EGP</span></div>
           <span class="text-[9px] text-gray-500 block mt-1">منذ البداية</span>
         </div>
         <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm border border-purple-500/20">
@@ -262,7 +262,7 @@
         <div class="flex items-center justify-between">
           <div>
             <div class="text-[10px] text-gray-400">الرصيد المتاح</div>
-            <div class="text-xs font-black text-yellow-400">1,200.00 <span class="text-[10px]">EGP</span></div>
+            <div class="text-xs font-black text-yellow-400"><span id="walletBalance">0.00</span> <span class="text-[10px]">EGP</span></div>
           </div>
           <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs border border-emerald-500/20">
             <i class="fa-solid fa-wallet"></i>
@@ -293,10 +293,10 @@
         </div>
       </div>
 
-      <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+      <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start lg:[direction:ltr]">
 
         <!-- فورم طلب فوري (يمين) -->
-        <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-span-12 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3">
+        <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-span-7 lg:col-start-6 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3 lg:[direction:rtl]">
 
           <!-- مستطيل البحث الفردي والشغال بنجاح -->
           <div class="relative">
@@ -366,7 +366,7 @@
         </form>
 
         <!-- مربع الشروط الأساسية (يسار بالكمبيوتر وتحت بالموبايل) -->
-        <div class="smm-terms lg:col-span-12 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
+        <div class="smm-terms lg:col-span-5 lg:col-start-1 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between lg:[direction:rtl]">
           <div>
             <div class="bg-[#0b0f19] border border-gray-800/80 rounded-xl p-3 text-center mb-3">
               <div class="font-black text-lg text-yellow-400">MSB <span class="text-blue-500">MEDIA</span></div>
@@ -670,7 +670,7 @@
         <div class="w-6 h-6 rounded-full bg-black/40 flex items-center justify-center text-[10px]">🤖</div>
         <div>
           <div class="font-black text-xs">خدمة دعم الذكاء الاصطناعي MSB</div>
-          <span class="text-[9px] text-emerald-300">● متصل فورياً ومطابق للسيرفر</span>
+          <span class="text-[9px] text-emerald-300">● متصل الآن</span>
         </div>
       </div>
       <button onclick="toggleAiSupportChat()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
@@ -687,7 +687,7 @@
         <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
         <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
         <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
-        <button onclick="triggerAiAction('وهمي')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
+        <button onclick="triggerAiAction('اكتمال وهمى')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
       </div>
     </div>
 
@@ -760,7 +760,7 @@
       { code: '0606', name: 'لايكات + لاف ♥️👍 إنستجرام الإمارات 🇦🇪', cat: 'instagram', type: 'post', price: 380, unit: 100, min: 50, max: 10000, startSpeed: 'فوري', dailyRate: '5,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'تفاعل خليجي أصيل', condition: 'رابط المنشور العام.' },
 
       // يوتيوب
-      { code: '0401', name: 'مشتركون يوتيوب ▶️ 🔥', cat: 'youtube', type: 'page', price: 250, unit: 1000, min: 100, max: 10000, startSpeed: 'خلال 24 ساعة', dailyRate: '300-500 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'مشتركين حقيقيين', condition: 'رابط القناة الرسمي. يجب إظهار عدد المشتركين في القناة للتأكد من الزيادة.' },
+      { code: '0401', name: 'مشتركون يوتيوب ▶️ 🔥', cat: 'youtube', type: 'page', price: 950, unit: 1000, min: 100, max: 10000, startSpeed: 'خلال 24 ساعة', dailyRate: '300-500 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'مشتركين حقيقيين', condition: 'رابط القناة الرسمي. يجب إظهار عدد المشتركين في القناة للتأكد من الزيادة.' },
       { code: '0402', name: 'YouTube Like 👍', cat: 'youtube', type: 'post', price: 75, unit: 100, min: 50, max: 10000, startSpeed: 'نصف ساعة', dailyRate: '5,000 / يوم', guaranteeType: 'مدى الحياة', qualityLevel: 'لايكات يوتيوب آمنة', condition: 'رابط فيديو يوتيوب أو شورتس.' },
       { code: '0403', name: 'مشاهدات يوتيوب 👁️ 🚀', cat: 'youtube', type: 'post', price: 30, unit: 1000, min: 500, max: 200000, startSpeed: 'خلال ساعتين', dailyRate: '20,000 / يوم', guaranteeType: 'آمنة لتحقيق الربح', qualityLevel: 'مشاهدات مصادر خارجية', condition: 'رابط الفيديو. آمن تماماً على قنوات أدسنس.' },
 
@@ -973,15 +973,8 @@
       recalculateOrderCost();
     }
 
-    function countCommentsLinesLive() {
-      const lines = document.getElementById('commentsTxt').value.split('\n').filter(l => l.trim().length > 0);
-      document.getElementById('linesCountNotice').textContent = `عدد التعليقات: ${lines.length} تعليق`;
-      const code = document.getElementById('mainServicesDropdown').value;
-      const service = servicesList.find(s => s.code === code);
-      const total = (lines.length / 1000) * service.price;
-      document.getElementById('finalQtyLabel').textContent = `${lines.length} تعليق`;
-      document.getElementById('finalCostLabel').textContent = total.toFixed(2);
-    }
+    function normalizeCommentLines(){const input=document.getElementById('commentsTxt');if(!input)return;const words=input.value.replace(/\r/g,'').split(/\s+/).map(w=>w.trim()).filter(Boolean);const chunks=[];for(let i=0;i<words.length;i+=7)chunks.push(words.slice(i,i+7).join(' '));const next=chunks.join('\n');if(input.value!==next)input.value=next;return chunks;}
+    function countCommentsLinesLive(){const lines=normalizeCommentLines()||[];const notice=document.getElementById('linesCountNotice');if(notice)notice.textContent=`عدد التعليقات: ${lines.length} تعليق — كل سطر حتى 7 كلمات`;const service=servicesList.find(s=>s.code===document.getElementById('mainServicesDropdown').value);if(!service)return;document.getElementById('finalQtyLabel').textContent=`${lines.length} تعليق`;document.getElementById('finalCostLabel').textContent=((lines.length/1000)*service.price).toFixed(2);}
 
     function recalculateOrderCost() {
       const code = document.getElementById('mainServicesDropdown').value;

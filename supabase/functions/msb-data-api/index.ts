@@ -52,7 +52,7 @@ const socialServices: Record<number, SocialService> = {
   305: { name: "Instagram Haha 😂", rate: 0.30, min: 50, max: 5000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
   307: { name: "كومنتات إنستجرام مخصصة ✍️", rate: 1.3, min: 20, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   306: { name: "مشاهدات ريلز إنستجرام 👁️ 🔥", rate: 0.03, min: 1000, max: 1000000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "ثابت" },
-  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 0.25, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 0.95, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
   402: { name: "YouTube Like 👍", rate: 0.75, min: 100, max: 5000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   403: { name: "مشاهدات يوتيوب 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   501: { name: "اشتراك Gemini PRO / Veo 3 / Google Flow / Nano Banana — لمدة 18 شهر 🔥", rate: 250, min: 1, max: 100, platform: "phone", delivery: "0–24 ساعة", guarantee: "بدون إلغاء — مدة 18 شهر" },
@@ -223,11 +223,14 @@ async function handleJson(request: Request) {
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
     const balance = await walletBalance(customerId);
-    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, amount, total_amount, payment_method, status, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(50);
+    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, amount, total_amount, payment_method, status, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (depositsError) throw depositsError;
-    const { data: orders, error: ordersError } = await admin.from("social_growth_orders").select("id, service_name, quantity, amount, status, target_url, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(50);
+    const { data: orders, error: ordersError } = await admin.from("social_growth_orders").select("id, service_name, service_id, quantity, amount, status, target_url, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (ordersError) throw ordersError;
-    return json({ ok: true, balance, deposits: deposits ?? [], orders: orders ?? [] });
+    const { data: ledger, error: ledgerError } = await admin.from("wallet_ledger").select("amount, kind").eq("customer_profile_id", customerId).limit(5000);
+    if (ledgerError) throw ledgerError;
+    const totalSpent = (ledger ?? []).filter(row => row.kind === "order").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0);
+    return json({ ok: true, balance, totalSpent, totalOrders: (orders ?? []).length, deposits: deposits ?? [], orders: orders ?? [] });
   }
 
   if (action === "approve_wallet_deposit" || action === "reject_wallet_deposit") {
@@ -289,6 +292,7 @@ async function handleJson(request: Request) {
     const isAiSubscription = [501].includes(serviceId);
     const isCustomComments = [106, 207, 307].includes(serviceId);
     const commentLines = isCustomComments ? customComments.split(/\r?\n/).map(line => line.trim()).filter(Boolean) : [];
+    if (isCustomComments && commentLines.some(line => line.split(/\s+/).filter(Boolean).length > 7)) return json({ ok: false, message: "كل تعليق يجب ألا يزيد عن 7 كلمات في السطر الواحد." }, 400);
     const service = socialServices[serviceId];
     if (isAiSubscription && Number(input.quantity) !== 1) return json({ ok: false, message: "خدمة اشتراك AI لها تكلفة ثابتة 250 جنيه." }, 400);
     if (!service || !Number.isInteger(quantity) || quantity < service.min || quantity > service.max || !matchesServicePlatform(targetUrl, service) || (isCustomComments && commentLines.length !== quantity)) return json({ ok: false, message: `تحقق من الخدمة والكمية. الرابط لازم يكون رابط ${service?.platform || "المنصة"} صحيح ومناسب للخدمة.` }, 400);
