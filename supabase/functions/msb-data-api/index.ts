@@ -192,17 +192,65 @@ async function handleJson(request: Request) {
   if (action === "sign_in") {
     const phone = text(input.phone, 32);
     const email = text(input.email, 320).toLowerCase();
+    const requestedUsername = text(input.username, 40).toLowerCase();
+    const identifier = text(input.identifier, 320) || requestedUsername || email || phone;
     const password = text(input.password, 128);
-    const { data: byPhone } = await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").eq("phone", phone).maybeSingle();
-    const { data: byEmail } = byPhone ? { data: null } : await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").ilike("email", email || phone).maybeSingle();
-    const customer = byPhone ?? byEmail;
-    if (!customer?.password_hash || !customer.password_salt) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
-    const passwordHash = await sha256(`${customer.password_salt}:${password}`);
-    if (passwordHash !== customer.password_hash) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
+    if (!identifier || password.length < 6) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
+
+    type LoginCandidate = {
+      id: string;
+      full_name: string;
+      username: string | null;
+      phone: string;
+      email: string | null;
+      password_hash: string | null;
+      password_salt: string | null;
+    };
+    const selectedColumns = "id, full_name, username, phone, email, password_hash, password_salt";
+    const candidates = new Map<string, LoginCandidate>();
+    const addCandidates = (rows: LoginCandidate[] | null) => {
+      for (const row of rows ?? []) candidates.set(row.id, row);
+    };
+
+    if (phone) {
+      const { data, error } = await admin.from("customer_profiles").select(selectedColumns).eq("phone", phone).limit(1);
+      if (error) throw error;
+      addCandidates(data);
+    }
+
+    const normalizedIdentifier = identifier.toLowerCase();
+    if (normalizedIdentifier.includes("@")) {
+      const { data, error } = await admin.from("customer_profiles").select(selectedColumns).eq("email", normalizedIdentifier).limit(1);
+      if (error) throw error;
+      addCandidates(data);
+    }
+
+    const { data: usernameMatches, error: usernameError } = await admin.from("customer_profiles").select(selectedColumns).eq("username", normalizedIdentifier).limit(1);
+    if (usernameError) throw usernameError;
+    addCandidates(usernameMatches);
+
+    const escapedName = identifier.replace(/[\\%_]/g, "\\$&");
+    const { data: nameMatches, error: nameError } = await admin.from("customer_profiles").select(selectedColumns).ilike("full_name", escapedName).limit(50);
+    if (nameError) throw nameError;
+    addCandidates(nameMatches);
+
+    const passwordMatches: LoginCandidate[] = [];
+    for (const candidate of candidates.values()) {
+      if (!candidate.password_hash || !candidate.password_salt) continue;
+      const passwordHash = await sha256(`${candidate.password_salt}:${password}`);
+      if (passwordHash === candidate.password_hash) passwordMatches.push(candidate);
+    }
+    if (passwordMatches.length !== 1) {
+      const message = passwordMatches.length > 1
+        ? "الاسم بالكامل يطابق أكثر من حساب؛ استخدم رقم الهاتف أو اسم المستخدم أو البريد لتحديد الحساب."
+        : "بيانات الدخول غير صحيحة.";
+      return json({ ok: false, message }, 401);
+    }
+
+    const customer = passwordMatches[0];
     const token = await createSession(customer.id);
     return json({ ok: true, customer: { id: customer.id, full_name: customer.full_name, username: customer.username, phone: customer.phone, email: customer.email }, token });
   }
-
   if (action === "reset_password") {
     const phone = text(input.phone, 32);
     const email = text(input.email, 320).toLowerCase();
