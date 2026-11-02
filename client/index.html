@@ -67,6 +67,18 @@
     .service-picker-option .service-option-meta { display: block; color: #9ca3af; font-size: 9px; margin-top: 2px; direction: ltr; text-align: right; }
     .service-brand-icon { width: 27px; height: 27px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 8px; background: rgba(255,255,255,.08); font-size: 15px; }
     @keyframes msbDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    .msb-flag-logo{position:relative;width:min(100%,320px);aspect-ratio:1/0.62;margin:18px auto 2px;border-radius:18px;background:radial-gradient(circle,#17351f 0,#07130d 72%);border:1px solid rgba(234,179,8,.65);box-shadow:0 0 0 5px rgba(234,179,8,.08),0 0 24px rgba(34,197,94,.28),inset 0 0 24px rgba(234,179,8,.1);overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .msb-flag-logo:before{content:"";position:absolute;inset:7px;border:1px solid rgba(34,197,94,.75);border-radius:13px;box-shadow:0 0 12px rgba(34,197,94,.55),inset 0 0 14px rgba(234,179,8,.14)}
+    .msb-logo-flags{position:absolute;inset:7px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;z-index:2;font-size:18px;filter:drop-shadow(0 0 5px rgba(234,179,8,.6));}
+    .msb-logo-flags.top,.msb-logo-flags.bottom{inset-inline:20px;height:20px;flex-direction:row}.msb-logo-flags.top{top:1px}.msb-logo-flags.bottom{bottom:1px}.msb-logo-flags.left,.msb-logo-flags.right{inset-block:20px;width:20px;flex-direction:column}.msb-logo-flags.left{left:1px}.msb-logo-flags.right{right:1px}
+    .msb-logo-flags span{animation:msbFlagGlow 2.4s ease-in-out infinite}.msb-logo-flags span:nth-child(2n){animation-delay:.35s}.msb-logo-flags span:nth-child(3n){animation-delay:.7s}
+    .msb-logo-word{position:relative;z-index:4;font-size:clamp(24px,5vw,42px);font-weight:1000;letter-spacing:.08em;white-space:nowrap;background:linear-gradient(105deg,#ffd21f 0%,#fff48a 22%,#22c55e 42%,#facc15 62%,#16a34a 82%,#fff48a 100%);background-size:230% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 8px rgba(234,179,8,.9),0 0 20px rgba(34,197,94,.75);animation:msbLogoSweep 2.6s linear infinite}
+    .msb-logo-word:after{content:"";position:absolute;top:-20%;bottom:-20%;width:22%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);filter:blur(7px);transform:skewX(-18deg);animation:msbLogoBeam 2.4s ease-in-out infinite;pointer-events:none}
+    .msb-logo-caption{position:absolute;z-index:4;bottom:22px;color:#d9f99d;font-size:8px;letter-spacing:.24em;text-shadow:0 0 7px #22c55e}
+    @keyframes msbLogoSweep{0%{background-position:220% 0}100%{background-position:-20% 0}}@keyframes msbLogoBeam{0%,100%{left:-30%;opacity:0}35%{opacity:1}70%{left:110%;opacity:.8}}
+    @keyframes msbFlagGlow{0%,100%{opacity:.7;transform:scale(.94)}50%{opacity:1;transform:scale(1.12)}}
+    @media(max-width:767px){.msb-flag-logo{width:min(100%,300px);margin-top:16px}.msb-logo-word{font-size:clamp(25px,9vw,38px)}}
     .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
     .msb-toast.success { border-color: #10b981; background: #052e2b; }
     .msb-toast.error { border-color: #fb7185; background: #3b0a18; }
@@ -403,6 +415,14 @@
           </div>
           <div class="mt-4 pt-3 border-t border-gray-800/80 flex items-center justify-center gap-2 text-[10px] text-gray-400">
             <i class="fa-solid fa-shield-halved text-emerald-400"></i> معالجة برمجية دقيقة وآمنة
+          </div>
+
+          <div class="msb-flag-logo" aria-label="شعار MSBMEDIA التجريبي">
+            <div class="msb-logo-flags top"><span>🇪🇬</span><span>🇸🇦</span><span>🇦🇪</span><span>🇶🇦</span><span>🇰🇼</span></div>
+            <div class="msb-logo-flags bottom"><span>🇯🇴</span><span>🇵🇸</span><span>🇲🇦</span><span>🇩🇿</span><span>🇴🇲</span></div>
+            <div class="msb-logo-flags left"><span>🇹🇳</span><span>🇱🇾</span><span>🇸🇩</span><span>🇮🇶</span></div>
+            <div class="msb-logo-flags right"><span>🇱🇧</span><span>🇾🇪</span><span>🇧🇭</span><span>🇲🇷</span></div>
+            <div class="msb-logo-word">MSBMEDIA</div><div class="msb-logo-caption">DIGITAL GROWTH AGENCY</div>
           </div>
         </div>
 
