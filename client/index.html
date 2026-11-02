@@ -49,6 +49,12 @@
     #mainCatSelect:hover, #mainServicesDropdown:hover { border-color: rgba(234,179,8,.75); transform: translateY(-1px); }
     #mainCatSelect:focus, #mainServicesDropdown:focus { border-color: #eab308; box-shadow: 0 0 0 3px rgba(234,179,8,.16); outline: none; }
     #mainServicesDropdown option, #mainCatSelect option { background: #111827; color: #fff; padding: 10px; }
+    #mainServicesDropdown { max-height: 260px; overflow-y: auto; scrollbar-color: #eab308 #111827; }
+    #mainServicesDropdown option { min-height: 38px; border-bottom: 1px solid rgba(148,163,184,.12); font-weight: 700; letter-spacing: .01em; }
+    .service-catalog-row { background: rgba(11,15,25,.55); }
+    .service-catalog-row:hover { background: rgba(234,179,8,.08); }
+    .service-platform-icon { width: 25px; height: 25px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(234,179,8,.12); border: 1px solid rgba(234,179,8,.25); font-size: 15px; flex: 0 0 auto; }
+    .service-price-badge { display: inline-flex; white-space: nowrap; align-items: center; gap: 4px; background: rgba(234,179,8,.14); color: #fde047; border: 1px solid rgba(234,179,8,.28); border-radius: 7px; padding: 4px 7px; font-weight: 900; letter-spacing: .02em; }
     .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
     .msb-toast.success { border-color: #10b981; background: #052e2b; }
     .msb-toast.error { border-color: #fb7185; background: #3b0a18; }
@@ -321,7 +327,7 @@
 
           <div>
             <label class="block text-[11px] font-bold text-gray-300 mb-1">الخدمة</label>
-            <select id="mainServicesDropdown" onchange="renderServiceInputFields()" class="w-full min-h-12 bg-[#0b0f19] border border-gray-700 rounded-xl py-3 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
+            <select id="mainServicesDropdown" size="6" onchange="renderServiceInputFields()" class="w-full min-h-12 bg-[#0b0f19] border border-gray-700 rounded-xl py-3 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
           </div>
 
           <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير سيرفرات SMM -->
@@ -890,6 +896,8 @@
     }
 
 
+    function servicePlatformIcon(cat){return ({facebook:'🔵',instagram:'📸',tiktok:'🎵',youtube:'▶️',google_ai:'🤖',linkedin:'💼',snapchat:'👻',video_ads:'📣'})[cat]||'✨';}
+
     function updateServicesBySelectedCat() {
       const cat = document.getElementById('mainCatSelect').value;
       const dropdown = document.getElementById('mainServicesDropdown');
@@ -898,7 +906,7 @@
       filtered.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
-        opt.textContent = `(${s.code}) ${s.name} | السعر: ${s.price.toFixed(2)} EGP | الوحدة: ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
+        opt.textContent = `${servicePlatformIcon(s.cat)}  ${String(s.code).padStart(4,'0')}  |  ${s.name}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit === 1 ? 'اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
       renderServiceInputFields();
@@ -912,7 +920,7 @@
       matched.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.code;
-        opt.textContent = `(${s.code}) ${s.name} | السعر: ${s.price.toFixed(2)} EGP | الوحدة: ${s.unit === 1 ? '1 اشتراك' : s.unit.toLocaleString('en-US')}`;
+        opt.textContent = `${servicePlatformIcon(s.cat)}  ${String(s.code).padStart(4,'0')}  |  ${s.name}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit === 1 ? 'اشتراك' : s.unit.toLocaleString('en-US')}`;
         dropdown.appendChild(opt);
       });
       renderServiceInputFields();
@@ -999,17 +1007,10 @@
       deskTbody.innerHTML = '';
 
       servicesList.forEach(s => {
-        const rowHTML = `
-          <tr class="hover:bg-gray-800/40 transition-colors">
-            <td class="p-2.5 font-mono text-yellow-400 font-bold">${s.code}</td>
-            <td class="p-2.5 font-bold text-gray-200">${s.name}</td>
-            <td class="p-2.5 text-gray-400">${s.unit === 1 ? '1 اشتراك/خدمة' : s.unit.toLocaleString('en-US')}</td>
-            <td class="p-2.5 font-black text-yellow-400">${s.price.toFixed(2)} EGP</td>
-            <td class="p-2.5 text-center">
-              <button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all">اطلب ⚡</button>
-            </td>
-          </tr>
-        `;
+        const code = String(s.code).padStart(4, '0');
+        const price = s.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const unit = s.unit === 1 ? '1 اشتراك/خدمة' : s.unit.toLocaleString('en-US');
+        const rowHTML = `<tr class="service-catalog-row hover:bg-gray-800/40 transition-colors"><td class="p-2.5 font-mono text-yellow-400 font-black tracking-widest">${code}</td><td class="p-2.5"><div class="flex items-center gap-2 min-w-[230px]"><span class="service-platform-icon">${servicePlatformIcon(s.cat)}</span><span class="font-bold text-gray-200 leading-relaxed">${s.name}</span></div></td><td class="p-2.5 text-gray-300 font-bold whitespace-nowrap">${unit}</td><td class="p-2.5"><span class="service-price-badge">${price} EGP</span></td><td class="p-2.5 text-center"><button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all whitespace-nowrap">اطلب ⚡</button></td></tr>`;
         fullTbody.innerHTML += rowHTML;
         deskTbody.innerHTML += rowHTML;
       });
