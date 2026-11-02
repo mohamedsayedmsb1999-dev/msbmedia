@@ -1001,8 +1001,8 @@
       recalculateOrderCost();
     }
 
-    function normalizeCommentLines(){const input=document.getElementById('commentsTxt');if(!input)return;const words=input.value.replace(/\r/g,'').split(/\s+/).map(w=>w.trim()).filter(Boolean);const chunks=[];for(let i=0;i<words.length;i+=7)chunks.push(words.slice(i,i+7).join(' '));const next=chunks.join('\n');if(input.value!==next)input.value=next;return chunks;}
-    function countCommentsLinesLive(){const lines=normalizeCommentLines()||[];const notice=document.getElementById('linesCountNotice');if(notice)notice.textContent=`عدد التعليقات: ${lines.length} تعليق — كل سطر حتى 7 كلمات`;const service=servicesList.find(s=>s.code===document.getElementById('mainServicesDropdown').value);if(!service)return;document.getElementById('finalQtyLabel').textContent=`${lines.length} تعليق`;document.getElementById('finalCostLabel').textContent=((lines.length/1000)*service.price).toFixed(2);}
+    function normalizeCommentLines(){const input=document.getElementById('commentsTxt');if(!input)return [];return input.value.replace(/\r\n?/g,'\n').split('\n').map(line=>line.trim()).filter(Boolean);}
+    function countCommentsLinesLive(){const lines=normalizeCommentLines();const notice=document.getElementById('linesCountNotice');if(notice)notice.textContent=`عدد التعليقات: ${lines.length} تعليق — كل سطر تعليق مستقل`;const service=servicesList.find(s=>s.code===document.getElementById('mainServicesDropdown').value);if(!service)return;document.getElementById('finalQtyLabel').textContent=`${lines.length} تعليق`;document.getElementById('finalCostLabel').textContent=((lines.length/1000)*service.price).toFixed(2);}
 
     function recalculateOrderCost() {
       const code = document.getElementById('mainServicesDropdown').value;
