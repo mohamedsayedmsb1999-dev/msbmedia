@@ -55,6 +55,18 @@
     .service-catalog-row:hover { background: rgba(234,179,8,.08); }
     .service-platform-icon { width: 25px; height: 25px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(234,179,8,.12); border: 1px solid rgba(234,179,8,.25); font-size: 15px; flex: 0 0 auto; }
     .service-price-badge { display: inline-flex; white-space: nowrap; align-items: center; gap: 4px; background: rgba(234,179,8,.14); color: #fde047; border: 1px solid rgba(234,179,8,.28); border-radius: 7px; padding: 4px 7px; font-weight: 900; letter-spacing: .02em; }
+    .service-picker { position: relative; direction: rtl; }
+    .service-picker-button { width: 100%; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #0b0f19; border: 1px solid rgba(234,179,8,.35); border-radius: 12px; padding: 9px 11px; color: #fff; text-align: right; font-size: 11px; font-weight: 800; }
+    .service-picker-button:hover, .service-picker.open .service-picker-button { border-color: #eab308; box-shadow: 0 0 0 3px rgba(234,179,8,.12); }
+    .service-picker-menu { display: none; position: absolute; z-index: 80; top: calc(100% + 6px); right: 0; left: 0; max-height: 300px; overflow-y: auto; padding: 5px; background: #111827; border: 1px solid rgba(234,179,8,.45); border-radius: 13px; box-shadow: 0 18px 35px rgba(0,0,0,.45); }
+    .service-picker.open .service-picker-menu { display: block; animation: msbDrop .16s ease-out; }
+    .service-picker-option { width: 100%; display: flex; align-items: center; gap: 8px; padding: 9px 8px; border-radius: 9px; border-bottom: 1px solid rgba(148,163,184,.1); color: #e5e7eb; text-align: right; font-size: 10px; line-height: 1.5; }
+    .service-picker-option:hover, .service-picker-option.active { background: rgba(234,179,8,.14); color: #fde047; }
+    .service-picker-option .service-option-main { flex: 1; min-width: 0; }
+    .service-picker-option .service-option-name { display: block; font-weight: 900; white-space: normal; }
+    .service-picker-option .service-option-meta { display: block; color: #9ca3af; font-size: 9px; margin-top: 2px; direction: ltr; text-align: right; }
+    .service-brand-icon { width: 27px; height: 27px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 8px; background: rgba(255,255,255,.08); font-size: 15px; }
+    @keyframes msbDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
     .msb-toast.success { border-color: #10b981; background: #052e2b; }
     .msb-toast.error { border-color: #fb7185; background: #3b0a18; }
@@ -64,15 +76,10 @@
       background: linear-gradient(to bottom, #ce1126 33.3%, #ffffff 33.3%, #ffffff 66.6%, #000000 66.6%);
       position: relative;
     }
-
-    @media (min-width:1024px){#section-new-order{max-width:1180px;margin-inline:auto}.smm-service-list{max-height:330px}.smm-workspace{align-items:stretch}.smm-workspace>form{order:2}.smm-workspace>.smm-terms{order:1}}
-    @media (max-width:1023px){.smm-workspace>form,.smm-workspace>.smm-terms{order:initial}.smm-service-list{max-height:230px}}
+    @media (min-width:768px){#section-new-order{max-width:1180px;margin-inline:auto}.smm-workspace{direction:ltr;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:stretch}.smm-workspace>#orderFormMain{grid-column:2;grid-row:1;order:initial;width:100%;direction:rtl}.smm-workspace>.smm-terms{grid-column:1;grid-row:1;order:initial;width:100%;direction:rtl}}
+    @media (max-width:767px){.smm-workspace{display:flex;flex-direction:column}.smm-workspace>#orderFormMain{order:1;width:100%}.smm-workspace>.smm-terms{order:2;width:100%}}
 
     body,.selectable-text,input,textarea,select,option{user-select:text;-webkit-user-select:text}
-    @media (min-width:1024px){.smm-workspace{direction:rtl;display:grid;grid-template-columns:5fr 7fr;align-items:stretch}.smm-workspace>#orderFormMain{grid-column:2;order:initial;width:100%}.smm-workspace>.smm-terms{grid-column:1;order:initial;width:100%}}
-
-    @media (min-width:768px){.smm-workspace{direction:rtl;display:grid;grid-template-columns:5fr 7fr;align-items:stretch}.smm-workspace>#orderFormMain{grid-column:2;order:initial;width:100%}.smm-workspace>.smm-terms{grid-column:1;order:initial;width:100%}}
-    @media (max-width:767px){.smm-workspace{display:flex;flex-direction:column}.smm-workspace>#orderFormMain,.smm-workspace>.smm-terms{width:100%;order:initial}}
   </style>
 </head>
 <body class="pb-24">
@@ -299,10 +306,10 @@
         </div>
       </div>
 
-      <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start lg:[direction:ltr]">
+      <div class="smm-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
 
         <!-- فورم طلب فوري (يمين) -->
-        <form id="orderFormMain" onsubmit="executeOrder(event)" class="lg:col-span-7 lg:col-start-6 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3 lg:[direction:rtl]">
+        <form id="orderFormMain" onsubmit="executeOrder(event)" class="bg-[#131b2e] border border-gray-800 p-4 rounded-2xl space-y-3">
 
           <!-- مستطيل البحث الفردي والشغال بنجاح -->
           <div class="relative">
@@ -327,7 +334,8 @@
 
           <div>
             <label class="block text-[11px] font-bold text-gray-300 mb-1">الخدمة</label>
-            <select id="mainServicesDropdown" size="6" onchange="renderServiceInputFields()" class="w-full min-h-12 bg-[#0b0f19] border border-gray-700 rounded-xl py-3 px-3 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
+            <select id="mainServicesDropdown" class="hidden"></select>
+            <div id="servicePicker" class="service-picker"><button type="button" id="servicePickerButton" class="service-picker-button" onclick="toggleServicePicker()"><span id="servicePickerButtonText">اختار الخدمة المطلوبة 👇</span><i class="fa-solid fa-chevron-down text-yellow-400"></i></button><div id="servicePickerMenu" class="service-picker-menu"></div></div>
           </div>
 
           <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير سيرفرات SMM -->
@@ -372,7 +380,7 @@
         </form>
 
         <!-- مربع الشروط الأساسية (يسار بالكمبيوتر وتحت بالموبايل) -->
-        <div class="smm-terms lg:col-span-5 lg:col-start-1 bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between lg:[direction:rtl]">
+        <div class="smm-terms bg-[#131b2e] border border-gray-800 p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <div class="bg-[#0b0f19] border border-gray-800/80 rounded-xl p-3 text-center mb-3">
               <div class="font-black text-lg text-yellow-400">MSB <span class="text-blue-500">MEDIA</span></div>
@@ -401,7 +409,7 @@
       </div>
 
       <!-- جدول الخدمات الكامل بوضع سطح المكتب -->
-      <div class="hidden lg:block bg-[#131b2e] border border-gray-800 p-4 rounded-2xl mt-4">
+      <div class="bg-[#131b2e] border border-gray-800 p-4 rounded-2xl mt-4">
         <div class="text-xs font-bold text-yellow-400 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-table-list"></i> جدول أسعار وخدمات MSB Media المعتمدة
         </div>
@@ -896,35 +904,18 @@
     }
 
 
+    const platformMeta={facebook:{name:'Facebook',icon:'<i class="fa-brands fa-facebook text-blue-400"></i>'},instagram:{name:'Instagram',icon:'<i class="fa-brands fa-instagram text-pink-400"></i>'},tiktok:{name:'TikTok',icon:'<i class="fa-brands fa-tiktok text-white"></i>'},youtube:{name:'YouTube',icon:'<i class="fa-brands fa-youtube text-red-500"></i>'},google_ai:{name:'Google AI',icon:'<i class="fa-brands fa-google text-blue-400"></i>'},linkedin:{name:'LinkedIn',icon:'<i class="fa-brands fa-linkedin text-blue-400"></i>'},snapchat:{name:'Snapchat',icon:'<i class="fa-brands fa-snapchat text-yellow-300"></i>'},video_ads:{name:'خدمات رقمية',icon:'<i class="fa-solid fa-bullhorn text-orange-400"></i>'}};
     function servicePlatformIcon(cat){return ({facebook:'🔵',instagram:'📸',tiktok:'🎵',youtube:'▶️',google_ai:'🤖',linkedin:'💼',snapchat:'👻',video_ads:'📣'})[cat]||'✨';}
+    function servicePlatformIconHtml(cat){return platformMeta[cat]?.icon||'<i class="fa-solid fa-star text-yellow-400"></i>';}
+    function servicePlatformName(cat){return platformMeta[cat]?.name||'MSB Media';}
+    function toggleServicePicker(){document.getElementById('servicePicker')?.classList.toggle('open');}
+    function closeServicePicker(){document.getElementById('servicePicker')?.classList.remove('open');}
+    function selectServiceFromPicker(code){const select=document.getElementById('mainServicesDropdown');select.value=code;const service=servicesList.find(x=>x.code===code);if(service){document.getElementById('servicePickerButtonText').innerHTML=`${servicePlatformIconHtml(service.cat)} <span>${servicePlatformName(service.cat)} — ${service.name}</span>`;}closeServicePicker();renderServiceInputFields();}
+    function renderServicePicker(list){const select=document.getElementById('mainServicesDropdown'),menu=document.getElementById('servicePickerMenu');select.innerHTML='';menu.innerHTML='';list.forEach((s,index)=>{const opt=document.createElement('option');opt.value=s.code;opt.textContent=s.name;select.appendChild(opt);const item=document.createElement('button');item.type='button';item.className='service-picker-option';item.onclick=()=>selectServiceFromPicker(s.code);item.innerHTML=`<span class="service-brand-icon">${servicePlatformIconHtml(s.cat)}</span><span class="service-option-main"><span class="service-option-name">${servicePlatformName(s.cat)} — ${s.name}</span><span class="service-option-meta">كود ${String(s.code).padStart(4,'0')}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit===1?'اشتراك':s.unit.toLocaleString('en-US')}</span></span>`;menu.appendChild(item);});if(list[0])selectServiceFromPicker(list[0].code);}
+    document.addEventListener('click',event=>{if(!event.target.closest('#servicePicker'))closeServicePicker();});
 
-    function updateServicesBySelectedCat() {
-      const cat = document.getElementById('mainCatSelect').value;
-      const dropdown = document.getElementById('mainServicesDropdown');
-      dropdown.innerHTML = '';
-      const filtered = (cat === 'all') ? servicesList : servicesList.filter(s => s.cat === cat);
-      filtered.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.code;
-        opt.textContent = `${servicePlatformIcon(s.cat)}  ${String(s.code).padStart(4,'0')}  |  ${s.name}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit === 1 ? 'اشتراك' : s.unit.toLocaleString('en-US')}`;
-        dropdown.appendChild(opt);
-      });
-      renderServiceInputFields();
-    }
-    function searchServicesLive() {
-      const q = document.getElementById('orderSearchInput').value.toLowerCase().trim();
-      const dropdown = document.getElementById('mainServicesDropdown');
-      dropdown.innerHTML = '';
-      const matched = servicesList.filter(s => s.name.toLowerCase().includes(q) || s.code.includes(q) || s.price.toString().includes(q));
-      if (matched.length === 0) { dropdown.innerHTML = '<option value="">لا توجد خدمة تطابق بحثك</option>'; return; }
-      matched.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.code;
-        opt.textContent = `${servicePlatformIcon(s.cat)}  ${String(s.code).padStart(4,'0')}  |  ${s.name}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit === 1 ? 'اشتراك' : s.unit.toLocaleString('en-US')}`;
-        dropdown.appendChild(opt);
-      });
-      renderServiceInputFields();
-    }
+    function updateServicesBySelectedCat(){const cat=document.getElementById('mainCatSelect').value;const filtered=cat==='all'?servicesList:servicesList.filter(s=>s.cat===cat);renderServicePicker(filtered);}
+    function searchServicesLive(){const q=document.getElementById('orderSearchInput').value.toLowerCase().trim();const matched=servicesList.filter(s=>s.name.toLowerCase().includes(q)||s.code.includes(q)||s.price.toString().includes(q));renderServicePicker(matched);}
     function renderServiceInputFields() {
       const code = document.getElementById('mainServicesDropdown').value;
       const service = servicesList.find(s => s.code === code) || servicesList[0];
@@ -1010,7 +1001,7 @@
         const code = String(s.code).padStart(4, '0');
         const price = s.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const unit = s.unit === 1 ? '1 اشتراك/خدمة' : s.unit.toLocaleString('en-US');
-        const rowHTML = `<tr class="service-catalog-row hover:bg-gray-800/40 transition-colors"><td class="p-2.5 font-mono text-yellow-400 font-black tracking-widest">${code}</td><td class="p-2.5"><div class="flex items-center gap-2 min-w-[230px]"><span class="service-platform-icon">${servicePlatformIcon(s.cat)}</span><span class="font-bold text-gray-200 leading-relaxed">${s.name}</span></div></td><td class="p-2.5 text-gray-300 font-bold whitespace-nowrap">${unit}</td><td class="p-2.5"><span class="service-price-badge">${price} EGP</span></td><td class="p-2.5 text-center"><button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all whitespace-nowrap">اطلب ⚡</button></td></tr>`;
+        const rowHTML = `<tr class="service-catalog-row hover:bg-gray-800/40 transition-colors"><td class="p-2.5 font-mono text-yellow-400 font-black tracking-widest">${code}</td><td class="p-2.5"><div class="flex items-center gap-2 min-w-[230px]"><span class="service-platform-icon">${servicePlatformIconHtml(s.cat)}</span><span class="font-bold text-gray-200 leading-relaxed">${s.name}</span></div></td><td class="p-2.5 text-gray-300 font-bold whitespace-nowrap">${unit}</td><td class="p-2.5"><span class="service-price-badge">${price} EGP</span></td><td class="p-2.5 text-center"><button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all whitespace-nowrap">اطلب ⚡</button></td></tr>`;
         fullTbody.innerHTML += rowHTML;
         deskTbody.innerHTML += rowHTML;
       });
@@ -1020,8 +1011,7 @@
       navigateSection('new-order');
       document.getElementById('mainCatSelect').value = 'all';
       updateServicesBySelectedCat();
-      document.getElementById('mainServicesDropdown').value = code;
-      renderServiceInputFields();
+      selectServiceFromPicker(code);
       window.scrollTo({ top: 350, behavior: 'smooth' });
     }
 
