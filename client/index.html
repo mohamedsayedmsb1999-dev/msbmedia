@@ -896,7 +896,7 @@
     // 4. منطق فحص وبحث الخدمات والـ SPA
     const MSB_SECTIONS = ['new-order', 'services-catalog', 'orders-list', 'deposit', 'tickets'];
     let activeSectionId = null;
-    function sectionFromLocation(){const hash=(location.hash||'').replace(/^#/, '').trim();return MSB_SECTIONS.includes(hash)?hash:(localStorage.getItem('msb_active_section')||'new-order');}
+    function sectionFromLocation(useStored=true){const hash=(location.hash||'').replace(/^#/, '').trim();return MSB_SECTIONS.includes(hash)?hash:(useStored?(localStorage.getItem('msb_active_section')||'new-order'):'new-order');}
     function navigateSection(sectionId, options={}) {
       if (!MSB_SECTIONS.includes(sectionId)) sectionId='new-order';
       const shouldPush=options.push!==false && activeSectionId!==sectionId;
@@ -915,8 +915,8 @@
       if (shouldPush && !options.popstate) { const url=new URL(location.href); url.hash=sectionId; history.pushState({section:sectionId},'',url); }
       window.scrollTo({ top: 0, behavior: options.instant ? 'auto' : 'smooth' });
     }
-    window.addEventListener('popstate',()=>navigateSection(sectionFromLocation(),{push:false,popstate:true,instant:true}));
-    window.addEventListener('hashchange',()=>navigateSection(sectionFromLocation(),{push:false,popstate:true,instant:true}));
+    window.addEventListener('popstate',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
+    window.addEventListener('hashchange',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
 
     function toggleSideMenu() {
       document.getElementById('sideMenu').classList.toggle('translate-x-full');
