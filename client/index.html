@@ -894,23 +894,29 @@
     }
 
     // 4. منطق فحص وبحث الخدمات والـ SPA
-    function navigateSection(sectionId) {
-      const sections = ['new-order', 'services-catalog', 'orders-list', 'deposit', 'tickets'];
+    const MSB_SECTIONS = ['new-order', 'services-catalog', 'orders-list', 'deposit', 'tickets'];
+    let activeSectionId = null;
+    function sectionFromLocation(){const hash=(location.hash||'').replace(/^#/, '').trim();return MSB_SECTIONS.includes(hash)?hash:(localStorage.getItem('msb_active_section')||'new-order');}
+    function navigateSection(sectionId, options={}) {
+      if (!MSB_SECTIONS.includes(sectionId)) sectionId='new-order';
+      const shouldPush=options.push!==false && activeSectionId!==sectionId;
+      const sections = MSB_SECTIONS;
       sections.forEach(s => {
         document.getElementById(`section-${s}`)?.classList.add('hidden');
         document.getElementById(`nav-${s}`)?.classList.remove('active-nav');
         document.getElementById(`nav-${s}`)?.classList.add('text-gray-400');
       });
-
       document.getElementById(`section-${sectionId}`)?.classList.remove('hidden');
       if (sectionId === 'tickets' && customerToken) loadSupportMessages();
       const activeNavBtn = document.getElementById(`nav-${sectionId}`);
-      if (activeNavBtn) {
-        activeNavBtn.classList.add('active-nav');
-        activeNavBtn.classList.remove('text-gray-400');
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (activeNavBtn) { activeNavBtn.classList.add('active-nav'); activeNavBtn.classList.remove('text-gray-400'); }
+      activeSectionId=sectionId;
+      localStorage.setItem('msb_active_section', sectionId);
+      if (shouldPush && !options.popstate) { const url=new URL(location.href); url.hash=sectionId; history.pushState({section:sectionId},'',url); }
+      window.scrollTo({ top: 0, behavior: options.instant ? 'auto' : 'smooth' });
     }
+    window.addEventListener('popstate',()=>navigateSection(sectionFromLocation(),{push:false,popstate:true,instant:true}));
+    window.addEventListener('hashchange',()=>navigateSection(sectionFromLocation(),{push:false,popstate:true,instant:true}));
 
     function toggleSideMenu() {
       document.getElementById('sideMenu').classList.toggle('translate-x-full');
@@ -1112,7 +1118,7 @@
     }, 7000);
 
     // التحقق من الحساب المسجل مسبقاً عند الفتح
-    window.onload = async () => { const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);document.getElementById('authModal').classList.add('hidden');} updateServicesBySelectedCat();populateServicesTables();if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');navigateSection('tickets');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
+    window.onload = async () => { const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);document.getElementById('authModal').classList.add('hidden');} updateServicesBySelectedCat();populateServicesTables();const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
   </script>
 
 </body>
