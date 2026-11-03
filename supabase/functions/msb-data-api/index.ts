@@ -31,7 +31,7 @@ const campaignBudgets = {
 } as const;
 type SocialService = { name: string; rate: number; min: number; max: number; platform: "facebook" | "instagram" | "tiktok" | "youtube" | "google" | "phone" | "linkedin"; delivery: string; guarantee: string };
 const socialServices: Record<number, SocialService> = {
-  101: { name: "متابعين فيسبوك مصريين 100% 🇪🇬 🔥", rate: 0.28, min: 50, max: 500000, platform: "facebook", delivery: "6–24 ساعة", guarantee: "30 يوم تعويض نقص" },
+  101: { name: "متابعين فيسبوك مصريين 100% 🇪🇬 🔥", rate: 0.22, min: 50, max: 500000, platform: "facebook", delivery: "6–24 ساعة", guarantee: "30 يوم تعويض نقص" },
   102: { name: "متابعين فيسبوك [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]", rate: 0.067, min: 50, max: 500000, platform: "facebook", delivery: "24–72 ساعة", guarantee: "بدون تعويض" },
   103: { name: "Facebook Like 👍", rate: 0.75, min: 50, max: 5000, platform: "facebook", delivery: "6–24 ساعة", guarantee: "30 يوم" },
   104: { name: "Facebook Love ♥️", rate: 0.90, min: 50, max: 5000, platform: "facebook", delivery: "6–24 ساعة", guarantee: "30 يوم" },
@@ -45,14 +45,14 @@ const socialServices: Record<number, SocialService> = {
   205: { name: "TikTok Haha 😂", rate: 0.30, min: 50, max: 5000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
   207: { name: "تعليقات تيكتوك مخصصة مصريين 100% ✍️", rate: 1.4, min: 30, max: 500000, platform: "tiktok", delivery: "24–72 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   206: { name: "مشاهدات تيك توك 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "tiktok", delivery: "6–24 ساعة", guarantee: "ثابت" },
-  301: { name: "متابعين إنستجرام مصريين 100% 🇪🇬 🔥", rate: 0.28, min: 50, max: 500000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "30 يوم" },
+  301: { name: "متابعين إنستجرام مصريين 100% 🇪🇬 🔥", rate: 0.22, min: 50, max: 500000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "30 يوم" },
   302: { name: "متابعين إنستجرام [ جودة عالية 🚀 | الأرخص في السوق 🔥 ]", rate: 0.067, min: 50, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "بدون تعويض" },
   303: { name: "Instagram Like 👍", rate: 0.75, min: 50, max: 5000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "30 يوم" },
   304: { name: "Instagram Love ♥️", rate: 0.90, min: 50, max: 5000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "30 يوم" },
   305: { name: "Instagram Haha 😂", rate: 0.30, min: 50, max: 5000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "حسب جودة الرابط" },
   307: { name: "كومنتات إنستجرام مخصصة ✍️", rate: 1.3, min: 30, max: 500000, platform: "instagram", delivery: "24–72 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   306: { name: "مشاهدات ريلز إنستجرام 👁️ 🔥", rate: 0.03, min: 1000, max: 1000000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "ثابت" },
-  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 0.95, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 1.5, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
   402: { name: "YouTube Like 👍", rate: 0.75, min: 100, max: 5000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   403: { name: "مشاهدات يوتيوب 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   501: { name: "اشتراك Gemini PRO / Veo 3 / Google Flow / Nano Banana — لمدة 18 شهر 🔥", rate: 250, min: 1, max: 100, platform: "phone", delivery: "0–24 ساعة", guarantee: "بدون إلغاء — مدة 18 شهر" },

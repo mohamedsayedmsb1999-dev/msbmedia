@@ -763,7 +763,7 @@
     // 1. مصفوفة الخدمات بعد حذف مونتاج الذكاء الاصطناعي 200 جنيه بالكامل
     const servicesList = [
       // فيسبوك
-      { code: '0101', name: 'متابعين فيسبوك مصريين 🇪🇬 🔥', cat: 'facebook', type: 'page', price: 280, unit: 1000, min: 50, max: 50000, startSpeed: 'فوري (0-30 دقيقة)', dailyRate: '5,000 / يوم', guaranteeType: 'تعويض 30 يوم ♻️', qualityLevel: 'مصريين حقيقيين', condition: 'رابط الصفحة الشخصية أو العامة. الحساب يجب أن يكون عاماً (Public). ضمان تعويض 30 يوم ضد النقص.' },
+      { code: '0101', name: 'متابعين فيسبوك مصريين 🇪🇬 🔥', cat: 'facebook', type: 'page', price: 220, unit: 1000, min: 50, max: 50000, startSpeed: 'فوري (0-30 دقيقة)', dailyRate: '5,000 / يوم', guaranteeType: 'تعويض 30 يوم ♻️', qualityLevel: 'مصريين حقيقيين', condition: 'رابط الصفحة الشخصية أو العامة. الحساب يجب أن يكون عاماً (Public). ضمان تعويض 30 يوم ضد النقص.' },
       { code: '0102', name: 'متابعين فيسبوك أجانب 🌍 ⚠️', cat: 'facebook', type: 'page', price: 67, unit: 1000, min: 50, max: 100000, startSpeed: 'خلال ساعة', dailyRate: '15,000 / يوم', guaranteeType: 'بدون تعويض ⚠️', qualityLevel: 'حسابات دولية ميكس', condition: 'رابط الحساب العام. خدمة أجنبية/مكس بدون تعويض.' },
       { code: '0103', name: 'Facebook Like 👍', cat: 'facebook', type: 'post', price: 75, unit: 100, min: 50, max: 20000, startSpeed: 'فوري', dailyRate: '10,000 / يوم', guaranteeType: 'ثابت وضمان 30 يوم', qualityLevel: 'إعجابات حقيقية', condition: 'رابط المنشور أو الصورة فقط. يجب أن يكون المنشور متاحاً للعامة وليس للأصدقاء فقط.' },
       { code: '0104', name: 'Facebook Love ♥️', cat: 'facebook', type: 'post', price: 90, unit: 100, min: 50, max: 20000, startSpeed: 'فوري', dailyRate: '10,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'تفاعل لاف حقيقي', condition: 'رابط البوست العام. تفاعل لاف مركز لرفع تقييم المنشور الإعلاني.' },
@@ -785,7 +785,7 @@
       { code: '0207', name: 'تعليقات تيكتوك مخصصة مصريين 100% ✍️', cat: 'tiktok', type: 'comment', price: 1400, unit: 1000, min: 30, max: 1000, startSpeed: 'نصف ساعة', dailyRate: '300 / يوم', guaranteeType: 'تعويض تلقائي', qualityLevel: 'حسابات مصرية أصيلة', condition: 'كل سطر يساوي تعليق واحد. حد أقصى 7 كلمات لكل تعليق.' },
 
       // إنستجرام
-      { code: '0301', name: 'متابعين إنستجرام مصريين 🇪🇬 🔥', cat: 'instagram', type: 'page', price: 280, unit: 1000, min: 50, max: 20000, startSpeed: '10-30 دقيقة', dailyRate: '3,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'حسابات ببوستات وستوري', condition: 'رابط الحساب. الحساب يجب أن يكون عاماً (Public).' },
+      { code: '0301', name: 'متابعين إنستجرام مصريين 🇪🇬 🔥', cat: 'instagram', type: 'page', price: 220, unit: 1000, min: 50, max: 20000, startSpeed: '10-30 دقيقة', dailyRate: '3,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'حسابات ببوستات وستوري', condition: 'رابط الحساب. الحساب يجب أن يكون عاماً (Public).' },
       { code: '0302', name: 'متابعين إنستجرام أجانب 🌍 ⚠️', cat: 'instagram', type: 'page', price: 67, unit: 1000, min: 50, max: 50000, startSpeed: 'فوري', dailyRate: '15,000 / يوم', guaranteeType: 'بدون تعويض ⚠️', qualityLevel: 'ميكس أجنبي', condition: 'رابط الحساب العام. خدمة أجنبية/مكس بدون تعويض.' },
       { code: '0303', name: 'Instagram Like 👍', cat: 'instagram', type: 'post', price: 75, unit: 100, min: 50, max: 10000, startSpeed: 'فوري', dailyRate: '20,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'لايكات ممتازة', condition: 'رابط البوست أو الريلز.' },
       { code: '0304', name: 'Instagram Love ♥️', cat: 'instagram', type: 'post', price: 90, unit: 100, min: 50, max: 10000, startSpeed: 'فوري', dailyRate: '20,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'لاف حقيقي', condition: 'رابط المنشور العام.' },
@@ -797,7 +797,7 @@
       { code: '0606', name: 'لايكات + لاف ♥️👍 إنستجرام الإمارات 🇦🇪', cat: 'instagram', type: 'post', price: 380, unit: 100, min: 50, max: 10000, startSpeed: 'فوري', dailyRate: '5,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'تفاعل خليجي أصيل', condition: 'رابط المنشور العام.' },
 
       // يوتيوب
-      { code: '0401', name: 'مشتركون يوتيوب ▶️ 🔥', cat: 'youtube', type: 'page', price: 950, unit: 1000, min: 100, max: 10000, startSpeed: 'خلال 24 ساعة', dailyRate: '300-500 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'مشتركين حقيقيين', condition: 'رابط القناة الرسمي. يجب إظهار عدد المشتركين في القناة للتأكد من الزيادة.' },
+      { code: '0401', name: 'مشتركون يوتيوب ▶️ 🔥', cat: 'youtube', type: 'page', price: 1500, unit: 1000, min: 100, max: 10000, startSpeed: 'خلال 24 ساعة', dailyRate: '300-500 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'مشتركين حقيقيين', condition: 'رابط القناة الرسمي. يجب إظهار عدد المشتركين في القناة للتأكد من الزيادة.' },
       { code: '0402', name: 'YouTube Like 👍', cat: 'youtube', type: 'post', price: 75, unit: 100, min: 50, max: 10000, startSpeed: 'نصف ساعة', dailyRate: '5,000 / يوم', guaranteeType: 'مدى الحياة', qualityLevel: 'لايكات يوتيوب آمنة', condition: 'رابط فيديو يوتيوب أو شورتس.' },
       { code: '0403', name: 'مشاهدات يوتيوب 👁️ 🚀', cat: 'youtube', type: 'post', price: 30, unit: 1000, min: 500, max: 200000, startSpeed: 'خلال ساعتين', dailyRate: '20,000 / يوم', guaranteeType: 'آمنة لتحقيق الربح', qualityLevel: 'مشاهدات مصادر خارجية', condition: 'رابط الفيديو. آمن تماماً على قنوات أدسنس.' },
 
