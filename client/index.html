@@ -27,10 +27,6 @@
     async function handleDepositActionLink(){const params=new URLSearchParams(location.search);const entry=params.has('approve')?['approve','approve_wallet_deposit']:params.has('reject')?['reject','reject_wallet_deposit']:null;if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث الإيداع بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
     async function handleOrderActionLink(){const params=new URLSearchParams(location.search);const actions={approve_order:'approve_order',process_order:'process_order',partial_order:'partial_order',complete_order:'complete_order',reject_order:'reject_order'};const entry=Object.entries(actions).find(([key])=>params.has(key));if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث حالة الطلب بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
 
-
-    // إتاحة دوال المصادقة للسكربت الرئيسي حتى يعمل نموذج الدخول دون توقف صامت.
-    Object.assign(window,{apiJson,normalizedEgyptPhone,showToast,requireAuth,orderDisplayCode,deriveMsbUsername,applyUserData,logoutUser,renderRealOrders,loadRealSummary,handleDepositActionLink,handleOrderActionLink});
-
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
