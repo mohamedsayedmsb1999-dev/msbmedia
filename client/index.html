@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://tfyypramrzruteuucwfm.supabase.co">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <title>MSB MEDIA - المنظومة التسويقية والخدمات الرقمية</title>
 
   <!-- Meta Pixel Code الأساسي -->
@@ -121,11 +123,11 @@
       <form id="viewLogin" onsubmit="processLogin(event)" class="space-y-3 text-xs">
         <div>
           <label class="block text-gray-400 mb-1">اسم المستخدم أو الجيميل أو الهاتف</label>
-          <input type="text" id="loginIdentifier" required placeholder="user123 أو name@example.com" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
+          <input type="text" id="loginIdentifier" required autocomplete="username" placeholder="اسم المستخدم أو name@example.com أو 01xxxxxxxxx" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
         </div>
         <div>
           <label class="block text-gray-400 mb-1">كلمة المرور</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
+          <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••" class="w-full bg-[#0b0f19] border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-yellow-400">
         </div>
         <div class="flex justify-between items-center text-[11px]">
           <label class="flex items-center gap-1.5 text-gray-400"><input type="checkbox" checked class="rounded bg-gray-800"> تذكرني</label>
@@ -844,7 +846,7 @@
     }
 
     async function processRegister(e){e.preventDefault();const fullName=document.getElementById('regFullName').value.trim(),username=document.getElementById('regUsername').value.trim(),phone=normalizedEgyptPhone(document.getElementById('regPhone').value),email=document.getElementById('regEmail').value.trim().toLowerCase(),password=document.getElementById('regPassword').value;try{if(!/^[a-z]{4,20}$/.test(username)){showToast('اكتب اسم المستخدم بحروف إنجليزية صغيرة فقط، من 4 إلى 20 حرفًا، بدون أرقام أو فواصل.');return;}const r=await apiJson({action:'register',fullName,username,phone,email,password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.username||username,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم إنشاء الحساب وحفظه بأمان ✅');}catch(err){showToast(err.message);}}
-    async function processLogin(e){e.preventDefault();const identifier=document.getElementById('loginIdentifier').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await apiJson({action:'sign_in',phone:normalizedEgyptPhone(identifier),email:identifier.toLowerCase(),password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم تسجيل الدخول بنجاح ✅');}catch(err){showToast(err.message);}}
+    async function processLogin(e){e.preventDefault();const identifier=document.getElementById('loginIdentifier').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await apiJson({action:'sign_in',phone:normalizedEgyptPhone(identifier),email:identifier.toLowerCase(),username:identifier.toLowerCase().replace(/@msb$/,''),password});customerToken=r.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,customerToken);currentUser=r.customer;applyUserData({fullName:r.customer.full_name,username:r.customer.phone,phone:r.customer.phone,email:r.customer.email});document.getElementById('authModal').classList.add('hidden');await loadRealSummary();showToast('تم تسجيل الدخول بنجاح ✅');}catch(err){showToast(err.message);}}
     function handleGoogleSignIn(){showToast('التسجيل بجوجل غير متاح حاليًا. استخدم التسجيل العادي أو استعادة كلمة المرور.','info');}
     // إرسال كود التحقق في استعادة كلمة المرور
     function sendResetVerificationCode(){}

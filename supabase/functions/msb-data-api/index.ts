@@ -193,10 +193,15 @@ async function handleJson(request: Request) {
   if (action === "sign_in") {
     const phone = text(input.phone, 32);
     const email = text(input.email, 320).toLowerCase();
+    const username = text(input.username, 40).toLowerCase().replace(/@msb$/, "");
     const password = text(input.password, 128);
-    const { data: byPhone } = await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").eq("phone", phone).maybeSingle();
-    const { data: byEmail } = byPhone ? { data: null } : await admin.from("customer_profiles").select("id, full_name, username, phone, email, password_hash, password_salt").ilike("email", email || phone).maybeSingle();
-    const customer = byPhone ?? byEmail;
+    const customerFields = "id, full_name, username, phone, email, password_hash, password_salt";
+    const [{ data: byPhone }, { data: byEmail }, { data: byUsername }] = await Promise.all([
+      admin.from("customer_profiles").select(customerFields).eq("phone", phone).maybeSingle(),
+      admin.from("customer_profiles").select(customerFields).ilike("email", email || "__empty__").maybeSingle(),
+      admin.from("customer_profiles").select(customerFields).eq("username", username).maybeSingle(),
+    ]);
+    const customer = byPhone ?? byEmail ?? byUsername;
     if (!customer?.password_hash || !customer.password_salt) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
     const passwordHash = await sha256(`${customer.password_salt}:${password}`);
     if (passwordHash !== customer.password_hash) return json({ ok: false, message: "بيانات الدخول غير صحيحة." }, 401);
