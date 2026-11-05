@@ -16,10 +16,11 @@
     function normalizedEgyptPhone(value){const raw=String(value||'').replace(/[^0-9+]/g,'');if(raw.startsWith('+20'))return '0'+raw.slice(3);if(raw.startsWith('20')&&raw.length===12)return '0'+raw.slice(2);return raw;}
     function showToast(message, type='info'){document.querySelectorAll('.msb-toast').forEach(el=>el.remove());const box=document.createElement('div');box.className=`msb-toast ${type}`;box.setAttribute('role','status');box.textContent=String(message||'');document.body.appendChild(box);window.setTimeout(()=>box.remove(),6000);}
     function requireAuth(){if(!customerToken||!currentUser){showToast('سجّل الدخول أو أنشئ حسابًا أولاً 🔐','info');document.getElementById('authModal')?.classList.remove('hidden');return false;}return true;}
+    function orderDisplayCode(orderId){const hex=String(orderId||'').replace(/-/g,'').replace(/[^0-9a-f]/gi,'');if(!hex)return '';try{return String(100000n+(BigInt('0x'+(hex||'0'))%900000n));}catch{return String(Math.abs([...String(orderId||'')].reduce((a,c)=>(a*31+c.charCodeAt(0))%900000,0)+100000);}}
     function deriveMsbUsername(fullName, fallback=''){const clean=String(fullName||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return clean?`${clean}@msb`:String(fallback||'اسم المستخدم');}
     function applyUserData(user){const fullName=user.fullName||user.full_name||'حساب العميل';const normalized={fullName,username:user.username&&/@msb$/i.test(user.username)?user.username.toLowerCase():deriveMsbUsername(fullName,user.username||user.phone),phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
     function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');document.getElementById('authModal')?.classList.remove('hidden');switchAuthView('login');}
-    function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${String(o.id).slice(-8)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${String(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
+    function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${orderDisplayCode(o.id)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${orderDisplayCode(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
     async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];renderRealOrders(window.latestOrders);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
     async function handleDepositActionLink(){const params=new URLSearchParams(location.search);const entry=params.has('approve')?['approve','approve_wallet_deposit']:params.has('reject')?['reject','reject_wallet_deposit']:null;if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث الإيداع بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
     async function handleOrderActionLink(){const params=new URLSearchParams(location.search);const actions={approve_order:'approve_order',process_order:'process_order',partial_order:'partial_order',complete_order:'complete_order',reject_order:'reject_order'};const entry=Object.entries(actions).find(([key])=>params.has(key));if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث حالة الطلب بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
@@ -82,6 +83,9 @@
     @keyframes msbLogoSweep{0%{background-position:220% 0}100%{background-position:-20% 0}}@keyframes msbLogoBeam{0%,100%{left:-30%;opacity:0}35%{opacity:1}70%{left:110%;opacity:.8}}
     @keyframes msbFlagGlow{0%,100%{opacity:.7;transform:scale(.94)}50%{opacity:1;transform:scale(1.12)}}
     @media(max-width:767px){.msb-flag-logo{width:min(100%,300px);margin-top:16px}.msb-logo-word{font-size:clamp(25px,9vw,38px)}}
+    .ai-action-bar{position:sticky;bottom:0;z-index:3;padding:6px 0;background:linear-gradient(to top,#0b0f19 72%,transparent);}
+    .ai-action-bar button{box-shadow:0 4px 12px rgba(0,0,0,.22);transition:transform .16s ease,box-shadow .16s ease;}
+    .ai-action-bar button:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(234,179,8,.16);}
     .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
     .msb-toast.success { border-color: #10b981; background: #052e2b; }
     .msb-toast.error { border-color: #fb7185; background: #3b0a18; }
@@ -720,7 +724,7 @@
       </div>
 
       <!-- أزرار الإجراء السريع -->
-      <div class="grid grid-cols-4 gap-1 pt-1">
+      <div class="ai-action-bar grid grid-cols-4 gap-1 pt-1">
         <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
         <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
         <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
@@ -861,7 +865,7 @@
       if (!requireAuth()) return;
       aiPendingAction = actionType;
       verifiedClientUsername = currentUser.username;
-      appendAiMessage(`اكتب رقم الطلب الصحيح لتنفيذ: ${actionType}.\nيمكنك استخدام آخر 8 خانات الظاهرة في جدول طلباتك.`, 'ai');
+      appendAiMessage(`اكتب رقم الطلب الصحيح لتنفيذ: ${actionType}.\nاستخدم معرف الطلب المكون من 6 أرقام الظاهر في جدول طلباتك.`, 'ai');
     }
 
     async function submitAiChatMessage() {
@@ -871,16 +875,16 @@
       if (!text) return;
       appendAiMessage(`أنت: ${text}`, 'user');
       input.value = '';
-      const match = text.match(/[A-Za-z0-9-]{4,40}/);
+      const match = text.match(/\d{6}/);
       const orderText = match?.[0] || '';
       const orders = Array.isArray(window.latestOrders) ? window.latestOrders : [];
-      const order = orders.find(o => String(o.id) === orderText || String(o.id).endsWith(orderText));
+      const order = orders.find(o => orderDisplayCode(o.id) === orderText);
       if (!order) { appendAiMessage('⚠️ رقم الطلب غير موجود داخل حسابك. افتح صفحة الطلبات واستخدم الرقم الظاهر هناك فقط.', 'ai'); return; }
       const requestType = aiPendingAction || (text.includes('تعويض') ? 'تعويض' : text.includes('تسريع') ? 'تسريع' : 'متابعة الطلب');
       try {
         appendAiMessage('⏳ جاري مراجعة الطلب وإرسال طلبك للإدارة...', 'ai');
         const result = await apiJson({action:'order_assistance', requestType, orderId:String(order.id)});
-        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${String(order.id).slice(-8)}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
+        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${orderDisplayCode(order.id)}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
         aiPendingAction = '';
       } catch (error) { appendAiMessage(`⚠️ ${error.message || 'تعذر إرسال الطلب الآن. حاول مرة أخرى.'}`, 'ai'); }
     }

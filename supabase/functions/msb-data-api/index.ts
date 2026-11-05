@@ -18,6 +18,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 const text = (value: unknown, max: number) => typeof value === "string" ? value.trim().slice(0, max) : "";
 const hex = (bytes: Uint8Array) => Array.from(bytes).map(byte => byte.toString(16).padStart(2, "0")).join("");
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[character] ?? character));
+const orderDisplayCode = (orderId: string) => { const hexValue = String(orderId ?? "").replace(/-/g, "").replace(/[^0-9a-f]/gi, ""); try { return String(100000n + (BigInt(`0x${hexValue || "0"}`) % 900000n)); } catch { return String(100000 + Math.abs([...String(orderId ?? "")].reduce((sum, character) => (sum * 31 + character.charCodeAt(0)) % 900000, 0))); } };
 const campaignObjectives = {
   ecommerce_sales: "زيادة مبيعات متجر إلكتروني",
   messages: "استقبال رسائل واتساب / ماسنجر",
@@ -311,7 +312,7 @@ async function handleJson(request: Request) {
     const partialUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?partial_order=${token}`;
     const completeUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?complete_order=${token}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${token}`;
-    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", order.id], ["كود الخدمة", String(serviceId).padStart(4, "0")], ["الخدمة", service.name], ["الكمية", String(quantity)], ["سعر الوحدة", `${service.rate.toFixed(3)} EGP`], ["معادلة الحساب", `${quantity} × ${service.rate.toFixed(3)} = ${amount.toFixed(2)} EGP`], ["الرابط", targetUrl], ["التعليقات", isCustomComments ? `${commentLines.length} تعليق — كل سطر تعليق واحد\n${commentLines.join("\n")}` : "غير مطبق"], ["القيمة النهائية", `${amount.toFixed(2)} EGP`], ["قرار الإدارة", `${approvalUrl} | ${processUrl} | ${partialUrl} | ${completeUrl} | ${rejectUrl}`]]);
+    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", orderDisplayCode(order.id)], ["المعرف الداخلي", order.id], ["كود الخدمة", String(serviceId).padStart(4, "0")], ["الخدمة", service.name], ["الكمية", String(quantity)], ["سعر الوحدة", `${service.rate.toFixed(3)} EGP`], ["معادلة الحساب", `${quantity} × ${service.rate.toFixed(3)} = ${amount.toFixed(2)} EGP`], ["الرابط", targetUrl], ["التعليقات", isCustomComments ? `${commentLines.length} تعليق — كل سطر تعليق واحد\n${commentLines.join("\n")}` : "غير مطبق"], ["القيمة النهائية", `${amount.toFixed(2)} EGP`], ["قرار الإدارة", `${approvalUrl} | ${processUrl} | ${partialUrl} | ${completeUrl} | ${rejectUrl}`]]);
     return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. جاري انتظار مراجعة الإدارة." });
   }
 
@@ -320,16 +321,16 @@ async function handleJson(request: Request) {
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا لإرسال طلب مرتبط بحسابك." }, 401);
     const requestType = text(input.requestType, 40);
     const orderId = text(input.orderId, 40);
-    if (!["تعويض", "اكتمال وهمى", "تسريع", "إلغاء", "متابعة الطلب"].includes(requestType) || !/^[A-Za-z0-9-]{4,40}$/.test(orderId)) return json({ ok: false, message: "اكتب رقم الطلب واختر نوع طلب صحيح." }, 400);
-    const { data: ownedOrders, error: ownedOrdersError } = await admin.from("social_growth_orders").select("id, status").eq("customer_profile_id", customerId).limit(100);
+    if (!["تعويض", "اكتمال وهمى", "تسريع", "إلغاء", "متابعة الطلب"].includes(requestType) || !/^\d{6}$/.test(orderId)) return json({ ok: false, message: "اكتب رقم الطلب واختر نوع طلب صحيح." }, 400);
+    const { data: ownedOrders, error: ownedOrdersError } = await admin.from("social_growth_orders").select("id, status, service_name, quantity, amount, target_url").eq("customer_profile_id", customerId).limit(100);
     if (ownedOrdersError) throw ownedOrdersError;
-    const ownedOrder = (ownedOrders ?? []).find((item) => item.id === orderId || item.id.endsWith(orderId));
+    const ownedOrder = (ownedOrders ?? []).find((item) => orderDisplayCode(item.id) === orderId);
     if (!ownedOrder) return json({ ok: false, message: "رقم الطلب غير موجود داخل حسابك. استخدم رقمًا من صفحة الطلبات." }, 404);
     if (ownedOrder.status === "rejected") return json({ ok: false, message: "لا يمكن إرسال طلب متابعة لطلب ملغى." }, 400);
     const { data: customer } = await admin.from("customer_profiles").select("full_name, phone, email").eq("id", customerId).maybeSingle();
     const { error } = await admin.from("order_assistance_requests").insert({ customer_profile_id: customerId, order_id_text: ownedOrder.id, request_type: requestType });
     if (error) throw error;
-    await notifyOwner(`طلب متابعة من MSB AI — ${requestType}`, [["الاسم", customer?.full_name || "غير معروف"], ["الهاتف", customer?.phone || "غير معروف"], ["البريد", customer?.email || "غير مضاف"], ["رقم الطلب", orderId], ["نوع الطلب", requestType]]);
+    await notifyOwner(`طلب متابعة من MSB AI — ${requestType}`, [["الاسم", customer?.full_name || "غير معروف"], ["الهاتف", customer?.phone || "غير معروف"], ["البريد", customer?.email || "غير مضاف"], ["رقم الطلب", orderDisplayCode(ownedOrder.id)], ["نوع الطلب", requestType], ["الخدمة", ownedOrder.service_name || "غير معروف"], ["الرابط", ownedOrder.target_url || "غير مضاف"], ["الكمية", String(ownedOrder.quantity ?? "غير معروفة")], ["السعر", `${Number(ownedOrder.amount ?? 0).toFixed(2)} EGP`], ["الحالة الحالية", ownedOrder.status || "غير معروفة"]]);
     return json({ ok: true, message: "تم استلام طلبك بنجاح ✅ يرجى الانتظار سيستغرق الأمر من 24 ساعة إلى 72 ساعة لتنفيذ طلبك." });
   }
 
