@@ -48,7 +48,12 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
-    body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #fff; }
+    html, body { max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; }
+    body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #fff; overscroll-behavior-y: none; }
+    html.msb-session-known #authModal { display: none !important; }
+    html.msb-session-known body.auth-locked > nav,
+    html.msb-session-known body.auth-locked > main,
+    html.msb-session-known body.auth-locked > .fixed { visibility: visible; pointer-events: auto; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .active-nav { color: #eab308 !important; font-weight: 900 !important; }
@@ -107,6 +112,7 @@
 
     body,.selectable-text,input,textarea,select,option{user-select:text;-webkit-user-select:text}
   </style>
+  <script>try{if(localStorage.getItem('msb_customer_token')&&localStorage.getItem('msb_current_user'))document.documentElement.classList.add('msb-session-known')}catch(e){}</script>
 </head>
 <body class="pb-24 auth-locked">
 
@@ -756,7 +762,7 @@
       <i class="fa-solid fa-rectangle-list text-xs"></i>
       <span>الطلبات</span>
     </button>
-    <button onclick="navigateSection('new-order'); window.scrollTo({top:0, behavior:'smooth'});" class="w-11 h-11 rounded-full bg-yellow-500 text-black flex items-center justify-center -mt-6 border-4 border-[#0b0f19] shadow-xl shadow-yellow-500/20 active:scale-90 transition-transform">
+    <button onclick="navigateSection('new-order'); window.scrollTo({top:0, behavior:'auto'});" class="w-11 h-11 rounded-full bg-yellow-500 text-black flex items-center justify-center -mt-6 border-4 border-[#0b0f19] shadow-xl shadow-yellow-500/20 active:scale-90 transition-transform">
       <i class="fa-solid fa-plus text-base font-black"></i>
     </button>
     <button onclick="navigateSection('deposit')" id="nav-deposit" class="bottom-nav-item text-gray-400 flex flex-col items-center gap-1 text-[10px]">
@@ -927,7 +933,7 @@
       activeSectionId=sectionId;
       localStorage.setItem('msb_active_section', sectionId);
       if (shouldPush && !options.popstate) { const url=new URL(location.href); url.hash=sectionId; history.pushState({section:sectionId},'',url); }
-      window.scrollTo({ top: 0, behavior: options.instant ? 'auto' : 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
     window.addEventListener('popstate',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
     window.addEventListener('hashchange',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
@@ -1052,7 +1058,7 @@
       document.getElementById('mainCatSelect').value = 'all';
       updateServicesBySelectedCat();
       selectServiceFromPicker(code);
-      window.scrollTo({ top: 350, behavior: 'smooth' });
+      window.scrollTo({ top: 350, behavior: 'auto' });
     }
 
     function handlePaymentMethodChange() {
