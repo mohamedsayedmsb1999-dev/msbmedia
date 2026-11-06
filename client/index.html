@@ -79,7 +79,14 @@
     .service-picker-option:hover, .service-picker-option.active { background: rgba(234,179,8,.14); color: #fde047; }
     .service-picker-option .service-option-main { flex: 1; min-width: 0; }
     .service-picker-option .service-option-name { display: block; font-weight: 900; white-space: normal; }
-    .service-picker-option .service-option-meta { display: block; color: #9ca3af; font-size: 9px; margin-top: 2px; direction: ltr; text-align: right; }
+    .service-picker-option .service-option-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; color: #cbd5e1; font-size: 9px; margin-top: 3px; direction: rtl; text-align: right; }
+    .service-option-code, .service-option-qty, .service-option-price { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; border-radius: 5px; padding: 2px 5px; }
+    .service-option-code { color: #fde047; background: rgba(234,179,8,.12); font-family: ui-monospace, monospace; letter-spacing: .08em; }
+    .service-option-qty { color: #dbeafe; background: rgba(59,130,246,.12); }
+    .service-option-price { color: #fde047; background: rgba(234,179,8,.16); font-weight: 900; }
+    .service-row-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; direction: rtl; }
+    .service-qty-badge { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; color: #dbeafe; background: rgba(59,130,246,.13); border: 1px solid rgba(96,165,250,.2); border-radius: 7px; padding: 4px 7px; font-weight: 800; }
+    .service-price-badge { display: inline-flex; white-space: nowrap; align-items: center; gap: 5px; direction: ltr; background: rgba(234,179,8,.14); color: #fde047; border: 1px solid rgba(234,179,8,.28); border-radius: 7px; padding: 4px 7px; font-weight: 900; letter-spacing: .02em; }
     .service-brand-icon { width: 27px; height: 27px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 8px; background: rgba(255,255,255,.08); font-size: 15px; }
     @keyframes msbDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -956,14 +963,16 @@
     function servicePlatformIcon(cat){return ({facebook:'🔵',instagram:'📸',tiktok:'🎵',youtube:'▶️',google_ai:'🤖',linkedin:'💼',snapchat:'👻',video_ads:'📣'})[cat]||'✨';}
     function servicePlatformIconHtml(cat){return platformMeta[cat]?.icon||'<i class="fa-solid fa-star text-yellow-400"></i>';}
     function servicePlatformName(cat){return platformMeta[cat]?.name||'MSB Media';}
+    const serviceDisplayCodes = (() => { const used = new Set(), map = new Map(); let n = 0; for (const s of servicesList) { for (;;) { const raw = String(1023 + n++); if (raw.length === 4 && new Set(raw).size === 4 && !used.has(raw)) { used.add(raw); map.set(s.code, raw); break; } } } return map; })();
+    function serviceDisplayCode(service){return serviceDisplayCodes.get(service.code)||String(service.code).padStart(4,'0');}
     function toggleServicePicker(){document.getElementById('servicePicker')?.classList.toggle('open');}
     function closeServicePicker(){document.getElementById('servicePicker')?.classList.remove('open');}
-    function selectServiceFromPicker(code){const select=document.getElementById('mainServicesDropdown');select.value=code;const service=servicesList.find(x=>x.code===code);if(service){document.getElementById('servicePickerButtonText').innerHTML=`${servicePlatformIconHtml(service.cat)} <span>${servicePlatformName(service.cat)} — ${service.name}</span>`;}closeServicePicker();renderServiceInputFields();}
-    function renderServicePicker(list){const select=document.getElementById('mainServicesDropdown'),menu=document.getElementById('servicePickerMenu');select.innerHTML='';menu.innerHTML='';list.forEach((s,index)=>{const opt=document.createElement('option');opt.value=s.code;opt.textContent=s.name;select.appendChild(opt);const item=document.createElement('button');item.type='button';item.className='service-picker-option';item.onclick=()=>selectServiceFromPicker(s.code);item.innerHTML=`<span class="service-brand-icon">${servicePlatformIconHtml(s.cat)}</span><span class="service-option-main"><span class="service-option-name">${servicePlatformName(s.cat)} — ${s.name}</span><span class="service-option-meta">كود ${String(s.code).padStart(4,'0')}  |  ${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP / ${s.unit===1?'اشتراك':s.unit.toLocaleString('en-US')}</span></span>`;menu.appendChild(item);});if(list[0])selectServiceFromPicker(list[0].code);}
+    function selectServiceFromPicker(code){const select=document.getElementById('mainServicesDropdown');select.value=code;const service=servicesList.find(x=>x.code===code);if(service){document.getElementById('servicePickerButtonText').innerHTML=`${servicePlatformIconHtml(service.cat)} <span><b class="text-yellow-400 font-mono tracking-widest">${serviceDisplayCode(service)}</b> — ${servicePlatformName(service.cat)} — ${service.name}</span>`;}closeServicePicker();renderServiceInputFields();}
+    function renderServicePicker(list){const select=document.getElementById('mainServicesDropdown'),menu=document.getElementById('servicePickerMenu');select.innerHTML='';menu.innerHTML='';list.forEach((s,index)=>{const opt=document.createElement('option');opt.value=s.code;opt.textContent=`${serviceDisplayCode(s)} — ${s.name}`;select.appendChild(opt);const item=document.createElement('button');item.type='button';item.className='service-picker-option';item.onclick=()=>selectServiceFromPicker(s.code);const qty=s.unit===1?'اشتراك':`${s.unit.toLocaleString('en-US')} / 1000`;const price=`${s.price.toLocaleString('en-US',{minimumFractionDigits:2})} EGP`;item.innerHTML=`<span class="service-brand-icon">${servicePlatformIconHtml(s.cat)}</span><span class="service-option-main"><span class="service-option-name"><b class="text-yellow-400 font-mono tracking-widest">${serviceDisplayCode(s)}</b> — ${servicePlatformName(s.cat)} — ${s.name}</span><span class="service-option-meta"><span class="service-option-code">الكود ${serviceDisplayCode(s)}</span><span class="service-option-qty">الكمية ${qty}</span><span class="service-option-price">${price}</span></span></span>`;menu.appendChild(item);});if(list[0])selectServiceFromPicker(list[0].code);}
     document.addEventListener('click',event=>{if(!event.target.closest('#servicePicker'))closeServicePicker();});
 
     function updateServicesBySelectedCat(){const cat=document.getElementById('mainCatSelect').value;const filtered=cat==='all'?servicesList:servicesList.filter(s=>s.cat===cat);renderServicePicker(filtered);}
-    function searchServicesLive(){const q=document.getElementById('orderSearchInput').value.toLowerCase().trim();const matched=servicesList.filter(s=>s.name.toLowerCase().includes(q)||s.code.includes(q)||s.price.toString().includes(q));renderServicePicker(matched);}
+    function searchServicesLive(){const q=document.getElementById('orderSearchInput').value.toLowerCase().trim();const matched=!q?servicesList:servicesList.filter(s=>{const haystack=[s.name,s.code,serviceDisplayCode(s),String(s.price),String(s.unit),servicePlatformName(s.cat)].join(' ').toLowerCase();return haystack.includes(q);});renderServicePicker(matched);}
     function renderServiceInputFields() {
       const code = document.getElementById('mainServicesDropdown').value;
       const service = servicesList.find(s => s.code === code) || servicesList[0];
@@ -1046,10 +1055,10 @@
       deskTbody.innerHTML = '';
 
       servicesList.forEach(s => {
-        const code = String(s.code).padStart(4, '0');
+        const code = serviceDisplayCode(s);
         const price = s.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const unit = s.unit === 1 ? '1 اشتراك/خدمة' : s.unit.toLocaleString('en-US');
-        const rowHTML = `<tr class="service-catalog-row hover:bg-gray-800/40 transition-colors"><td class="p-2.5 font-mono text-yellow-400 font-black tracking-widest">${code}</td><td class="p-2.5"><div class="flex items-center gap-2 min-w-[230px]"><span class="service-platform-icon">${servicePlatformIconHtml(s.cat)}</span><span class="font-bold text-gray-200 leading-relaxed">${s.name}</span></div></td><td class="p-2.5 text-gray-300 font-bold whitespace-nowrap">${unit}</td><td class="p-2.5"><span class="service-price-badge">${price} EGP</span></td><td class="p-2.5 text-center"><button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all whitespace-nowrap">اطلب ⚡</button></td></tr>`;
+        const rowHTML = `<tr class="service-catalog-row hover:bg-gray-800/40 transition-colors"><td class="p-2.5 font-mono text-yellow-400 font-black tracking-widest whitespace-nowrap">${code}</td><td class="p-2.5"><div class="flex items-center gap-2 min-w-[230px]"><span class="service-platform-icon">${servicePlatformIconHtml(s.cat)}</span><span class="font-bold text-gray-200 leading-relaxed">${s.name}</span></div></td><td class="p-2.5"><span class="service-qty-badge">${unit}</span></td><td class="p-2.5"><span class="service-price-badge">${price} EGP</span></td><td class="p-2.5 text-center"><button onclick="orderServiceDirect('${s.code}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded-lg font-black text-[10px] transition-all whitespace-nowrap">اطلب ⚡</button></td></tr>`;
         fullTbody.innerHTML += rowHTML;
         deskTbody.innerHTML += rowHTML;
       });
