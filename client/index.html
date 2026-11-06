@@ -25,7 +25,8 @@
     function applyUserData(user){const fullName=user.fullName||user.full_name||'حساب العميل';const normalized={fullName,username:user.username&&/@msb$/i.test(user.username)?user.username.toLowerCase():deriveMsbUsername(fullName,user.username||user.phone),phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
     function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');lockAuthScreen();switchAuthView('login');}
     function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${orderDisplayCode(o.id)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${orderDisplayCode(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
-    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];renderRealOrders(window.latestOrders);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
+    function renderDepositHistory(deposits=[]){const body=document.getElementById('depositHistoryTableBody');if(!body)return;if(!deposits.length){body.innerHTML='<tr><td colspan="8" class="p-5 text-center text-gray-500">لا توجد إيداعات مسجلة حتى الآن.</td></tr>';return;}const methods={vodafone_cash:'Vodafone Cash',etisalat_cash:'Etisalat Cash',instapay:'InstaPay',binance_pay:'Binance Pay'};const statuses={pending:['pending','معلق ⏳'],approved:['approved','مكتمل ✅'],rejected:['rejected','مرفوض ❌']};const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));body.innerHTML=deposits.map(d=>{const [statusClass,statusLabel]=statuses[d.status]||statuses.pending;const date=d.created_at?new Date(d.created_at).toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}):'—';const receipt=d.receipt_filename?`<span class="text-emerald-300" title="${safe(d.receipt_filename)}"><i class="fa-solid fa-check"></i> مرفوع</span>`:'—';return `<tr class="hover:bg-yellow-500/5"><td class="p-2.5 whitespace-nowrap text-gray-300">${date}</td><td class="p-2.5 font-mono text-yellow-400">${safe(String(d.id||'').slice(0,8).toUpperCase())}</td><td class="p-2.5 text-gray-300">${safe(methods[d.payment_method]||d.payment_method||'—')}</td><td class="p-2.5 font-black text-white">${Number(d.amount||0).toFixed(2)} <span class="text-[9px] text-gray-400">EGP</span></td><td class="p-2.5 text-gray-400">${Number(d.fee||0).toFixed(2)}</td><td class="p-2.5 font-black text-yellow-400">${Number(d.total_amount||0).toFixed(2)} <span class="text-[9px] text-gray-400">EGP</span></td><td class="p-2.5">${receipt}</td><td class="p-2.5"><span class="deposit-status ${statusClass}">${statusLabel}</span></td></tr>`;}).join('');}
+    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];window.latestDeposits=r.deposits||[];renderRealOrders(window.latestOrders);renderDepositHistory(window.latestDeposits);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
     async function handleDepositActionLink(){const params=new URLSearchParams(location.search);const entry=params.has('approve')?['approve','approve_wallet_deposit']:params.has('reject')?['reject','reject_wallet_deposit']:null;if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث الإيداع بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
     async function handleOrderActionLink(){const params=new URLSearchParams(location.search);const actions={approve_order:'approve_order',process_order:'process_order',partial_order:'partial_order',complete_order:'complete_order',reject_order:'reject_order'};const entry=Object.entries(actions).find(([key])=>params.has(key));if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث حالة الطلب بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
 
@@ -87,6 +88,11 @@
     .service-row-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; direction: rtl; }
     .service-qty-badge { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; color: #fde047; background: rgba(234,179,8,.14); border: 1px solid rgba(234,179,8,.25); border-radius: 7px; padding: 4px 7px; font-weight: 900; }
     .service-price-badge { display: inline-flex; white-space: nowrap; align-items: center; gap: 5px; direction: ltr; background: rgba(234,179,8,.14); color: #fde047; border: 1px solid rgba(234,179,8,.28); border-radius: 7px; padding: 4px 7px; font-weight: 900; letter-spacing: .02em; }
+    .deposit-history-table { min-width: 760px; }
+    .deposit-status { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; border-radius: 999px; padding: 4px 9px; font-size: 10px; font-weight: 900; }
+    .deposit-status.pending { color: #fde68a; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.28); }
+    .deposit-status.approved { color: #6ee7b7; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.28); }
+    .deposit-status.rejected { color: #fca5a5; background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.28); }
     .service-brand-icon { width: 27px; height: 27px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 8px; background: rgba(255,255,255,.08); font-size: 15px; }
     @keyframes msbDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -626,6 +632,33 @@
           تأكيد السداد وإرسال إشعار الإيداع 📩
         </button>
       </form>
+
+      <section class="bg-[#0b0f19] border border-gray-800 rounded-xl overflow-hidden" aria-labelledby="depositHistoryTitle">
+        <div class="p-3 border-b border-gray-800 flex items-center justify-between gap-2">
+          <div>
+            <h3 id="depositHistoryTitle" class="text-xs font-black text-yellow-400 flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left"></i> سجل الإيداعات</h3>
+            <p class="text-[9px] text-gray-500 mt-1">تظهر العملية معلقة حتى مراجعة الإيصال، ثم تتحدث تلقائيًا بعد قرار الإدارة.</p>
+          </div>
+          <button type="button" onclick="loadRealSummary()" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-[10px] text-gray-200"><i class="fa-solid fa-rotate"></i> تحديث</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="deposit-history-table w-full text-right text-[10px] border-collapse">
+            <thead class="bg-[#131b2e] text-gray-400">
+              <tr>
+                <th class="p-2.5 whitespace-nowrap">التاريخ</th>
+                <th class="p-2.5 whitespace-nowrap">المعرف</th>
+                <th class="p-2.5 whitespace-nowrap">طريقة الدفع</th>
+                <th class="p-2.5 whitespace-nowrap">المبلغ</th>
+                <th class="p-2.5 whitespace-nowrap">الرسوم</th>
+                <th class="p-2.5 whitespace-nowrap">الإجمالي</th>
+                <th class="p-2.5 whitespace-nowrap">الإيصال</th>
+                <th class="p-2.5 whitespace-nowrap">الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="depositHistoryTableBody" class="divide-y divide-gray-800/70"><tr><td colspan="8" class="p-5 text-center text-gray-500">سجّل الدخول لعرض سجل إيداعاتك.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
     </div>
 
     <!-- ==================== القسم 5: الدعم والتذاكر والشات ==================== -->

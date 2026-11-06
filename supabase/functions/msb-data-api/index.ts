@@ -229,7 +229,7 @@ async function handleJson(request: Request) {
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
     const balance = await walletBalance(customerId);
-    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, amount, total_amount, payment_method, status, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
+    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, customer_name, phone, payment_method, payment_identifier, amount, fee, total_amount, service_id, service_name, requested_quantity, target_url, receipt_filename, status, approved_at, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (depositsError) throw depositsError;
     const { data: orders, error: ordersError } = await admin.from("social_growth_orders").select("id, service_name, service_id, quantity, amount, status, target_url, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (ordersError) throw ordersError;
