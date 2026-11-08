@@ -124,7 +124,7 @@
     @keyframes msbLogoSweep{0%{background-position:220% 0}100%{background-position:-20% 0}}@keyframes msbLogoBeam{0%,100%{left:-30%;opacity:0}35%{opacity:1}70%{left:110%;opacity:.8}}
     @keyframes msbFlagGlow{0%,100%{opacity:.7;transform:scale(.94)}50%{opacity:1;transform:scale(1.12)}}
     @media(max-width:767px){.msb-flag-logo{width:min(100%,300px);margin-top:16px}.msb-logo-word{font-size:clamp(25px,9vw,38px)}}
-    .ai-action-bar{position:sticky;bottom:0;z-index:3;padding:6px 0;background:linear-gradient(to top,#0b0f19 72%,transparent);}
+    .ai-action-bar{position:relative;z-index:3;flex:0 0 auto;padding:6px 0;background:#0b0f19;border-top:1px solid rgba(55,65,81,.65);box-shadow:0 -8px 16px rgba(0,0,0,.18);}
     .ai-action-bar button{box-shadow:0 4px 12px rgba(0,0,0,.22);transition:transform .16s ease,box-shadow .16s ease;}
     .ai-action-bar button:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(234,179,8,.16);}
     .msb-toast { position: fixed; top: 76px; right: 14px; left: 14px; z-index: 200; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(234,179,8,.65); background: #111827; color: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.38); font-size: 12px; font-weight: 800; line-height: 1.7; animation: msbToastIn .2s ease-out; }
@@ -804,7 +804,7 @@
   </div>
 
   <!-- نافذة شات دعم الذكاء الاصطناعي MSB ai (تفاعلية بنظام سيرفر الكابوس) -->
-  <div id="aiSupportWindow" class="hidden fixed bottom-36 left-4 z-50 w-80 md:w-96 bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden text-right text-xs">
+  <div id="aiSupportWindow" class="hidden fixed bottom-36 left-4 z-50 w-80 md:w-96 max-h-[calc(100dvh-180px)] bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden text-right text-xs flex flex-col">
     <div class="bg-gradient-to-r from-red-600 to-gray-900 p-3 flex justify-between items-center text-white">
       <div class="flex items-center gap-2">
         <div class="w-6 h-6 rounded-full bg-black/40 flex items-center justify-center text-[10px]">🤖</div>
@@ -816,21 +816,20 @@
       <button onclick="toggleAiSupportChat()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div class="p-3 bg-[#0b0f19] space-y-2 max-h-72 overflow-y-auto" id="aiChatBody">
+    <div class="p-3 bg-[#0b0f19] space-y-2 flex-1 min-h-0 overflow-y-auto" id="aiChatBody">
       <div class="bg-gray-800/80 p-2.5 rounded-xl text-gray-200">
         <div class="text-yellow-400 font-bold mb-1">★ مرحباً بك في نظام الدعم الذكي!</div>
         <p class="text-[11px] leading-relaxed">أنا نظام الذكاء الاصطناعي لاستلام طلبات الدعم، التعويض، وتسريع الأوردرات ومعالجتها تلقائياً.</p>
       </div>
 
-      <!-- أزرار الإجراء السريع -->
-      <div class="ai-action-bar grid grid-cols-4 gap-1 pt-1">
-        <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
-        <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
-        <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
-        <button onclick="triggerAiAction('اكتمال وهمى')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
-      </div>
     </div>
-
+    <!-- أزرار الإجراء السريع ثابتة أسفل نافذة الأداة ولا تتحرك مع الرسائل -->
+    <div class="ai-action-bar grid grid-cols-4 gap-1 px-3">
+      <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
+      <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
+      <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
+      <button onclick="triggerAiAction('اكتمال وهمى')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
+    </div>
     <!-- حقل الإدخال -->
     <div class="p-2.5 bg-[#111827] border-t border-gray-800 flex gap-1.5">
       <input type="text" id="aiChatInput" placeholder="اكتب استفسارك أو رقم الطلب أو اسم المستخدم..." class="flex-1 bg-[#0b0f19] border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-yellow-400">
@@ -974,16 +973,22 @@
       if (!text) return;
       appendAiMessage(`أنت: ${text}`, 'user');
       input.value = '';
-      const match = text.match(/\d{6}/);
-      const orderText = match?.[0] || '';
+      const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+      const normalizeOrderDigits = value => String(value || '').replace(/[٠-٩]/g, digit => String(arabicDigits.indexOf(digit))).replace(/[^0-9]/g, '');
+      const match = text.match(/[0-9٠-٩]{6}/);
+      const orderText = normalizeOrderDigits(match?.[0] || '');
+      if (!/^\d{6}$/.test(orderText)) { appendAiMessage('⚠️ اكتب معرف الطلب المكون من 6 أرقام كما يظهر في صفحة الطلبات.', 'ai'); return; }
       const orders = Array.isArray(window.latestOrders) ? window.latestOrders : [];
       const order = orders.find(o => orderDisplayCode(o.id) === orderText);
-      if (!order) { appendAiMessage('⚠️ رقم الطلب غير موجود داخل حسابك. افتح صفحة الطلبات واستخدم الرقم الظاهر هناك فقط.', 'ai'); return; }
-      const requestType = aiPendingAction || (text.includes('تعويض') ? 'تعويض' : text.includes('تسريع') ? 'تسريع' : 'متابعة الطلب');
+      const requestType = aiPendingAction || (text.includes('تعويض') ? 'تعويض' : text.includes('تسريع') ? 'تسريع' : text.includes('إلغاء') ? 'إلغاء' : 'متابعة الطلب');
+      if (order && order.status !== 'completed' && requestType !== 'إلغاء') {
+        appendAiMessage('⚠️ الطلب لم يكتمل بعد. المسموح حاليًا هو زر الإلغاء فقط.', 'ai');
+        return;
+      }
       try {
         appendAiMessage('⏳ جاري مراجعة الطلب وإرسال طلبك للإدارة...', 'ai');
-        const result = await apiJson({action:'order_assistance', requestType, orderId:String(order.id)});
-        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${orderDisplayCode(order.id)}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
+        const result = await apiJson({action:'order_assistance', requestType, orderId:orderText});
+        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${orderText}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
         aiPendingAction = '';
       } catch (error) { appendAiMessage(`⚠️ ${error.message || 'تعذر إرسال الطلب الآن. حاول مرة أخرى.'}`, 'ai'); }
     }

@@ -353,11 +353,14 @@ async function handleJson(request: Request) {
     const requestType = text(input.requestType, 40);
     const orderId = text(input.orderId, 40);
     if (!["تعويض", "اكتمال وهمى", "تسريع", "إلغاء", "متابعة الطلب"].includes(requestType) || !/^\d{6}$/.test(orderId)) return json({ ok: false, message: "اكتب رقم الطلب واختر نوع طلب صحيح." }, 400);
-    const { data: ownedOrders, error: ownedOrdersError } = await admin.from("social_growth_orders").select("id, status, service_name, quantity, amount, target_url").eq("customer_profile_id", customerId).limit(100);
+    const { data: ownedOrders, error: ownedOrdersError } = await admin.from("social_growth_orders").select("id, status, service_name, quantity, amount, target_url").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (ownedOrdersError) throw ownedOrdersError;
     const ownedOrder = (ownedOrders ?? []).find((item) => orderDisplayCode(item.id) === orderId);
     if (!ownedOrder) return json({ ok: false, message: "رقم الطلب غير موجود داخل حسابك. استخدم رقمًا من صفحة الطلبات." }, 404);
     if (ownedOrder.status === "rejected") return json({ ok: false, message: "لا يمكن إرسال طلب متابعة لطلب ملغى." }, 400);
+    if (ownedOrder.status !== "completed" && requestType !== "إلغاء") {
+      return json({ ok: false, message: "⚠️ الطلب لم يكتمل بعد. المسموح حاليًا هو زر الإلغاء فقط." }, 400);
+    }
 
     // طلب التعويض لنفس رقم الطلب مسموح مرة واحدة فقط كل 6 ساعات.
     // التحقق هنا على السيرفر حتى لا يمكن تجاوزه بإعادة تحميل الصفحة أو استدعاء الـAPI مباشرة.
