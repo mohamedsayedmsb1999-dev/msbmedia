@@ -530,7 +530,8 @@ async function handleReceipt(request: Request) {
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
     if (!Number.isFinite(depositAmount) || depositAmount < 50 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 50 EGP." }, 400);
-    const fee = Math.round(depositAmount * 0.01 * 100) / 100;
+    const feeRate = method === "binance_pay" ? 0.005 : 0.01;
+    const fee = Math.round(depositAmount * feeRate * 100) / 100;
     const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
     const secret = randomToken();
     const approvalTokenHash = await sha256(secret);
@@ -541,7 +542,7 @@ async function handleReceipt(request: Request) {
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const { data: signedReceipt } = await admin.storage.from("payment-receipts").createSignedUrl(storagePath, 60 * 60 * 24 * 7);
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], ["رسوم التعبئة (1%)", `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], [`رسوم التعبئة (${method === "binance_pay" ? "0.5%" : "1%"})`, `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, payment_identifier: paymentIdentifier || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
