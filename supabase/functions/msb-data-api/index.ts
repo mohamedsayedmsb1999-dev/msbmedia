@@ -115,7 +115,7 @@ async function notifyOwner(subject: string, lines: Array<[string, string]>) {
         const button = labels[index] || "تنفيذ الإجراء";
         const color = colors[index] || "#334155";
         return `<a href="${escapeHtml(part)}" style="display:inline-block;margin:4px;padding:11px 14px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-weight:700">${button}</a>`;
-      }).join(" ") : label === "الإيصال" && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" ");
+      }).join(" ") : (label === "الإيصال" || label === "الصورة") && /^https?:\/\//.test(value) ? `<a href="${escapeHtml(value)}" target="_blank"><img src="${escapeHtml(value)}" alt="صورة إيصال التحويل" style="display:block;max-width:320px;max-height:420px;border:1px solid #ddd;border-radius:8px;margin:6px 0" /></a><a href="${escapeHtml(value)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">فتح الصورة بالحجم الكامل</a>` : parts.map(part => /^https?:\/\//.test(part) ? `<a href="${escapeHtml(part)}" style="color:#0b5bd3;text-decoration:underline;word-break:break-all">${escapeHtml(part)}</a>` : escapeHtml(part)).join(" ");
       return `<tr><td style="padding:6px 0;font-weight:700;border-bottom:1px solid #eee">${escapeHtml(label)}:</td><td style="padding:6px 8px;border-bottom:1px solid #eee">${rendered}</td></tr>`;
     }).join("")}</table></div>`;
     const response = await fetch("https://api.resend.com/emails", {
@@ -265,7 +265,7 @@ async function handleJson(request: Request) {
     const customerId = await currentCustomer(request);
     if (!customerId) return json({ ok: false, message: "سجّل الدخول أولًا." }, 401);
     const balance = await walletBalance(customerId);
-    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, customer_name, phone, payment_method, payment_identifier, amount, fee, total_amount, service_id, service_name, requested_quantity, target_url, receipt_filename, status, approved_at, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
+    const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, customer_name, phone, payment_method, payment_identifier, amount, service_id, service_name, requested_quantity, target_url, receipt_filename, status, approved_at, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (depositsError) throw depositsError;
     const { data: orders, error: ordersError } = await admin.from("social_growth_orders").select("id, service_name, service_id, quantity, amount, status, target_url, created_at").eq("customer_profile_id", customerId).order("created_at", { ascending: false }).limit(1000);
     if (ordersError) throw ordersError;
@@ -549,9 +549,8 @@ async function handleReceipt(request: Request) {
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
     if (!Number.isFinite(depositAmount) || depositAmount < 50 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 50 EGP." }, 400);
-    const feeRate = method === "binance_pay" ? 0.005 : 0;
-    const fee = Math.round(depositAmount * feeRate * 100) / 100;
-    const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
+    const fee = 0;
+    const totalAmount = depositAmount;
     const secret = randomToken();
     const approvalTokenHash = await sha256(secret);
     const service = socialServices[serviceId];
@@ -561,7 +560,7 @@ async function handleReceipt(request: Request) {
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const { data: signedReceipt } = await admin.storage.from("payment-receipts").createSignedUrl(storagePath, 60 * 60 * 24 * 7);
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], [`رسوم التعبئة (${method === "binance_pay" ? "0.5%" : "0%"})`, `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["الاسم", customerName], ["الرقم", phone], ["المبلغ", `${depositAmount.toFixed(2)} EGP`], ["الصورة", signedReceipt?.signedUrl || "تعذر إنشاء رابط الصورة"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, payment_identifier: paymentIdentifier || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
