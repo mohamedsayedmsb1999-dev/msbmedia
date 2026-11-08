@@ -665,7 +665,7 @@
 
         <div class="bg-[#111827] p-2 rounded-lg border border-gray-800 flex justify-between items-center text-[11px]">
           <span id="depFeeSummaryLabel" class="text-gray-400">الإجمالي المطلوب تحويله (الرسوم حسب وسيلة الدفع):</span>
-          <span class="font-bold text-yellow-400"><span id="depTotalWithFees">50.50</span> EGP</span>
+          <span class="font-bold text-yellow-400"><span id="depTotalWithFees">50.00</span> EGP</span>
         </div>
 
         <div>
@@ -1197,7 +1197,6 @@
 
     function calculateDepositLive() {
       const amount = parseFloat(document.getElementById('depEgpAmount').value) || 0;
-      const isBinance = document.getElementById('depMethodSelect')?.value === 'binance';
       const isBinance = document.getElementById('depMethodSelect')?.value === 'binance';
       const feeRate = isBinance ? 0.005 : 0;
       const feePercent = isBinance ? '0.5%' : '0%';
