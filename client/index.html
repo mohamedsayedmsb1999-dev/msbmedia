@@ -652,8 +652,8 @@
             <input type="text" id="depSenderIdentifier" required placeholder="010xxxxxxx" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-white text-xs">
           </div>
           <div>
-            <label id="depAmountLabel" class="block text-[10px] text-gray-400 mb-1">المبلغ المطلوب شحنه (EGP) - الحد الأدنى 100</label>
-            <input type="number" id="depEgpAmount" min="100" value="100" oninput="calculateDepositLive()" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-white text-xs">
+            <label id="depAmountLabel" class="block text-[10px] text-gray-400 mb-1">المبلغ المطلوب شحنه (EGP) - الحد الأدنى 50</label>
+            <input type="number" id="depEgpAmount" min="50" value="50" oninput="calculateDepositLive()" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-white text-xs">
           </div>
         </div>
 
@@ -664,8 +664,8 @@
         </div>
 
         <div class="bg-[#111827] p-2 rounded-lg border border-gray-800 flex justify-between items-center text-[11px]">
-          <span class="text-gray-400">الإجمالي المطلوب تحويله (شامل رسوم 5%):</span>
-          <span class="font-bold text-yellow-400"><span id="depTotalWithFees">105.00</span> EGP</span>
+          <span class="text-gray-400">الإجمالي المطلوب تحويله (شامل رسوم 1%):</span>
+          <span class="font-bold text-yellow-400"><span id="depTotalWithFees">50.50</span> EGP</span>
         </div>
 
         <div>
@@ -1189,15 +1189,15 @@
         label.textContent = 'رقم الهاتف المحول منه';
         input.placeholder = '010xxxxxxx';
         binanceBox.classList.add('hidden');
-        document.getElementById('depAmountLabel').textContent = 'المبلغ المطلوب شحنه (EGP) — الحد الأدنى 100';
-        const amountInput = document.getElementById('depEgpAmount'); amountInput.min = '100'; amountInput.value = String(Math.max(100, Number(amountInput.value) || 0));
+        document.getElementById('depAmountLabel').textContent = 'المبلغ المطلوب شحنه (EGP) — الحد الأدنى 50';
+        const amountInput = document.getElementById('depEgpAmount'); amountInput.min = '50'; amountInput.value = String(Math.max(50, Number(amountInput.value) || 0));
       }
       calculateDepositLive();
     }
 
     function calculateDepositLive() {
       const amount = parseFloat(document.getElementById('depEgpAmount').value) || 0;
-      const totalEgp = amount + (amount * 0.05);
+      const totalEgp = amount + (amount * 0.01);
       document.getElementById('depTotalWithFees').textContent = totalEgp.toFixed(2);
       const usdValue = totalEgp / 57;
       document.getElementById('binanceUsdValue').textContent = usdValue.toFixed(2);
