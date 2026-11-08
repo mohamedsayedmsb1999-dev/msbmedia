@@ -264,7 +264,8 @@
   </header>
 
   <!-- القائمة الجانبية المنسدلة -->
-  <div id="sideMenu" class="fixed inset-y-0 right-0 w-64 bg-[#111827] border-l border-gray-800 z-50 transform translate-x-full transition-transform duration-300 p-4 space-y-4 shadow-2xl">
+  <div id="sideMenuBackdrop" class="hidden fixed inset-0 z-40 bg-black/35" onclick="closeSideMenu()" aria-hidden="true"></div>
+  <div id="sideMenu" class="fixed inset-y-0 right-0 w-64 bg-[#111827] border-l border-gray-800 z-50 transform translate-x-full transition-transform duration-300 p-4 space-y-4 shadow-2xl" aria-hidden="true">
     <div class="flex justify-between items-center pb-3 border-b border-gray-800">
       <div class="font-black text-sm text-yellow-400">⚡ القائمة الرئيسية</div>
       <button onclick="toggleSideMenu()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -795,7 +796,7 @@
 
   <!-- ==================== أيقونة وشات دعم الذكاء الاصطناعي MSB ai (على اليسار - علم مصر) ==================== -->
   <div class="fixed bottom-20 left-4 z-50">
-    <button onclick="toggleAiSupportChat()" class="w-14 h-14 rounded-full egypt-flag-icon flex items-center justify-center shadow-2xl shadow-red-500/30 border-2 border-yellow-400 active:scale-95 transition-all">
+    <button onclick="closeSideMenu(); toggleAiSupportChat()" class="w-14 h-14 rounded-full egypt-flag-icon flex items-center justify-center shadow-2xl shadow-red-500/30 border-2 border-yellow-400 active:scale-95 transition-all">
       <div class="text-center">
         <span class="block text-[10px] font-black text-black leading-none bg-white/90 px-1 rounded shadow">MSB</span>
         <span class="block text-[8px] font-black text-amber-900 leading-none mt-0.5">ai 🇪🇬</span>
@@ -1040,9 +1041,16 @@
     window.addEventListener('popstate',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
     window.addEventListener('hashchange',()=>navigateSection(sectionFromLocation(false),{push:false,popstate:true,instant:true}));
 
-    function toggleSideMenu() {
-      document.getElementById('sideMenu').classList.toggle('translate-x-full');
+    function setSideMenuOpen(open) {
+      const menu = document.getElementById('sideMenu');
+      const backdrop = document.getElementById('sideMenuBackdrop');
+      menu.classList.toggle('translate-x-full', !open);
+      backdrop.classList.toggle('hidden', !open);
+      menu.setAttribute('aria-hidden', String(!open));
+      document.body.classList.toggle('side-menu-open', open);
     }
+    function closeSideMenu() { setSideMenuOpen(false); }
+    function toggleSideMenu() { setSideMenuOpen(document.getElementById('sideMenu').classList.contains('translate-x-full')); }
 
     function filterServices(categoryKey, btn) {
       document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active-platform'));
