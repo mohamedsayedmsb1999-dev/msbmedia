@@ -19,6 +19,21 @@ const text = (value: unknown, max: number) => typeof value === "string" ? value.
 const hex = (bytes: Uint8Array) => Array.from(bytes).map(byte => byte.toString(16).padStart(2, "0")).join("");
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[character] ?? character));
 const orderDisplayCode = (orderId: string) => { const hexValue = String(orderId ?? "").replace(/-/g, "").replace(/[^0-9a-f]/gi, ""); try { return String(100000n + (BigInt(`0x${hexValue || "0"}`) % 900000n)); } catch { return String(100000 + Math.abs([...String(orderId ?? "")].reduce((sum, character) => (sum * 31 + character.charCodeAt(0)) % 900000, 0))); } };
+const rewardLevels = [
+  { name: "المستوى الأول", threshold: 5000, discount: 3 },
+  { name: "المستوى الثاني", threshold: 10000, discount: 5 },
+  { name: "المستوى الثالث", threshold: 20000, discount: 7 },
+  { name: "المستوى الرابع", threshold: 35000, discount: 10 },
+  { name: "VIP", threshold: 50000, discount: 15 },
+] as const;
+function rewardForSpending(spent: number) {
+  const safeSpent = Math.max(0, Number(spent) || 0);
+  let current = { name: "بدون مستوى", threshold: 0, discount: 0 };
+  for (const level of rewardLevels) if (safeSpent >= level.threshold) current = level;
+  const next = rewardLevels.find(level => safeSpent < level.threshold) ?? null;
+  const progress = next ? Math.min(100, Math.max(0, ((safeSpent - current.threshold) / (next.threshold - current.threshold)) * 100)) : 100;
+  return { current, next, spent: safeSpent, remaining: next ? Math.max(0, next.threshold - safeSpent) : 0, progress: Math.round(progress) };
+}
 const campaignObjectives = {
   ecommerce_sales: "زيادة مبيعات متجر إلكتروني",
   messages: "استقبال رسائل واتساب / ماسنجر",
@@ -144,6 +159,13 @@ async function walletBalance(customerId: string) {
   if (error) throw error;
   return (data ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
 }
+async function customerSpending(customerId: string) {
+  const { data, error } = await admin.from("wallet_ledger").select("amount, kind").eq("customer_profile_id", customerId).limit(5000);
+  if (error) throw error;
+  const orders = (data ?? []).filter(row => row.kind === "order").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0);
+  const refunds = (data ?? []).filter(row => row.kind === "refund").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0);
+  return Math.max(0, orders - refunds);
+}
 
 async function createSession(customerId: string) {
   const token = randomToken();
@@ -235,8 +257,8 @@ async function handleJson(request: Request) {
     if (ordersError) throw ordersError;
     const { data: ledger, error: ledgerError } = await admin.from("wallet_ledger").select("amount, kind").eq("customer_profile_id", customerId).limit(5000);
     if (ledgerError) throw ledgerError;
-    const totalSpent = (ledger ?? []).filter(row => row.kind === "order").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0);
-    return json({ ok: true, balance, totalSpent, totalOrders: (orders ?? []).length, deposits: deposits ?? [], orders: orders ?? [] });
+    const totalSpent = Math.max(0, (ledger ?? []).filter(row => row.kind === "order").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0) - (ledger ?? []).filter(row => row.kind === "refund").reduce((sum, row) => sum + Math.abs(Number(row.amount || 0)), 0));
+    return json({ ok: true, balance, totalSpent, reward: rewardForSpending(totalSpent), totalOrders: (orders ?? []).length, deposits: deposits ?? [], orders: orders ?? [] });
   }
 
   if (action === "approve_wallet_deposit" || action === "reject_wallet_deposit") {
@@ -302,9 +324,13 @@ async function handleJson(request: Request) {
     const service = socialServices[serviceId];
     if (isAiSubscription && Number(input.quantity) !== 1) return json({ ok: false, message: "خدمة اشتراك AI لها تكلفة ثابتة 250 جنيه." }, 400);
     if (!service || !Number.isInteger(quantity) || quantity < service.min || quantity > service.max || !matchesServicePlatform(targetUrl, service) || (isCustomComments && commentLines.length !== quantity)) return json({ ok: false, message: `تحقق من الخدمة والكمية. الرابط لازم يكون رابط ${service?.platform || "المنصة"} صحيح ومناسب للخدمة.` }, 400);
-    const amount = Math.round(quantity * service.rate * 100) / 100;
+    const baseAmount = Math.round(quantity * service.rate * 100) / 100;
+    const spendingBeforeOrder = await customerSpending(customerId);
+    const reward = rewardForSpending(spendingBeforeOrder);
+    const discountAmount = Math.round(baseAmount * (reward.current.discount / 100) * 100) / 100;
+    const amount = Math.max(0, Math.round((baseAmount - discountAmount) * 100) / 100);
     const balance = await walletBalance(customerId);
-    if (balance < amount) return json({ ok: false, message: `رصيدك الحالي ${balance.toFixed(2)} EGP، والمطلوب ${amount.toFixed(2)} EGP.` }, 400);
+    if (balance < amount) return json({ ok: false, message: `رصيدك الحالي ${balance.toFixed(2)} EGP، والمطلوب ${amount.toFixed(2)} EGP بعد خصم ${reward.current.discount}%.` }, 400);
     const secret = randomToken();
     const approvalTokenHash = await sha256(secret);
     const { data: order, error: orderError } = await admin.from("social_growth_orders").insert({ customer_profile_id: customerId, service_id: serviceId, service_name: service.name, quantity, target_url: targetUrl, amount, custom_comments: isCustomComments ? commentLines.join("\n") : null, approval_token_hash: approvalTokenHash }).select("id").single();
@@ -317,8 +343,8 @@ async function handleJson(request: Request) {
     const partialUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?partial_order=${token}`;
     const completeUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?complete_order=${token}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject_order=${token}`;
-    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", orderDisplayCode(order.id)], ["المعرف الداخلي", order.id], ["كود الخدمة", String(serviceId).padStart(4, "0")], ["الخدمة", service.name], ["الكمية", String(quantity)], ["سعر الوحدة", `${service.rate.toFixed(3)} EGP`], ["معادلة الحساب", `${quantity} × ${service.rate.toFixed(3)} = ${amount.toFixed(2)} EGP`], ["الرابط", targetUrl], ["التعليقات", isCustomComments ? `${commentLines.length} تعليق — كل سطر تعليق واحد\n${commentLines.join("\n")}` : "غير مطبق"], ["القيمة النهائية", `${amount.toFixed(2)} EGP`], ["قرار الإدارة", `${approvalUrl} | ${processUrl} | ${partialUrl} | ${completeUrl} | ${rejectUrl}`]]);
-    return json({ ok: true, message: "تم استلام الطلب وخصم قيمته. جاري انتظار مراجعة الإدارة." });
+    await notifyOwner("طلب خدمة نمو سوشيال جديد — اختار الإجراء المناسب", [["معرف الطلب", orderDisplayCode(order.id)], ["المعرف الداخلي", order.id], ["كود الخدمة", String(serviceId).padStart(4, "0")], ["الخدمة", service.name], ["الكمية", String(quantity)], ["سعر الوحدة", `${service.rate.toFixed(3)} EGP`], ["المستوى والخصم", `${reward.current.name} — خصم ${reward.current.discount}%`], ["السعر قبل الخصم", `${baseAmount.toFixed(2)} EGP`], ["قيمة الخصم", `${discountAmount.toFixed(2)} EGP`], ["القيمة النهائية", `${amount.toFixed(2)} EGP`], ["الرابط", targetUrl], ["التعليقات", isCustomComments ? `${commentLines.length} تعليق — كل سطر تعليق واحد\n${commentLines.join("\n")}` : "غير مطبق"], ["قرار الإدارة", `${approvalUrl} | ${processUrl} | ${partialUrl} | ${completeUrl} | ${rejectUrl}`]]);
+    return json({ ok: true, message: `تم استلام الطلب وخصم قيمته بعد خصم ${reward.current.discount}% من مكافأتك. جاري انتظار مراجعة الإدارة.` });
   }
 
   if (action === "order_assistance") {

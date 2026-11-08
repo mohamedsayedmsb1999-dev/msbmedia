@@ -23,10 +23,17 @@
     function orderDisplayCode(orderId){const hex=String(orderId||'').replace(/-/g,'').replace(/[^0-9a-f]/gi,'');if(!hex)return '';try{return String(100000n+(BigInt('0x'+(hex||'0'))%900000n));}catch{return String(Math.abs([...String(orderId||'')].reduce((a,c)=>(a*31+c.charCodeAt(0))%900000,0)+100000));}}
     function deriveMsbUsername(fullName, fallback=''){const clean=String(fullName||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return clean?`${clean}@msb`:String(fallback||'اسم المستخدم');}
     function applyUserData(user){const fullName=user.fullName||user.full_name||'حساب العميل';const normalized={fullName,username:user.username&&/@msb$/i.test(user.username)?user.username.toLowerCase():deriveMsbUsername(fullName,user.username||user.phone),phone:user.phone||'',email:user.email||''};currentUser=normalized;localStorage.setItem('msb_current_user',JSON.stringify(normalized));[['headerAccountName',normalized.fullName],['cardFullName',normalized.fullName],['cardUsername',normalized.username]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});}
+    const rewardTiers=[{name:'المستوى الأول',threshold:5000,discount:3},{name:'المستوى الثاني',threshold:10000,discount:5},{name:'المستوى الثالث',threshold:20000,discount:7},{name:'المستوى الرابع',threshold:35000,discount:10},{name:'VIP',threshold:50000,discount:15}];
+    let latestReward={current:{name:'بدون مستوى',threshold:0,discount:0},next:rewardTiers[0],spent:0,remaining:5000,progress:0};
+    function localRewardForSpending(spent){const value=Math.max(0,Number(spent)||0);let current={name:'بدون مستوى',threshold:0,discount:0};rewardTiers.forEach(t=>{if(value>=t.threshold)current=t;});const next=rewardTiers.find(t=>value<t.threshold)||null;return {current,next,spent:value,remaining:next?Math.max(0,next.threshold-value):0,progress:next?Math.round(Math.min(100,Math.max(0,((value-current.threshold)/(next.threshold-current.threshold))*100))):100};}
+    function renderRewardUI(reward){latestReward=reward&&reward.current?reward:localRewardForSpending(reward?.spent||0);const r=latestReward;const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};set('rewardLevelLabel',r.current.name);set('rewardProgressLabel',`${r.progress}%`);set('rewardSpentLabel',`${Number(r.spent||0).toLocaleString('en-US')} EGP`);set('rewardNextLabel',r.next?`باقي ${Number(r.remaining||0).toLocaleString('en-US')} EGP`:'أعلى مستوى');set('rewardModalSpent',`${Number(r.spent||0).toLocaleString('en-US')} EGP`);set('rewardModalCurrent',`${r.current.name}${r.current.discount?` — خصم ${r.current.discount}%`:''}`);set('rewardModalNext',r.next?`المتبقي للوصول إلى ${r.next.name}: ${Number(r.remaining||0).toLocaleString('en-US')} EGP`:'وصلت إلى أعلى مستوى VIP 🎉');const bar=document.getElementById('rewardProgressBar');if(bar)bar.style.width=`${r.progress}%`;}
+    function discountedOrderTotal(base){const discount=Number(latestReward?.current?.discount||0);return Math.max(0,Number(base||0)*(1-discount/100));}
+    function openRewardModal(){const r=latestReward;const body=document.getElementById('rewardLevelsBody');if(body)body.innerHTML=rewardTiers.map(t=>`<tr class="${r.current.name===t.name?'active':''}"><td>${t.name}${r.current.name===t.name?' ⭐':''}</td><td>${t.threshold.toLocaleString('en-US')} EGP</td><td>خصم ${t.discount}%</td></tr>`).join('');document.getElementById('rewardModal')?.classList.remove('hidden');}
+    function closeRewardModal(){document.getElementById('rewardModal')?.classList.add('hidden');}
     function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');lockAuthScreen();switchAuthView('login');}
     function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${orderDisplayCode(o.id)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${orderDisplayCode(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
     function renderDepositHistory(deposits=[]){const body=document.getElementById('depositHistoryTableBody');if(!body)return;if(!deposits.length){body.innerHTML='<tr><td colspan="8" class="p-5 text-center text-gray-500">لا توجد إيداعات مسجلة حتى الآن.</td></tr>';return;}const methods={vodafone_cash:'Vodafone Cash',etisalat_cash:'Etisalat Cash',instapay:'InstaPay',binance_pay:'Binance Pay'};const statuses={pending:['pending','معلق ⏳'],approved:['approved','مكتمل ✅'],rejected:['rejected','مرفوض ❌']};const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));body.innerHTML=deposits.map(d=>{const [statusClass,statusLabel]=statuses[d.status]||statuses.pending;const date=d.created_at?new Date(d.created_at).toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}):'—';const receipt=d.receipt_filename?`<span class="text-emerald-300" title="${safe(d.receipt_filename)}"><i class="fa-solid fa-check"></i> مرفوع</span>`:'—';return `<tr class="hover:bg-yellow-500/5"><td class="p-2.5 whitespace-nowrap text-gray-300">${date}</td><td class="p-2.5 font-mono text-yellow-400">${safe(String(d.id||'').slice(0,8).toUpperCase())}</td><td class="p-2.5 text-gray-300">${safe(methods[d.payment_method]||d.payment_method||'—')}</td><td class="p-2.5 font-black text-white">${Number(d.amount||0).toFixed(2)} <span class="text-[9px] text-gray-400">EGP</span></td><td class="p-2.5 text-gray-400">${Number(d.fee||0).toFixed(2)}</td><td class="p-2.5 font-black text-yellow-400">${Number(d.total_amount||0).toFixed(2)} <span class="text-[9px] text-gray-400">EGP</span></td><td class="p-2.5">${receipt}</td><td class="p-2.5"><span class="deposit-status ${statusClass}">${statusLabel}</span></td></tr>`;}).join('');}
-    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];window.latestDeposits=r.deposits||[];renderRealOrders(window.latestOrders);renderDepositHistory(window.latestDeposits);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
+    async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];window.latestDeposits=r.deposits||[];renderRealOrders(window.latestOrders);renderDepositHistory(window.latestDeposits);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);renderRewardUI(r.reward||localRewardForSpending(spent));document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
     async function handleDepositActionLink(){const params=new URLSearchParams(location.search);const entry=params.has('approve')?['approve','approve_wallet_deposit']:params.has('reject')?['reject','reject_wallet_deposit']:null;if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث الإيداع بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
     async function handleOrderActionLink(){const params=new URLSearchParams(location.search);const actions={approve_order:'approve_order',process_order:'process_order',partial_order:'partial_order',complete_order:'complete_order',reject_order:'reject_order'};const entry=Object.entries(actions).find(([key])=>params.has(key));if(!entry)return;const [key,action]=entry;const token=params.get(key);if(!token)return;try{const result=await apiJson({action,token});showToast(result.message||'تم تحديث حالة الطلب بنجاح ✅','success');history.replaceState({},'',location.pathname);}catch(error){showToast(error.message,'error');history.replaceState({},'',location.pathname);}}
 
@@ -93,6 +100,16 @@
     .deposit-status.pending { color: #fde68a; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.28); }
     .deposit-status.approved { color: #6ee7b7; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.28); }
     .deposit-status.rejected { color: #fca5a5; background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.28); }
+    .reward-level-card { background: linear-gradient(135deg, rgba(234,179,8,.15), rgba(19,27,46,.96) 58%); border: 1px solid rgba(234,179,8,.42); }
+    .reward-progress { height: 6px; background: rgba(15,23,42,.9); border-radius: 999px; overflow: hidden; }
+    .reward-progress > span { display: block; height: 100%; background: linear-gradient(90deg,#f59e0b,#fde047,#34d399); border-radius: inherit; transition: width .25s ease; }
+    .reward-modal-backdrop { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.78); backdrop-filter: blur(5px); }
+    .reward-modal { width: min(100%, 520px); max-height: min(88vh, 720px); overflow: auto; background: #111827; border: 1px solid rgba(234,179,8,.7); border-radius: 18px; box-shadow: 0 25px 80px rgba(0,0,0,.65), 0 0 30px rgba(234,179,8,.13); }
+    .reward-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    .reward-table th, .reward-table td { padding: 9px 7px; border-bottom: 1px solid rgba(148,163,184,.14); text-align: right; }
+    .reward-table th { color: #facc15; background: rgba(234,179,8,.08); font-weight: 900; }
+    .reward-table td { color: #e5e7eb; }
+    .reward-table tr.active td { color: #fde047; background: rgba(234,179,8,.09); font-weight: 900; }
     .service-brand-icon { width: 27px; height: 27px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 8px; background: rgba(255,255,255,.08); font-size: 15px; }
     @keyframes msbDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -277,7 +294,7 @@
   <main class="max-w-7xl mx-auto px-3 pt-3 space-y-3.5">
 
     <!-- كروت إحصائيات المحفظة والحساب العلوية مع ضبط اسم المستخدم وزر النسخ -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
 
       <!-- الكارت 1: اسم الحساب واسم المستخدم مع علامة النسخ -->
       <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
@@ -331,6 +348,33 @@
         <button onclick="navigateSection('deposit')" class="mt-2 w-full py-1 bg-yellow-500 hover:bg-yellow-400 active:scale-95 transition-all text-black text-center text-[10px] font-black rounded-lg">
           إضافة رصيد +
         </button>
+      </div>
+
+      <div class="reward-level-card p-2.5 rounded-xl flex flex-col justify-between" id="rewardLevelCard">
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="text-[10px] text-yellow-200/80 flex items-center gap-1"><i class="fa-solid fa-gift"></i> هدايا المستويات</div>
+            <div id="rewardLevelLabel" class="text-xs font-black text-white mt-1">بدون مستوى</div>
+            <div class="text-[9px] text-gray-300 mt-1">تقدمك: <span id="rewardProgressLabel">0%</span></div>
+          </div>
+          <button type="button" onclick="openRewardModal()" class="shrink-0 px-2.5 py-1 rounded-md bg-yellow-500 hover:bg-yellow-400 text-black text-[10px] font-black">عرض</button>
+        </div>
+        <div class="reward-progress mt-2"><span id="rewardProgressBar" style="width:0%"></span></div>
+        <div class="flex justify-between gap-2 mt-1.5 text-[8px] text-gray-300"><span id="rewardSpentLabel">0 EGP</span><span id="rewardNextLabel">ابدأ من 5,000 EGP</span></div>
+      </div>
+    </div>
+
+    <div id="rewardModal" class="reward-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="rewardModalTitle" onclick="if(event.target===this)closeRewardModal()">
+      <div class="reward-modal" dir="rtl">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between gap-3">
+          <div><h2 id="rewardModalTitle" class="text-sm font-black text-yellow-400"><i class="fa-solid fa-gift"></i> نظام هدايا المستويات</h2><p class="text-[10px] text-gray-400 mt-1">المكافآت تُحسب من إجمالي إنفاقك الفعلي على الطلبات.</p></div>
+          <button type="button" onclick="closeRewardModal()" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-red-600/30 text-gray-300" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="bg-[#0b0f19] border border-gray-800 rounded-xl p-3 text-xs"><div class="flex items-center justify-between gap-2"><span class="text-gray-400">إجمالي إنفاقك</span><strong id="rewardModalSpent" class="text-yellow-400">0.00 EGP</strong></div><div class="flex items-center justify-between gap-2 mt-2"><span class="text-gray-400">مستواك الحالي</span><strong id="rewardModalCurrent" class="text-white">بدون مستوى</strong></div><div id="rewardModalNext" class="text-[10px] text-emerald-300 mt-2"></div></div>
+          <div class="overflow-x-auto rounded-xl border border-gray-800"><table class="reward-table"><thead><tr><th>المستوى</th><th>الإنفاق المطلوب</th><th>المكافأة</th></tr></thead><tbody id="rewardLevelsBody"></tbody></table></div>
+          <p class="text-[10px] text-gray-500 leading-relaxed">كلما زاد إنفاقك على الطلبات، تنتقل للمستوى التالي تلقائيًا. الخصم يُحسب على الطلبات الجديدة بعد الوصول للمستوى.</p>
+        </div>
       </div>
     </div>
 
@@ -1063,7 +1107,7 @@
     }
 
     function normalizeCommentLines(){const input=document.getElementById('commentsTxt');if(!input)return [];return input.value.replace(/\r\n?/g,'\n').split('\n').map(line=>line.trim()).filter(Boolean);}
-    function countCommentsLinesLive(){const lines=normalizeCommentLines();const notice=document.getElementById('linesCountNotice');if(notice)notice.textContent=`عدد التعليقات: ${lines.length} تعليق — كل سطر تعليق مستقل`;const service=servicesList.find(s=>s.code===document.getElementById('mainServicesDropdown').value);if(!service)return;document.getElementById('finalQtyLabel').textContent=`${lines.length} تعليق`;document.getElementById('finalCostLabel').textContent=((lines.length/1000)*service.price).toFixed(2);}
+    function countCommentsLinesLive(){const lines=normalizeCommentLines();const notice=document.getElementById('linesCountNotice');if(notice)notice.textContent=`عدد التعليقات: ${lines.length} تعليق — كل سطر تعليق مستقل`;const service=servicesList.find(s=>s.code===document.getElementById('mainServicesDropdown').value);if(!service)return;document.getElementById('finalQtyLabel').textContent=`${lines.length} تعليق`;document.getElementById('finalCostLabel').textContent=discountedOrderTotal((lines.length/1000)*service.price).toFixed(2);}
 
     function recalculateOrderCost() {
       const code = document.getElementById('mainServicesDropdown').value;
@@ -1078,7 +1122,7 @@
       const qty = parseFloat(document.getElementById('orderQtyInp')?.value) || 0;
       let total = (service.unit === 1) ? (qty * service.price) : ((qty / service.unit) * service.price);
       document.getElementById('finalQtyLabel').textContent = qty.toLocaleString('en-US');
-      document.getElementById('finalCostLabel').textContent = total.toFixed(2);
+      document.getElementById('finalCostLabel').textContent = discountedOrderTotal(total).toFixed(2);
     }
 
     function populateServicesTables() {
