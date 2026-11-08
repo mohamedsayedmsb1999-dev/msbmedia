@@ -815,6 +815,13 @@
       </div>
       <button onclick="toggleAiSupportChat()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
     </div>
+    <!-- أزرار الإجراء السريع ثابتة أعلى نافذة الأداة ولا تتحرك مع الرسائل -->
+    <div class="ai-action-bar grid grid-cols-4 gap-1 px-3">
+      <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
+      <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
+      <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
+      <button onclick="triggerAiAction('اكتمال وهمى')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
+    </div>
 
     <div class="p-3 bg-[#0b0f19] space-y-2 flex-1 min-h-0 overflow-y-auto" id="aiChatBody">
       <div class="bg-gray-800/80 p-2.5 rounded-xl text-gray-200">
@@ -822,13 +829,6 @@
         <p class="text-[11px] leading-relaxed">أنا نظام الذكاء الاصطناعي لاستلام طلبات الدعم، التعويض، وتسريع الأوردرات ومعالجتها تلقائياً.</p>
       </div>
 
-    </div>
-    <!-- أزرار الإجراء السريع ثابتة أسفل نافذة الأداة ولا تتحرك مع الرسائل -->
-    <div class="ai-action-bar grid grid-cols-4 gap-1 px-3">
-      <button onclick="triggerAiAction('تسريع')" class="bg-blue-600/30 text-blue-400 border border-blue-500/30 py-1 rounded text-[10px] font-bold">⚡ تسريع</button>
-      <button onclick="triggerAiAction('تعويض')" class="bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 py-1 rounded text-[10px] font-bold">♻️ تعويض</button>
-      <button onclick="triggerAiAction('إلغاء')" class="bg-rose-600/30 text-rose-400 border border-rose-500/30 py-1 rounded text-[10px] font-bold">❌ إلغاء</button>
-      <button onclick="triggerAiAction('اكتمال وهمى')" class="bg-amber-600/30 text-amber-400 border border-amber-500/30 py-1 rounded text-[10px] font-bold">⚠️ وهمي</button>
     </div>
     <!-- حقل الإدخال -->
     <div class="p-2.5 bg-[#111827] border-t border-gray-800 flex gap-1.5">
