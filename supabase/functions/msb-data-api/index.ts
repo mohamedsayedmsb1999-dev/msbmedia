@@ -154,7 +154,21 @@ function isSafePaymentMethod(value: string) {
   return ["vodafone_cash", "etisalat_cash", "binance_pay", "instapay"].includes(value);
 }
 
+async function reconcileApprovedDeposits(customerId: string) {
+  const { data: deposits, error: depositsError } = await admin.from("wallet_deposits").select("id, amount").eq("customer_profile_id", customerId).eq("status", "approved").limit(1000);
+  if (depositsError) throw depositsError;
+  if (!deposits?.length) return;
+  const { data: ledgerRows, error: ledgerError } = await admin.from("wallet_ledger").select("reference_id").eq("customer_profile_id", customerId).eq("kind", "deposit").limit(1000);
+  if (ledgerError) throw ledgerError;
+  const existing = new Set((ledgerRows ?? []).map(row => String(row.reference_id)));
+  const missing = deposits.filter(deposit => !existing.has(String(deposit.id))).map(deposit => ({ customer_profile_id: customerId, amount: Number(deposit.amount), kind: "deposit", reference_id: deposit.id, description: "اعتماد إيداع من إدارة MSB Media" }));
+  if (!missing.length) return;
+  const { error: insertError } = await admin.from("wallet_ledger").upsert(missing, { onConflict: "kind,reference_id", ignoreDuplicates: true });
+  if (insertError) throw insertError;
+}
+
 async function walletBalance(customerId: string) {
+  await reconcileApprovedDeposits(customerId);
   const { data, error } = await admin.from("wallet_ledger").select("amount").eq("customer_profile_id", customerId).limit(1000);
   if (error) throw error;
   return (data ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
@@ -269,15 +283,20 @@ async function handleJson(request: Request) {
     const { data: deposit, error: depositError } = await admin.from("wallet_deposits").select("id, customer_profile_id, amount, status, approval_token_hash").eq("id", depositId).maybeSingle();
     if (depositError) throw depositError;
     if (!deposit || deposit.approval_token_hash !== tokenHash) return json({ ok: false, message: "رابط القرار غير صالح أو منتهي." }, 403);
-    if (deposit.status !== "pending") return json({ ok: true, message: deposit.status === "approved" ? "تم اعتماد الإيداع سابقًا." : "تم رفض الإيداع سابقًا." });
     const isApprove = action === "approve_wallet_deposit";
-    const { error: updateError } = await admin.from("wallet_deposits").update({ status: isApprove ? "approved" : "rejected", approved_at: isApprove ? new Date().toISOString() : null }).eq("id", deposit.id).eq("status", "pending");
-    if (updateError) throw updateError;
     if (isApprove) {
-      const { error: ledgerError } = await admin.from("wallet_ledger").insert({ customer_profile_id: deposit.customer_profile_id, amount: deposit.amount, kind: "deposit", reference_id: deposit.id, description: "اعتماد إيداع من إدارة MSB Media" });
-      if (ledgerError && !ledgerError.message.includes("duplicate")) throw ledgerError;
+      const { error: ledgerError } = await admin.from("wallet_ledger").upsert({ customer_profile_id: deposit.customer_profile_id, amount: deposit.amount, kind: "deposit", reference_id: deposit.id, description: "اعتماد إيداع من إدارة MSB Media" }, { onConflict: "kind,reference_id", ignoreDuplicates: true });
+      if (ledgerError) throw ledgerError;
+      if (deposit.status === "pending") {
+        const { error: updateError } = await admin.from("wallet_deposits").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", deposit.id).eq("status", "pending");
+        if (updateError) throw updateError;
+      }
+      return json({ ok: true, message: deposit.status === "approved" ? "تمت مطابقة الإيداع وإضافة الرصيد ✅" : "تم قبول الإيداع وإضافة الرصيد للعميل ✅" });
     }
-    return json({ ok: true, message: isApprove ? "تم قبول الدفع وإضافة الرصيد للعميل ✅" : "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
+    if (deposit.status !== "pending") return json({ ok: true, message: deposit.status === "rejected" ? "تم رفض الإيداع سابقًا." : "الإيداع مقبول بالفعل ولا يمكن رفضه." });
+    const { error: updateError } = await admin.from("wallet_deposits").update({ status: "rejected", approved_at: null }).eq("id", deposit.id).eq("status", "pending");
+    if (updateError) throw updateError;
+    return json({ ok: true, message: "تم رفض الدفع ولن يتم إضافة الرصيد للعميل ❌" });
   }
 
   if (["approve_order", "process_order", "partial_order", "complete_order", "reject_order"].includes(action)) {
@@ -530,7 +549,7 @@ async function handleReceipt(request: Request) {
   if (uploadError) throw uploadError;
   if (action === "wallet_deposit") {
     if (!Number.isFinite(depositAmount) || depositAmount < 50 || depositAmount > 1000000) return json({ ok: false, message: "الحد الأدنى لشحن الرصيد 50 EGP." }, 400);
-    const feeRate = method === "binance_pay" ? 0.005 : 0.01;
+    const feeRate = 0.005;
     const fee = Math.round(depositAmount * feeRate * 100) / 100;
     const totalAmount = Math.round((depositAmount + fee) * 100) / 100;
     const secret = randomToken();
@@ -542,7 +561,7 @@ async function handleReceipt(request: Request) {
     const approvalUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?approve=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const rejectUrl = `${PUBLIC_SITE_URL}/social-growth-media.html?reject=${encodeURIComponent(`${deposit.id}.${secret}`)}`;
     const { data: signedReceipt } = await admin.storage.from("payment-receipts").createSignedUrl(storagePath, 60 * 60 * 24 * 7);
-    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], [`رسوم التعبئة (${method === "binance_pay" ? "0.5%" : "1%"})`, `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
+    const sent = await notifyOwner("طلب شحن رصيد جديد — اختار قبول أو رفض", [["معرف الإيداع", deposit.id], ["الاسم", customerName], ["الهاتف", phone], ["بريد الحساب", customerProfile?.email || "غير مضاف"], ["طريقة الدفع", method === "binance_pay" ? "Binance Pay" : method === "instapay" ? "InstaPay" : method === "etisalat_cash" ? "اتصالات Cash" : "Vodafone Cash"], ["الخدمة المطلوبة", service?.name || "شحن رصيد فقط"], ["الكمية المطلوبة", service && Number.isInteger(requestedQuantity) ? requestedQuantity.toLocaleString("en-US") : "غير مضافة"], ["رابط المنشور أو الصفحة", isWebsiteUrl(targetUrl) ? targetUrl : "غير مضاف"], ["الرصيد المطلوب إضافته", `${depositAmount.toFixed(2)} EGP`], ["قيمة Binance بالدولار", method === "binance_pay" ? `${binanceUsdAmount.toFixed(2)} USD` : "غير مطبق"], [`رسوم التعبئة (0.5%)`, `${fee.toFixed(2)} EGP`], ["الإجمالي المطلوب تحويله", `${totalAmount.toFixed(2)} EGP`], ["الإيصال", signedReceipt?.signedUrl || "تعذر إنشاء رابط الإيصال"], ["قرار الإيداع", `${approvalUrl} | ${rejectUrl}`]]);
     return json({ ok: true, notificationSent: sent, message: "تم حفظ الإيصال وإرسال طلب الاعتماد للإدارة." });
   }
   const { error: insertError } = await admin.from("payment_receipts").insert({ customer_profile_id: customerId, customer_name: customerName, phone, payment_method: method, binance_phone: binancePhone || null, payment_identifier: paymentIdentifier || null, storage_path: storagePath, original_filename: safeName, mime_type: file.type, size_bytes: file.size, whatsapp_shared_at: new Date().toISOString() });
