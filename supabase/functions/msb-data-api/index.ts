@@ -357,9 +357,18 @@ async function handleJson(request: Request) {
     if (ownedOrdersError) throw ownedOrdersError;
     const ownedOrder = (ownedOrders ?? []).find((item) => orderDisplayCode(item.id) === orderId);
     if (!ownedOrder) return json({ ok: false, message: "رقم الطلب غير موجود داخل حسابك. استخدم رقمًا من صفحة الطلبات." }, 404);
-    if (ownedOrder.status === "rejected") return json({ ok: false, message: "لا يمكن إرسال طلب متابعة لطلب ملغى." }, 400);
-    if (ownedOrder.status !== "completed" && requestType !== "إلغاء") {
-      return json({ ok: false, message: "⚠️ الطلب لم يكتمل بعد. المسموح حاليًا هو زر الإلغاء فقط." }, 400);
+    const allowedActionsByStatus: Record<string, string[]> = {
+      manual_review: ["إلغاء", "متابعة الطلب"],
+      processing: ["تسريع", "إلغاء", "متابعة الطلب"],
+      in_progress: ["تسريع", "إلغاء", "متابعة الطلب"],
+      partial: ["تعويض", "إلغاء", "متابعة الطلب"],
+      completed: ["تعويض", "اكتمال وهمى", "متابعة الطلب"],
+      rejected: [],
+    };
+    const allowedActions = allowedActionsByStatus[ownedOrder.status] ?? [];
+    if (!allowedActions.includes(requestType)) {
+      const statusLabels: Record<string, string> = { manual_review: "قيد الانتظار", processing: "قيد المعالجة", in_progress: "قيد التنفيذ", partial: "جزئي", completed: "مكتمل", rejected: "ملغي" };
+      return json({ ok: false, message: `⚠️ لا يمكن تنفيذ «${requestType}» لأن الطلب حالته ${statusLabels[ownedOrder.status] || "غير معروفة"}. اختر إجراءً مناسبًا للحالة.` }, 400);
     }
 
     // طلب التعويض لنفس رقم الطلب مسموح مرة واحدة فقط كل 6 ساعات.
