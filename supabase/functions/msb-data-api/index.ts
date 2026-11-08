@@ -358,6 +358,38 @@ async function handleJson(request: Request) {
     const ownedOrder = (ownedOrders ?? []).find((item) => orderDisplayCode(item.id) === orderId);
     if (!ownedOrder) return json({ ok: false, message: "رقم الطلب غير موجود داخل حسابك. استخدم رقمًا من صفحة الطلبات." }, 404);
     if (ownedOrder.status === "rejected") return json({ ok: false, message: "لا يمكن إرسال طلب متابعة لطلب ملغى." }, 400);
+
+    // طلب التعويض لنفس رقم الطلب مسموح مرة واحدة فقط كل 6 ساعات.
+    // التحقق هنا على السيرفر حتى لا يمكن تجاوزه بإعادة تحميل الصفحة أو استدعاء الـAPI مباشرة.
+    if (requestType === "تعويض") {
+      const cooldownMs = 6 * 60 * 60 * 1000;
+      const { data: lastCompensation, error: compensationLookupError } = await admin
+        .from("order_assistance_requests")
+        .select("created_at")
+        .eq("customer_profile_id", customerId)
+        .eq("order_id_text", ownedOrder.id)
+        .eq("request_type", "تعويض")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (compensationLookupError) throw compensationLookupError;
+      if (lastCompensation?.created_at) {
+        const elapsedMs = Date.now() - new Date(lastCompensation.created_at).getTime();
+        const remainingMs = cooldownMs - elapsedMs;
+        if (remainingMs > 0) {
+          const totalMinutes = Math.ceil(remainingMs / 60000);
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          const remainingText = hours > 0 && minutes > 0
+            ? `${hours} ساعات و${minutes} دقيقة`
+            : hours > 0
+              ? `${hours} ساعات`
+              : `${minutes} دقيقة`;
+          return json({ ok: false, cooldown: true, message: `⚠️ تم استلام طلبك\nلـ تعويض ${orderId} مسبقا\nالمحاولة بعد ${remainingText}` }, 429);
+        }
+      }
+    }
+
     const { data: customer } = await admin.from("customer_profiles").select("full_name, phone, email").eq("id", customerId).maybeSingle();
     const { error } = await admin.from("order_assistance_requests").insert({ customer_profile_id: customerId, order_id_text: ownedOrder.id, request_type: requestType });
     if (error) throw error;
