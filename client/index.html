@@ -19,8 +19,8 @@
     function showToast(message, type='info'){document.querySelectorAll('.msb-toast').forEach(el=>el.remove());const box=document.createElement('div');box.className=`msb-toast ${type}`;box.setAttribute('role','status');box.textContent=String(message||'');document.body.appendChild(box);window.setTimeout(()=>box.remove(),6000);}
     function updateAuthNav(){const loggedIn=Boolean(customerToken&&currentUser);document.getElementById('authLoginNav')?.classList.toggle('hidden',loggedIn);document.getElementById('authLogoutNav')?.classList.toggle('hidden',!loggedIn);document.getElementById('authAiFab')?.classList.toggle('hidden',!loggedIn);if(!loggedIn)document.getElementById('aiSupportWindow')?.classList.add('hidden');document.getElementById('headerAccountName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):'مرحبًا بك في MSB MEDIA'));document.getElementById('cardFullName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):'زائر الموقع'));document.getElementById('cardUsername')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.username||'اسم المستخدم'):'سجّل للدخول'));}
     function openAuthLogin(){setSideMenuOpen(false);switchAuthView('login');lockAuthScreen();}
-    function lockAuthScreen(){document.body.classList.add('auth-locked');document.getElementById('authModal')?.classList.remove('hidden');updateAuthNav();}
-    function unlockAuthScreen(){document.body.classList.remove('auth-locked');document.getElementById('authModal')?.classList.add('hidden');updateAuthNav();}
+    function lockAuthScreen(){document.documentElement.classList.remove('msb-public-visitor');document.body.classList.add('auth-locked');document.getElementById('authModal')?.classList.remove('hidden');updateAuthNav();}
+    function unlockAuthScreen(){document.documentElement.classList.toggle('msb-public-visitor',!(customerToken&&currentUser));document.body.classList.remove('auth-locked');document.getElementById('authModal')?.classList.add('hidden');updateAuthNav();}
     function requireAuth(){if(!customerToken||!currentUser){showToast('سجّل الدخول أو أنشئ حسابًا أولاً 🔐','info');lockAuthScreen();return false;}return true;}
     function orderDisplayCode(orderId){const hex=String(orderId||'').replace(/-/g,'').replace(/[^0-9a-f]/gi,'');if(!hex)return '';try{return String(100000n+(BigInt('0x'+(hex||'0'))%900000n));}catch{return String(Math.abs([...String(orderId||'')].reduce((a,c)=>(a*31+c.charCodeAt(0))%900000,0)+100000));}}
     function deriveMsbUsername(fullName, fallback=''){const clean=String(fullName||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return clean?`${clean}@msb`:String(fallback||'اسم المستخدم');}
@@ -60,7 +60,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
     html, body { max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; scroll-behavior: auto !important; }
     body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #fff; overflow-y: auto; touch-action: pan-y; }
-    html.msb-session-known #authModal { display: none !important; }
+    html.msb-session-known #authModal, html.msb-public-visitor #authModal { display: none !important; }
+    html.msb-public-visitor body.auth-locked > nav,
+    html.msb-public-visitor body.auth-locked > main,
+    html.msb-public-visitor body.auth-locked > .fixed { visibility: visible; pointer-events: auto; }
     html.msb-session-known body.auth-locked > nav,
     html.msb-session-known body.auth-locked > main,
     html.msb-session-known body.auth-locked > .fixed { visibility: visible; pointer-events: auto; }
@@ -146,7 +149,7 @@
 
     body,.selectable-text,input,textarea,select,option{user-select:text;-webkit-user-select:text}
   </style>
-  <script>try{if(localStorage.getItem('msb_customer_token')&&localStorage.getItem('msb_current_user'))document.documentElement.classList.add('msb-session-known')}catch(e){}</script>
+  <script>try{const known=Boolean(localStorage.getItem('msb_customer_token')&&localStorage.getItem('msb_current_user'));document.documentElement.classList.add(known?'msb-session-known':'msb-public-visitor')}catch(e){document.documentElement.classList.add('msb-public-visitor')}</script>
 </head>
 <body class="pb-24 auth-locked">
 
@@ -958,7 +961,7 @@
     function toggleAiSupportChat() {
       document.getElementById('aiSupportWindow').classList.toggle('hidden');
       if (document.getElementById('aiChatBody').children.length <= 2) {
-        setTimeout(() => appendAiMessage('مساعد MSB نشط الآن ✅\nاختار تعويض أو تسريع، ثم اكتب رقم طلب موجود عندك في صفحة الطلبات. سيتم إرسال الطلب للإدارة على Gmail فورًا.\nللدعم العاجل: واتساب 01092794169', 'ai'), 180);
+        setTimeout(() => appendAiMessage('مساعد MSB نشط الآن ✅\nاختار تعويض أو تسريع، ثم اكتب رقم طلب موجود عندك في صفحة الطلبات. سيتم إرسال الطلب للإدارة على Gmail فورًا.\nللدعم العاجل: [[WHATSAPP]]', 'ai'), 180);
       }
     }
 
@@ -1002,7 +1005,7 @@
       try {
         appendAiMessage('⏳ جاري مراجعة الطلب وإرسال طلبك للإدارة...', 'ai');
         const result = await apiJson({action:'order_assistance', requestType, orderId:orderText});
-        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${orderText}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: واتساب 01092794169`, 'ai');
+        appendAiMessage(`${result.message || 'تم استلام طلبك بنجاح ✅'}\nرقم الطلب: #${orderText}\nاسم المستخدم: ${verifiedClientUsername}\nللدعم: [[WHATSAPP]]`, 'ai');
         aiPendingAction = '';
       } catch (error) { appendAiMessage(`⚠️ ${error.message || 'تعذر إرسال الطلب الآن. حاول مرة أخرى.'}`, 'ai'); }
     }
@@ -1013,7 +1016,21 @@
       div.className = sender === 'user'
         ? 'bg-gray-800 p-2.5 rounded-xl text-gray-200 text-right whitespace-pre-line'
         : 'bg-blue-950/70 border border-blue-900/50 p-2.5 rounded-xl text-blue-200 text-right whitespace-pre-line';
-      div.textContent = text;
+      const parts = String(text || '').split('[[WHATSAPP]]');
+      parts.forEach((part, index) => {
+        if (part) div.appendChild(document.createTextNode(part));
+        if (index < parts.length - 1) {
+          const wa = document.createElement('a');
+          wa.href = 'https://wa.me/201092794169';
+          wa.target = '_blank';
+          wa.rel = 'noopener noreferrer';
+          wa.title = 'تواصل عبر واتساب';
+          wa.setAttribute('aria-label', 'تواصل عبر واتساب');
+          wa.className = 'inline-flex align-middle items-center justify-center w-5 h-5 mx-1 rounded-full bg-emerald-500 text-white text-[11px] no-underline';
+          wa.innerHTML = '<i class="fa-brands fa-whatsapp"></i>';
+          div.appendChild(wa);
+        }
+      });
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
     }
