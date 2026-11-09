@@ -17,8 +17,10 @@
     async function apiJson(payload, options={}) { const response=await fetch(API_URL,{method:'POST',headers:{...(options.form?{}:{'Content-Type':'application/json'}),...(customerToken?{'x-msb-customer-token':customerToken}:{})},body:options.form?payload:JSON.stringify(payload)}); const result=await response.json().catch(()=>({ok:false,message:'تعذر قراءة رد الخادم.'})); if(!response.ok||!result.ok) throw new Error(result.message||'تعذر تنفيذ العملية.'); return result; }
     function normalizedEgyptPhone(value){const raw=String(value||'').replace(/[^0-9+]/g,'');if(raw.startsWith('+20'))return '0'+raw.slice(3);if(raw.startsWith('20')&&raw.length===12)return '0'+raw.slice(2);return raw;}
     function showToast(message, type='info'){document.querySelectorAll('.msb-toast').forEach(el=>el.remove());const box=document.createElement('div');box.className=`msb-toast ${type}`;box.setAttribute('role','status');box.textContent=String(message||'');document.body.appendChild(box);window.setTimeout(()=>box.remove(),6000);}
-    function lockAuthScreen(){document.body.classList.add('auth-locked');document.getElementById('authModal')?.classList.remove('hidden');}
-    function unlockAuthScreen(){document.body.classList.remove('auth-locked');document.getElementById('authModal')?.classList.add('hidden');}
+    function updateAuthNav(){const loggedIn=Boolean(customerToken&&currentUser);document.getElementById('authLoginNav')?.classList.toggle('hidden',loggedIn);document.getElementById('authLogoutNav')?.classList.toggle('hidden',!loggedIn);}
+    function openAuthLogin(){setSideMenuOpen(false);switchAuthView('login');lockAuthScreen();}
+    function lockAuthScreen(){document.body.classList.add('auth-locked');document.getElementById('authModal')?.classList.remove('hidden');updateAuthNav();}
+    function unlockAuthScreen(){document.body.classList.remove('auth-locked');document.getElementById('authModal')?.classList.add('hidden');updateAuthNav();}
     function requireAuth(){if(!customerToken||!currentUser){showToast('سجّل الدخول أو أنشئ حسابًا أولاً 🔐','info');lockAuthScreen();return false;}return true;}
     function orderDisplayCode(orderId){const hex=String(orderId||'').replace(/-/g,'').replace(/[^0-9a-f]/gi,'');if(!hex)return '';try{return String(100000n+(BigInt('0x'+(hex||'0'))%900000n));}catch{return String(Math.abs([...String(orderId||'')].reduce((a,c)=>(a*31+c.charCodeAt(0))%900000,0)+100000));}}
     function deriveMsbUsername(fullName, fallback=''){const clean=String(fullName||'').toLowerCase().replace(/[^a-z0-9]+/g,'');return clean?`${clean}@msb`:String(fallback||'اسم المستخدم');}
@@ -30,7 +32,7 @@
     function discountedOrderTotal(base){const discount=Number(latestReward?.current?.discount||0);return Math.max(0,Number(base||0)*(1-discount/100));}
     function openRewardModal(){const r=latestReward;const body=document.getElementById('rewardLevelsBody');if(body)body.innerHTML=rewardTiers.map(t=>`<tr class="${r.current.name===t.name?'active':''}"><td>${t.name}${r.current.name===t.name?' ⭐':''}</td><td>${t.threshold.toLocaleString('en-US')} EGP</td><td>خصم ${t.discount}%</td></tr>`).join('');document.getElementById('rewardModal')?.classList.remove('hidden');}
     function closeRewardModal(){document.getElementById('rewardModal')?.classList.add('hidden');}
-    function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');lockAuthScreen();switchAuthView('login');}
+    function logoutUser(){customerToken='';currentUser=null;localStorage.removeItem(CUSTOMER_TOKEN_KEY);localStorage.removeItem('msb_current_user');unlockAuthScreen();switchAuthView('login');navigateSection('new-order',{push:false});showToast('تم تسجيل الخروج بنجاح. يمكنك تصفح الموقع وتسجيل الدخول عند تنفيذ أي إجراء.','success');}
     function renderRealOrders(orders=[]){const body=document.getElementById('userOrdersTableBody');if(!body)return;if(!orders.length){body.innerHTML='<tr><td colspan="7" class="p-4 text-center text-gray-500">لا توجد طلبات حقيقية حتى الآن.</td></tr>';return;}const labels={manual_review:'قيد الانتظار ⏳',processing:'قيد المعالجة ⚙️',in_progress:'قيد التنفيذ 🔄',partial:'جزئي ◐',completed:'مكتمل ✅',rejected:'ملغى ❌'},progress={manual_review:0,processing:10,in_progress:50,partial:60,completed:100,rejected:0};body.innerHTML=orders.map(o=>{const pct=progress[o.status]??0;return `<tr><td class="p-2.5 font-mono text-yellow-400"><span>#${orderDisplayCode(o.id)}</span> <button type="button" title="نسخ معرف الطلب" onclick="copyData('${orderDisplayCode(o.id)}')" class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-800 text-gray-300 hover:text-yellow-400" aria-label="نسخ معرف الطلب"><i class="fa-regular fa-copy"></i></button></td><td class="p-2.5 font-mono text-gray-400">${String(o.service_id||'').padStart(4,'0')}</td><td class="p-2.5 font-bold text-white">${String(o.service_name||'').replace(/[&<>]/g,'')}</td><td class="p-2.5">${Number(o.quantity).toLocaleString('en-US')}</td><td class="p-2.5 font-black text-yellow-400">${Number(o.amount).toFixed(2)} EGP</td><td class="p-2.5 min-w-[120px]"><div class="flex items-center justify-between text-[9px] text-gray-400 mb-1"><span>${pct}%</span><span>تقدم التنفيذ</span></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-l from-yellow-400 to-emerald-400" style="width:${pct}%"></div></div></td><td class="p-2.5 text-center"><span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[10px]">${labels[o.status]||'قيد الانتظار ⏳'}</span></td></tr>`;}).join('');}
     function renderDepositHistory(deposits=[]){const body=document.getElementById('depositHistoryTableBody');if(!body)return;if(!deposits.length){body.innerHTML='<tr><td colspan="6" class="p-5 text-center text-gray-500">لا توجد إيداعات مسجلة حتى الآن.</td></tr>';return;}const methods={vodafone_cash:'Vodafone Cash',etisalat_cash:'Etisalat Cash',instapay:'InstaPay',binance_pay:'Binance Pay'};const statuses={pending:['pending','معلق ⏳'],approved:['approved','مكتمل ✅'],rejected:['rejected','مرفوض ❌']};const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));body.innerHTML=deposits.map(d=>{const [statusClass,statusLabel]=statuses[d.status]||statuses.pending;const date=d.created_at?new Date(d.created_at).toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}):'—';const receipt=d.receipt_filename?`<span class="text-emerald-300" title="${safe(d.receipt_filename)}"><i class="fa-solid fa-check"></i> مرفوع</span>`:'—';return `<tr class="hover:bg-yellow-500/5"><td class="p-2.5 whitespace-nowrap text-gray-300">${date}</td><td class="p-2.5 font-mono text-yellow-400">${safe(String(d.id||'').slice(0,8).toUpperCase())}</td><td class="p-2.5 text-gray-300">${safe(methods[d.payment_method]||d.payment_method||'—')}</td><td class="p-2.5 font-black text-white">${Number(d.amount||0).toFixed(2)} <span class="text-[9px] text-gray-400">EGP</span></td><td class="p-2.5">${receipt}</td><td class="p-2.5"><span class="deposit-status ${statusClass}">${statusLabel}</span></td></tr>`;}).join('');}
     async function loadRealSummary(){if(!customerToken)return;try{const r=await apiJson({action:'wallet_summary'});window.latestOrders=r.orders||[];window.latestDeposits=r.deposits||[];renderRealOrders(window.latestOrders);renderDepositHistory(window.latestDeposits);const balance=Number(r.balance||0),spent=Number(r.totalSpent||0),count=Number(r.totalOrders??window.latestOrders.length);renderRewardUI(r.reward||localRewardForSpending(spent));document.querySelectorAll('[data-real-balance]').forEach(e=>e.textContent=balance.toFixed(2)+' EGP');[['walletBalance',balance],['walletSpentLabel',spent],['ordersCounter',count]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=id==='walletSpentLabel'?Number(v).toFixed(2):Number(v).toLocaleString('en-US');});}catch(e){console.warn(e);}}
@@ -271,6 +273,9 @@
       <button onclick="toggleSideMenu()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
     </div>
     <nav class="space-y-1.5 text-xs font-bold">
+      <button id="authLoginNav" onclick="openAuthLogin()" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-yellow-400 hover:bg-gray-800 border border-yellow-500/20">
+        <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
+      </button>
       <button onclick="navigateSection('new-order'); toggleSideMenu();" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
         <i class="fa-solid fa-cart-shopping"></i> طلب جديد
       </button>
@@ -286,7 +291,7 @@
       <button onclick="navigateSection('tickets'); toggleSideMenu();" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-gray-300 hover:bg-gray-800">
         <i class="fa-solid fa-headset"></i> الدعم والتذاكر
       </button>
-      <button onclick="logoutUser()" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-red-400 hover:bg-gray-800 border-t border-gray-800 mt-4">
+      <button id="authLogoutNav" onclick="logoutUser()" class="hidden w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-red-400 hover:bg-gray-800 border-t border-gray-800 mt-4">
         <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
       </button>
     </nav>
@@ -1020,6 +1025,7 @@
     function sectionFromLocation(useStored=true){const hash=(location.hash||'').replace(/^#/, '').trim();return MSB_SECTIONS.includes(hash)?hash:(useStored?(localStorage.getItem('msb_active_section')||'new-order'):'new-order');}
     function navigateSection(sectionId, options={}) {
       if (!MSB_SECTIONS.includes(sectionId)) sectionId='new-order';
+      if (['deposit','orders-list','tickets'].includes(sectionId) && !requireAuth()) return;
       const shouldPush=options.push!==false && activeSectionId!==sectionId;
       const sections = MSB_SECTIONS;
       sections.forEach(s => {
@@ -1164,6 +1170,7 @@
     }
 
     function orderServiceDirect(code) {
+      if (!requireAuth()) return;
       navigateSection('new-order');
       document.getElementById('mainCatSelect').value = 'all';
       updateServicesBySelectedCat();
@@ -1245,7 +1252,7 @@
     }, 7000);
 
     // التحقق من الحساب المسجل مسبقاً عند الفتح
-    window.onload = async () => { updateServicesBySelectedCat();populateServicesTables(); await handleDepositActionLink(); await handleOrderActionLink(); const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);unlockAuthScreen();}else{lockAuthScreen();} const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
+    window.onload = async () => { updateServicesBySelectedCat();populateServicesTables(); await handleDepositActionLink(); await handleOrderActionLink(); const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);unlockAuthScreen();}else{currentUser=null;unlockAuthScreen();updateAuthNav();} const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
   </script>
 
 </body>
