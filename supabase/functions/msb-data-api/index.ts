@@ -68,7 +68,7 @@ const socialServices: Record<number, SocialService> = {
   305: { name: "Instagram Haha 😂", rate: 0.3, min: 50, max: 5000, platform: "instagram", delivery: "1–24 ساعة", guarantee: "حسب جودة الرابط" },
   307: { name: "كومنتات إنستجرام مخصصة ✍️", rate: 1.3, min: 30, max: 500000, platform: "instagram", delivery: "6–48 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   306: { name: "مشاهدات ريلز إنستجرام 👁️ 🔥", rate: 0.035, min: 1000, max: 1000000, platform: "instagram", delivery: "6–24 ساعة", guarantee: "ثابت" },
-  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 1.5, min: 100, max: 500000, platform: "youtube", delivery: "24–72 ساعة", guarantee: "30 يوم" },
+  401: { name: "مشتركون يوتيوب ▶️ 🔥", rate: 1.7, min: 100, max: 500000, platform: "youtube", delivery: "من 24 إلى 72 ساعة", guarantee: "ضمان 30 يوم ♻️ إعادة تعبئة عند النقص" },
   402: { name: "YouTube Like 👍", rate: 0.75, min: 100, max: 5000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   403: { name: "مشاهدات يوتيوب 👁️ 🚀", rate: 0.03, min: 1000, max: 1000000, platform: "youtube", delivery: "6–24 ساعة", guarantee: "ثابت" },
   501: { name: "اشتراك Gemini PRO / Veo 3 / Google Flow / Nano Banana — لمدة 18 شهر 🔥", rate: 250, min: 1, max: 100, platform: "phone", delivery: "24 ساعة", guarantee: "بدون إلغاء — مدة 18 شهر" },
