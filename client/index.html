@@ -437,10 +437,10 @@
             <div id="servicePicker" class="service-picker"><button type="button" id="servicePickerButton" class="service-picker-button" onclick="toggleServicePicker()"><span id="servicePickerButtonText">اختار الخدمة المطلوبة 👇</span><i class="fa-solid fa-chevron-down text-yellow-400"></i></button><div id="servicePickerMenu" class="service-picker-menu"></div></div>
           </div>
 
-          <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير سيرفرات SMM -->
+          <!-- تفاصيل وشروط الخدمة المعروضة وفق معايير الخدمة -->
           <div class="bg-[#0b0f19] border border-gray-800 p-3 rounded-xl text-[11px] space-y-1.5 text-gray-300">
             <div class="text-yellow-400 font-extrabold flex items-center justify-between border-b border-gray-800 pb-1.5">
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> تفاصيل الخدمة وقواعد السيرفر:</span>
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> تفاصيل الخدمة وقواعد الخدمة:</span>
               <span id="serviceBadgeLabel" class="bg-yellow-500/10 text-yellow-400 px-2 py-0.5 rounded text-[10px]">ضمان 30 يوم ♻️</span>
             </div>
 
@@ -569,7 +569,7 @@
       <div class="flex justify-between items-center border-b border-gray-800 pb-3">
         <div>
           <h2 class="text-sm font-black text-yellow-400">سجل الطلبات والمتابعة</h2>
-          <p class="text-[10px] text-gray-400">متابعة حالة وحركات التنفيذ عبر خوادم السيرفر</p>
+          <p class="text-[10px] text-gray-400">متابعة حالة وحركات التنفيذ عبر نظام التنفيذ</p>
         </div>
         <span class="text-xs bg-gray-800 px-2.5 py-1 rounded-full text-gray-300">محدث تلقائياً 🔄</span>
       </div>
@@ -597,7 +597,7 @@
       <div class="text-center">
         <span class="bg-gray-800 text-yellow-400 border border-gray-700 text-[10px] font-bold px-3 py-1 rounded-full">الحسابات والتحويل الفوري</span>
         <h2 class="text-sm md:text-base font-black text-white mt-1.5">المحفظة وتأكيد الدفع التلقائي</h2>
-        <p class="text-[10px] text-gray-400">سدد قيمة الشحن المباشر لتشغيل الأوردر فوراً عبر السيرفر</p>
+        <p class="text-[10px] text-gray-400">سدد قيمة الشحن المباشر لتشغيل الأوردر فوراً عبر النظام</p>
       </div>
 
       <!-- بطاقات الحسابات المالية الأربعة -->
@@ -809,7 +809,7 @@
     </button>
   </div>
 
-  <!-- نافذة شات دعم الذكاء الاصطناعي MSB ai (تفاعلية بنظام سيرفر الكابوس) -->
+  <!-- نافذة شات دعم الذكاء الاصطناعي MSB ai (تفاعلية بنظام الكابوس) -->
   <div id="aiSupportWindow" class="hidden fixed bottom-36 left-4 z-50 w-80 md:w-96 max-h-[calc(100dvh-180px)] bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden text-right text-xs flex flex-col">
     <div class="bg-gradient-to-r from-red-600 to-gray-900 p-3 flex justify-between items-center text-white">
       <div class="flex items-center gap-2">
@@ -885,7 +885,7 @@
 
       // تيك توك
       { code: '0201', name: 'متابعين تيك توك مصريين 🇪🇬 🔥', cat: 'tiktok', type: 'page', price: 280, unit: 1000, min: 50, max: 50000, startSpeed: '6–48 ساعة', dailyRate: '5,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'مصريين حقيقيين', condition: 'رابط البروفايل تيك توك. مناسب لفتح ميزة اللايف وزيادة الثقة.' },
-      { code: '0202', name: 'متابعين تيك توك مكس 🌍', cat: 'tiktok', type: 'page', price: 65, unit: 1000, min: 50, max: 50000, startSpeed: '1–24 ساعة', dailyRate: '20,000 / يوم', guaranteeType: 'بدون تعويض ⚠️', qualityLevel: 'سيرفر عالمي سريع', condition: 'رابط الحساب العام. خدمة أجنبية/مكس بدون تعويض.' },
+      { code: '0202', name: 'متابعين تيك توك أجانب 🌍', cat: 'tiktok', type: 'page', price: 90, unit: 1000, min: 50, max: 50000, startSpeed: '1–24 ساعة', dailyRate: '20,000 / يوم', guaranteeType: 'بدون تعويض ⚠️', qualityLevel: 'جودة عالمية سريعة', condition: 'رابط الحساب العام. خدمة أجنبية بدون تعويض.' },
       { code: '0203', name: 'TikTok Like 👍', cat: 'tiktok', type: 'post', price: 300, unit: 1000, min: 50, max: 20000, startSpeed: '1–24 ساعة', dailyRate: '15,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'لايكات سريعة وآمنة', condition: 'رابط فيديو تيك توك.' },
       { code: '0204', name: 'TikTok Love ♥️', cat: 'tiktok', type: 'post', price: 300, unit: 1000, min: 50, max: 20000, startSpeed: '1–24 ساعة', dailyRate: '15,000 / يوم', guaranteeType: 'ضمان 30 يوم ♻️', qualityLevel: 'قلوب نشطة', condition: 'رابط الفيديو على تيك توك.' },
       { code: '0205', name: 'TikTok Haha 😂', cat: 'tiktok', type: 'post', price: 300, unit: 1000, min: 50, max: 20000, startSpeed: '1–24 ساعة', dailyRate: '25,000 / يوم', guaranteeType: 'لا يوجد نقص', qualityLevel: 'تفاعل رياكشن', condition: 'رابط الفيديو.' },

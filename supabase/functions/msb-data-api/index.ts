@@ -55,7 +55,7 @@ const socialServices: Record<number, SocialService> = {
   106: { name: "تعليقات فيسبوك مخصصة ✍️", rate: 1.3, min: 30, max: 500000, platform: "facebook", delivery: "6–48 ساعة", guarantee: "بدون ضمان وبدون إعادة تعبئة" },
   109: { name: "مشاهدات فيديو فيسبوك 👁️ 🔥", rate: 0.035, min: 1000, max: 1000000, platform: "facebook", delivery: "6–24 ساعة", guarantee: "ثابت" },
   201: { name: "متابعين تيك توك مصريين 100% 🇪🇬 🔥", rate: 0.28, min: 50, max: 500000, platform: "tiktok", delivery: "6–48 ساعة", guarantee: "30 يوم" },
-  202: { name: "متابعين تيك توك مكس 🌍", rate: 0.065, min: 50, max: 500000, platform: "tiktok", delivery: "1–24 ساعة", guarantee: "بدون تعويض" },
+  202: { name: "متابعين تيك توك أجانب 🌍", rate: 0.09, min: 50, max: 500000, platform: "tiktok", delivery: "1–24 ساعة", guarantee: "بدون تعويض ⚠️" },
   203: { name: "TikTok Like 👍", rate: 0.3, min: 50, max: 5000, platform: "tiktok", delivery: "1–24 ساعة", guarantee: "30 يوم" },
   204: { name: "TikTok Love ♥️", rate: 0.3, min: 50, max: 5000, platform: "tiktok", delivery: "1–24 ساعة", guarantee: "30 يوم" },
   205: { name: "TikTok Haha 😂", rate: 0.3, min: 50, max: 5000, platform: "tiktok", delivery: "1–24 ساعة", guarantee: "حسب جودة الرابط" },
@@ -392,7 +392,7 @@ async function handleJson(request: Request) {
     }
 
     // طلب التعويض لنفس رقم الطلب مسموح مرة واحدة فقط كل 6 ساعات.
-    // التحقق هنا على السيرفر حتى لا يمكن تجاوزه بإعادة تحميل الصفحة أو استدعاء الـAPI مباشرة.
+    // التحقق هنا على الخادم حتى لا يمكن تجاوزه بإعادة تحميل الصفحة أو استدعاء الـAPI مباشرة.
     if (requestType === "تعويض") {
       const cooldownMs = 6 * 60 * 60 * 1000;
       const { data: lastCompensation, error: compensationLookupError } = await admin
