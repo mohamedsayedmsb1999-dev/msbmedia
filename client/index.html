@@ -17,7 +17,7 @@
     async function apiJson(payload, options={}) { const response=await fetch(API_URL,{method:'POST',headers:{...(options.form?{}:{'Content-Type':'application/json'}),...(customerToken?{'x-msb-customer-token':customerToken}:{})},body:options.form?payload:JSON.stringify(payload)}); const result=await response.json().catch(()=>({ok:false,message:'تعذر قراءة رد الخادم.'})); if(!response.ok||!result.ok) throw new Error(result.message||'تعذر تنفيذ العملية.'); return result; }
     function normalizedEgyptPhone(value){const raw=String(value||'').replace(/[^0-9+]/g,'');if(raw.startsWith('+20'))return '0'+raw.slice(3);if(raw.startsWith('20')&&raw.length===12)return '0'+raw.slice(2);return raw;}
     function showToast(message, type='info'){document.querySelectorAll('.msb-toast').forEach(el=>el.remove());const box=document.createElement('div');box.className=`msb-toast ${type}`;box.setAttribute('role','status');box.textContent=String(message||'');document.body.appendChild(box);window.setTimeout(()=>box.remove(),6000);}
-    function updateAuthNav(){const loggedIn=Boolean(customerToken&&currentUser);document.getElementById('authLoginNav')?.classList.toggle('hidden',loggedIn);document.getElementById('authLogoutNav')?.classList.toggle('hidden',!loggedIn);document.getElementById('authAiFab')?.classList.toggle('hidden',!loggedIn);if(!loggedIn)document.getElementById('aiSupportWindow')?.classList.add('hidden');document.getElementById('headerAccountName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):'مرحبًا بك في MSB MEDIA'));document.getElementById('cardFullName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):'زائر الموقع'));document.getElementById('cardUsername')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.username||'اسم المستخدم'):'سجّل للدخول'));}
+    function updateAuthNav(){const loggedIn=Boolean(customerToken&&currentUser);document.documentElement.classList.toggle('msb-public-visitor',!loggedIn);document.querySelectorAll('[data-auth-private-card]').forEach(el=>el.classList.toggle('hidden',!loggedIn));document.getElementById('authLoginNav')?.classList.toggle('hidden',loggedIn);document.getElementById('authLogoutNav')?.classList.toggle('hidden',!loggedIn);document.getElementById('authAiFab')?.classList.toggle('hidden',!loggedIn);if(!loggedIn){document.getElementById('aiSupportWindow')?.classList.add('hidden');['ordersCounter','walletSpentLabel','walletBalance'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0';});document.querySelectorAll('[data-real-balance]').forEach(el=>el.textContent='0.00 EGP');}document.getElementById('headerAccountName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):'مرحبًا بك في MSB MEDIA'));document.getElementById('cardFullName')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.fullName||currentUser.full_name||'حساب العميل'):''));document.getElementById('cardUsername')?.replaceChildren(document.createTextNode(loggedIn?(currentUser.username||'اسم المستخدم'):''));}
     function openAuthLogin(){setSideMenuOpen(false);switchAuthView('login');lockAuthScreen();}
     function lockAuthScreen(){document.documentElement.classList.remove('msb-public-visitor');document.body.classList.add('auth-locked');document.getElementById('authModal')?.classList.remove('hidden');updateAuthNav();}
     function unlockAuthScreen(){document.documentElement.classList.toggle('msb-public-visitor',!(customerToken&&currentUser));document.body.classList.remove('auth-locked');document.getElementById('authModal')?.classList.add('hidden');updateAuthNav();}
@@ -306,10 +306,10 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
 
       <!-- الكارت 1: اسم الحساب واسم المستخدم مع علامة النسخ -->
-      <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
+      <div data-auth-private-card class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
         <div class="space-y-0.5">
           <div class="text-[10px] text-gray-400">اسم الحساب</div>
-          <div id="cardFullName" class="text-xs font-black text-white truncate max-w-[110px]">زائر الموقع</div>
+          <div id="cardFullName" class="text-xs font-black text-white truncate max-w-[110px]"></div>
           <div class="flex items-center gap-1.5 pt-0.5">
             <span id="cardUsername" class="text-[11px] font-mono font-bold text-yellow-400">سجّل للدخول</span>
             <button onclick="copyUsername()" title="نسخ اسم المستخدم" class="text-gray-400 hover:text-white p-0.5 text-[10px]">
@@ -322,7 +322,7 @@
         </div>
       </div>
 
-      <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
+      <div data-auth-private-card class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-[10px] text-gray-400 mb-0.5">إجمالي الطلبات</div>
           <div class="text-sm font-black text-white" id="ordersCounter">0</div>
@@ -333,7 +333,7 @@
         </div>
       </div>
 
-      <div class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
+      <div data-auth-private-card class="bg-[#131b2e] border border-gray-800 p-3 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-[10px] text-gray-400 mb-0.5">إجمالي الإنفاق</div>
           <div class="text-xs font-bold text-white"><span id="walletSpentLabel">0.00</span> <span class="text-[10px] text-gray-400">EGP</span></div>
@@ -344,7 +344,7 @@
         </div>
       </div>
 
-      <div class="bg-[#131b2e] border border-gray-800 p-2.5 rounded-xl flex flex-col justify-between">
+      <div data-auth-private-card class="bg-[#131b2e] border border-gray-800 p-2.5 rounded-xl flex flex-col justify-between">
         <div class="flex items-center justify-between">
           <div>
             <div class="text-[10px] text-gray-400">الرصيد المتاح</div>
@@ -359,7 +359,7 @@
         </button>
       </div>
 
-      <div class="reward-level-card reward-guest-rectangle col-span-2 md:col-span-1 p-2.5 rounded-xl flex flex-col justify-between" id="rewardLevelCard">
+      <div data-auth-private-card class="reward-level-card reward-guest-rectangle col-span-2 md:col-span-1 p-2.5 rounded-xl flex flex-col justify-between" id="rewardLevelCard">
         <div class="flex items-start justify-between gap-2">
           <div class="min-w-0">
             <div class="text-[10px] text-yellow-200/80 flex items-center gap-1"><i class="fa-solid fa-gift"></i> هدايا المستويات</div>
@@ -1267,6 +1267,9 @@
       verseIndex = (verseIndex + 1) % quranVerses.length;
       if (ticker) ticker.textContent = quranVerses[verseIndex];
     }, 7000);
+
+    // إبقاء دوال onclick متاحة بعد تحميل كل السكربتات
+    Object.assign(window,{openAuthLogin,switchAuthView,lockAuthScreen,unlockAuthScreen,requireAuth,setSideMenuOpen,closeSideMenu,toggleSideMenu,navigateSection,logoutUser,copyData});
 
     // التحقق من الحساب المسجل مسبقاً عند الفتح
     window.onload = async () => { updateServicesBySelectedCat();populateServicesTables(); await handleDepositActionLink(); await handleOrderActionLink(); const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);unlockAuthScreen();}else{currentUser=null;unlockAuthScreen();updateAuthNav();} const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
