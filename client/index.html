@@ -61,6 +61,7 @@
     html, body { max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; scroll-behavior: auto !important; }
     body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #fff; overflow-y: auto; touch-action: pan-y; }
     html.msb-session-known #authModal, html.msb-public-visitor #authModal { display: none !important; }
+    html.msb-public-visitor [data-auth-private-card] { display: none !important; }
     html.msb-public-visitor body.auth-locked > nav,
     html.msb-public-visitor body.auth-locked > main,
     html.msb-public-visitor body.auth-locked > .fixed { visibility: visible; pointer-events: auto; }
@@ -276,7 +277,7 @@
       <button onclick="toggleSideMenu()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
     </div>
     <nav class="space-y-1.5 text-xs font-bold">
-      <button id="authLoginNav" onclick="openAuthLogin()" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-yellow-400 hover:bg-gray-800 border border-yellow-500/20">
+      <button id="authLoginNav" type="button" data-auth-login-button class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl text-yellow-400 hover:bg-gray-800 border border-yellow-500/20">
         <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
       </button>
       <button onclick="navigateSection('new-order'); toggleSideMenu();" class="w-full text-right flex items-center gap-2.5 p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
@@ -1271,8 +1272,11 @@
     // إبقاء دوال onclick متاحة بعد تحميل كل السكربتات
     Object.assign(window,{openAuthLogin,switchAuthView,lockAuthScreen,unlockAuthScreen,requireAuth,setSideMenuOpen,closeSideMenu,toggleSideMenu,navigateSection,logoutUser,copyData});
 
+    // ربط زر الدخول بحدث مباشر وتسريع تهيئة الواجهة بعد بناء DOM مباشرة
+    document.getElementById('authLoginNav')?.addEventListener('click',event=>{event.preventDefault();openAuthLogin();});
+
     // التحقق من الحساب المسجل مسبقاً عند الفتح
-    window.onload = async () => { updateServicesBySelectedCat();populateServicesTables(); await handleDepositActionLink(); await handleOrderActionLink(); const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);unlockAuthScreen();}else{currentUser=null;unlockAuthScreen();updateAuthNav();} const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} };
+    window.addEventListener('DOMContentLoaded', async () => { updateServicesBySelectedCat();populateServicesTables(); await handleDepositActionLink(); await handleOrderActionLink(); const savedUser=localStorage.getItem('msb_current_user'); const replyToken=new URLSearchParams(location.search).get('support_reply'); if(savedUser&&customerToken){currentUser=JSON.parse(savedUser);applyUserData(currentUser);unlockAuthScreen();}else{currentUser=null;unlockAuthScreen();updateAuthNav();} const initialSection=replyToken?'tickets':sectionFromLocation();navigateSection(initialSection,{push:false,instant:true});if(replyToken){document.getElementById('authModal').classList.add('hidden');document.getElementById('adminReplyPanel').classList.remove('hidden');}else{await loadRealSummary();if(currentUser)await loadSupportMessages();setInterval(()=>{if(document.visibilityState==='visible')loadRealSummary();},15000);window.addEventListener('focus',loadRealSummary);} },{once:true});
   </script>
 
 </body>
